@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX014 Limiter</title>
+<style>
+body {
+  background: #17202b;
+  color: #f0f3f7;
+  font: 16px system-ui;
+  max-width: 620px;
+  margin: 40px auto;
+  padding: 16px;
+}
+h1 { color: #82cfff; }
+label { display: block; margin: 24px 0; }
+input[type=range] { width: 100%; }
+button {
+  padding: 14px 20px;
+  margin: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.meter {
+  padding: 18px;
+  background: #26364a;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+.meter strong {
+  font-size: 28px;
+  color: #8edcb3;
+}
+#status { color: #a7dbff; }
+</style>
+</head>
+<body>
+
+<h1>FX014 — Limiter</h1>
+<p>SymphonyCSV Studio — Dynamics Laboratory</p>
+
+<h2>Test different note velocities</h2>
+
+<button id="soft">Play Soft C4</button>
+<button id="strong">Play Strong C4</button>
+
+<div class="meter">
+  Current gain reduction:
+  <strong id="reduction">0.0 dB</strong>
+
+  <p>
+    Peak reduction this note:
+    <strong id="peak">0.0 dB</strong>
+  </p>
+</div>
+
+<label>
+  Limiter Threshold:
+  <output id="thresholdValue">-12</output> dB
+  <input id="threshold" type="range"
+    min="-40" max="0" step="1" value="-12">
+</label>
+
+<label>
+  Wet Mix:
+  <output id="wetValue">1</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="1">
+</label>
+
+<label>
+  <input id="bypass" type="checkbox"> Bypass limiter
+</label>
+
+<p id="status">Audio has not started.</p>
+
+<p>
+  Compare soft and strong notes.
+  Lower the threshold to increase limiting.
+  Keep playback volume low.
+</p>
+
+<script type="module">
+import { start, Synth } from "tone";
+import { createLimiter } from "../fx014-limiter.js";
+
+const status = document.querySelector("#status");
+
+try {
+  const fx = createLimiter();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -14,
+    oscillator: { type: "sawtooth" },
+    envelope: {
+      attack: 0.01,
+      decay: 0.1,
+      sustain: 0.9,
+      release: 0.2
+    }
+  }).connect(fx.node);
+
+  let peakReduction = 0;
+
+  function updateMeter() {
+    const reduction = fx.getReduction();
+
+    if (Number.isFinite(reduction)) {
+      peakReduction = Math.min(
+        peakReduction, reduction
+      );
+
+      document.querySelector("#reduction")
+        .textContent =
+          reduction.toFixed(1) + " dB";
+
+      document.querySelector("#peak")
+        .textContent =
+          peakReduction.toFixed(1) + " dB";
+    }
+
+    requestAnimationFrame(updateMeter);
+  }
+
+  updateMeter();
+
+  async function playNote(velocity, label) {
+    try {
+      await start();
+
+      peakReduction = 0;
+
+      synth.triggerAttackRelease(
+        "C4", "2m", undefined, velocity
+      );
+
+      status.textContent =
+        "Playing " + label +
+        " C4. Watch gain reduction.";
+    } catch (error) {
+      status.textContent =
+        "Audio error: " + error.message;
+      console.error(error);
+    }
+  }
+
+  document.querySelector("#soft")
+    .addEventListener("click", () => {
+      playNote(0.2, "soft");
+    });
+
+  document.querySelector("#strong")
+    .addEventListener("click", () => {
+      playNote(1.0, "strong");
+    });
+
+  document.querySelector("#threshold")
+    .addEventListener("input", event => {
+      try {
+        const value = event.target.value;
+        fx.setThreshold(value);
+
+        document.querySelector("#thresholdValue")
+          .textContent = value;
+      } catch (error) {
+        status.textContent = error.message;
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#wet")
+    .addEventListener("input", event => {
+      try {
+        const value = event.target.value;
+        fx.setWet(value);
+
+        document.querySelector("#wetValue")
+          .textContent = value;
+      } catch (error) {
+        status.textContent = error.message;
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#bypass")
+    .addEventListener("change", event => {
+      fx.setBypass(event.target.checked);
+
+      status.textContent = event.target.checked
+        ? "Limiter bypassed."
+        : "Limiter active.";
+    });
+
+} catch (error) {
+  status.textContent =
+    "Initialization error: " + error.message;
+
+  document.querySelector("#soft").disabled = true;
+  document.querySelector("#strong").disabled = true;
+
+  console.error(error);
+}
+</script>
+</body>
+</html>
