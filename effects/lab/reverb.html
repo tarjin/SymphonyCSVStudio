@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX003 Reverb</title>
+<style>
+  body {
+    background: #17202b;
+    color: #f0f3f7;
+    font: 16px system-ui;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 16px;
+  }
+  h1 { color: #82cfff; }
+  label { display: block; margin: 24px 0; }
+  input[type=range] { width: 100%; }
+  button {
+    padding: 14px 24px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  #status { color: #a7dbff; }
+</style>
+</head>
+<body>
+
+<h1>FX003 — Reverb</h1>
+<p>SymphonyCSV Studio — Effects Laboratory</p>
+
+<button id="play">Play Test Note (C4)</button>
+
+<label>
+  Decay: <output id="decayValue">2.8</output> seconds
+  <input id="decay" type="range"
+    min="0.4" max="7" step="0.2" value="2.8">
+</label>
+
+<label>
+  Pre-Delay: <output id="preDelayValue">0.03</output> seconds
+  <input id="preDelay" type="range"
+    min="0" max="0.15" step="0.01" value="0.03">
+</label>
+
+<label>
+  Wet Mix: <output id="wetValue">0.65</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="0.65">
+</label>
+
+<label>
+  <input id="bypass" type="checkbox"> Bypass effect
+</label>
+
+<p id="status">Audio has not started.</p>
+
+<script type="module">
+  import { start, Synth } from "tone";
+  import { createReverb } from "../fx003-reverb.js";
+
+  const fx = createReverb();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -20,
+    oscillator: { type: "sawtooth" },
+    envelope: {
+      attack: 0.01,
+      decay: 0.12,
+      sustain: 0.2,
+      release: 0.15
+    }
+  }).connect(fx.node);
+
+  const status = document.querySelector("#status");
+  const play = document.querySelector("#play");
+
+  async function rebuild(promise) {
+    play.disabled = true;
+    status.textContent = "Generating reverb impulse response...";
+
+    try {
+      await promise;
+      status.textContent = "Reverb ready. Play a note.";
+    } catch (error) {
+      status.textContent = "Reverb error: " + error.message;
+      console.error(error);
+    } finally {
+      play.disabled = false;
+    }
+  }
+
+  play.addEventListener("click", async () => {
+    play.disabled = true;
+
+    try {
+      await start();
+      status.textContent = "Preparing reverb...";
+      await fx.ready();
+
+      synth.triggerAttackRelease("C4", "8n");
+
+      status.textContent =
+        "Playing C4. Listen for the reverberation tail.";
+    } catch (error) {
+      status.textContent = "Audio error: " + error.message;
+      console.error(error);
+    } finally {
+      play.disabled = false;
+    }
+  });
+
+  for (const [id, setter] of [
+    ["decay", "setDecay"],
+    ["preDelay", "setPreDelay"]
+  ]) {
+    const slider = document.querySelector("#" + id);
+
+    slider.addEventListener("input", () => {
+      document.querySelector("#" + id + "Value")
+        .textContent = slider.value;
+    });
+
+    slider.addEventListener("change", () => {
+      rebuild(fx[setter](slider.value));
+    });
+  }
+
+  document.querySelector("#wet")
+    .addEventListener("input", (event) => {
+      fx.setWet(event.target.value);
+      document.querySelector("#wetValue")
+        .textContent = event.target.value;
+    });
+
+  document.querySelector("#bypass")
+    .addEventListener("change", (event) => {
+      fx.setBypass(event.target.checked);
+    });
+</script>
+</body>
+</html>
