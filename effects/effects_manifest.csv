@@ -9,3 +9,4 @@
 "FX008","Vibrato","Tone.js 15.1.22","rate;depth;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX009","Three-Band Equalizer","Tone.js 15.1.22","low;mid;high;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX010","Low-Pass Filter","Tone.js 15.1.22","cutoff;resonance;wet;bypass","Prototype","Manual PASS 2026-11-09"
+"FX011","High-Pass Filter","Tone.js 15.1.22","cutoff;resonance;wet;bypass","Prototype","Manual PASS 2026-11-09"
