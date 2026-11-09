@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - Effects Chain</title>
+<style>
+  body {
+    background: #17202b;
+    color: #f0f3f7;
+    font: 16px system-ui;
+    max-width: 650px;
+    margin: 40px auto;
+    padding: 16px;
+  }
+  h1 { color: #82cfff; }
+  button {
+    padding: 14px;
+    margin: 8px 8px 8px 0;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  #order {
+    padding: 20px;
+    background: #26364a;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>Effects Chain Laboratory</h1>
+<p>SymphonyCSV Studio — Routing Test 001</p>
+
+<h2>Choose the effect order</h2>
+
+<button id="chorusFirst">Chorus → Delay</button>
+<button id="delayFirst">Delay → Chorus</button>
+
+<div id="order">Synth → Chorus → Delay → Output</div>
+
+<button id="play">▶ Play Test Note (C4)</button>
+
+<p id="status">Audio not started.</p>
+
+<p>
+Change the order between notes, after the previous
+echoes have faded. Listen for differences in how
+the repeats are modulated.
+</p>
+
+<script type="module">
+  import { start, Synth } from "tone";
+
+  import { createChorus }
+    from "../fx002-chorus.js";
+
+  import { createFeedbackDelay }
+    from "../fx001-feedback-delay.js";
+
+  import { createEffectsChain }
+    from "../effects-chain.js";
+
+  const chorus = createChorus();
+  const delay = createFeedbackDelay();
+
+  chorus.setRate(1.5);
+  chorus.setDepth(0.8);
+  chorus.setWet(0.85);
+
+  delay.setDelay(0.35);
+  delay.setFeedback(0.45);
+  delay.setWet(0.65);
+
+  const chain = createEffectsChain([
+    { id: "chorus", node: chorus.node },
+    { id: "delay", node: delay.node }
+  ]);
+
+  chain.output.toDestination();
+
+  const synth = new Synth({
+    volume: -22,
+    oscillator: { type: "sawtooth" },
+    envelope: {
+      attack: 0.02,
+      decay: 0.2,
+      sustain: 0.5,
+      release: 0.4
+    }
+  }).connect(chain.input);
+
+  function chooseOrder(ids) {
+    try {
+      chain.setOrder(ids);
+      document.querySelector("#order").textContent =
+        "Synth → " +
+        chain.getOrder().map(id =>
+          id === "chorus" ? "Chorus" : "Delay"
+        ).join(" → ") +
+        " → Output";
+    } catch (error) {
+      document.querySelector("#status").textContent =
+        "Routing error: " + error.message;
+      console.error(error);
+    }
+  }
+
+  document.querySelector("#chorusFirst")
+    .addEventListener("click", () => {
+      chooseOrder(["chorus", "delay"]);
+    });
+
+  document.querySelector("#delayFirst")
+    .addEventListener("click", () => {
+      chooseOrder(["delay", "chorus"]);
+    });
+
+  document.querySelector("#play")
+    .addEventListener("click", async () => {
+      try {
+        await start();
+        chorus.start();
+
+        synth.triggerAttackRelease("C4", "2n");
+
+        document.querySelector("#status").textContent =
+          "Playing with order: " +
+          chain.getOrder().join(" → ");
+      } catch (error) {
+        document.querySelector("#status").textContent =
+          "Audio error: " + error.message;
+        console.error(error);
+      }
+    });
+</script>
+
+</body>
+</html>
