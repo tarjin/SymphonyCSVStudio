@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX017 Overdrive</title>
+<style>
+body {
+  background:#17202b;
+  color:#f0f3f7;
+  font:16px system-ui;
+  max-width:620px;
+  margin:40px auto;
+  padding:16px;
+}
+h1 { color:#82cfff; }
+label { display:block; margin:24px 0; }
+input[type=range] { width:100%; }
+button, select {
+  padding:12px 18px;
+  font-size:16px;
+}
+button { cursor:pointer; }
+#status { color:#a7dbff; }
+</style>
+</head>
+<body>
+
+<h1>FX017 — Overdrive</h1>
+<p>SymphonyCSV Studio — Character Effects Laboratory</p>
+
+<button id="toggle">Start Sustained C3</button>
+
+<label>
+  Drive:
+  <output id="driveValue">0.4</output>
+  <input id="drive" type="range"
+    min="0" max="1" step="0.05" value="0.4">
+</label>
+
+<label>
+  Tone:
+  <output id="toneValue">6500</output> Hz
+  <input id="tone" type="range"
+    min="800" max="12000" step="100" value="6500">
+</label>
+
+<label>
+  Output Level:
+  <output id="levelValue">0.7</output>
+  <input id="level" type="range"
+    min="0" max="1" step="0.05" value="0.7">
+</label>
+
+<label>
+  Wet Mix:
+  <output id="wetValue">0.75</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="0.75">
+</label>
+
+<label>
+  Oversampling:
+  <select id="oversample">
+    <option value="none">None</option>
+    <option value="2x" selected>2x</option>
+    <option value="4x">4x</option>
+  </select>
+</label>
+
+<label>
+  <input id="bypass" type="checkbox">
+  Bypass overdrive
+</label>
+
+<p id="status">Audio has not started.</p>
+
+<p>
+  Start at a low listening volume.
+  Increase Drive gradually.
+  Stop the note before changing oversampling.
+</p>
+
+<script type="module">
+import { start, Synth } from "tone";
+import { createOverdrive } from "../fx017-overdrive.js";
+
+const status = document.querySelector("#status");
+const toggle = document.querySelector("#toggle");
+
+try {
+  const fx = createOverdrive();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -30,
+    oscillator: { type: "triangle" },
+    envelope: {
+      attack: 0.05,
+      decay: 0.2,
+      sustain: 0.8,
+      release: 0.25
+    }
+  }).connect(fx.node);
+
+  let playing = false;
+
+  toggle.addEventListener("click", async () => {
+    toggle.disabled = true;
+
+    try {
+      await start();
+
+      if (playing) {
+        synth.triggerRelease();
+        playing = false;
+        toggle.textContent = "Start Sustained C3";
+        status.textContent = "Note stopped.";
+      } else {
+        synth.triggerAttack("C3");
+        playing = true;
+        toggle.textContent = "Stop Sustained C3";
+        status.textContent =
+          "C3 playing. Adjust Drive and Tone.";
+      }
+    } catch (error) {
+      status.textContent =
+        "Audio error: " + error.message;
+      console.error(error);
+    } finally {
+      toggle.disabled = false;
+    }
+  });
+
+  for (const [id, method] of [
+    ["drive", "setDrive"],
+    ["tone", "setTone"],
+    ["level", "setLevel"],
+    ["wet", "setWet"]
+  ]) {
+    document.querySelector("#" + id)
+      .addEventListener("input", event => {
+        try {
+          const value = event.target.value;
+          fx[method](value);
+
+          document.querySelector("#" + id + "Value")
+            .textContent = value;
+        } catch (error) {
+          status.textContent =
+            "Control error: " + error.message;
+          console.error(error);
+        }
+      });
+  }
+
+  document.querySelector("#oversample")
+    .addEventListener("change", event => {
+      try {
+        fx.setOversample(event.target.value);
+
+        status.textContent =
+          "Oversampling: " + event.target.value;
+      } catch (error) {
+        status.textContent =
+          "Oversampling error: " + error.message;
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#bypass")
+    .addEventListener("change", event => {
+      fx.setBypass(event.target.checked);
+
+      status.textContent = event.target.checked
+        ? "Overdrive bypassed."
+        : "Overdrive active.";
+    });
+
+  window.addEventListener("pagehide", () => {
+    if (playing) synth.triggerRelease();
+    synth.dispose();
+    fx.dispose();
+  });
+
+} catch (error) {
+  status.textContent =
+    "Initialization error: " + error.message;
+  toggle.disabled = true;
+  console.error(error);
+}
+</script>
+</body>
+</html>
