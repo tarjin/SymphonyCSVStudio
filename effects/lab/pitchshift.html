@@ -1,0 +1,244 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX019 Pitch Shifter</title>
+<style>
+body {
+  background: #17202b;
+  color: #f0f3f7;
+  font: 16px system-ui;
+  max-width: 640px;
+  margin: 40px auto;
+  padding: 16px;
+}
+h1 { color: #82cfff; }
+h2 { margin-top: 28px; }
+label { display: block; margin: 24px 0; }
+input[type=range] { width: 100%; }
+button {
+  padding: 12px 16px;
+  margin: 5px;
+  font-size: 15px;
+  cursor: pointer;
+}
+#status { color: #a7dbff; }
+.notice { color: #d4dce6; }
+</style>
+</head>
+<body>
+
+<h1>FX019 — Pitch Shifter</h1>
+<p>SymphonyCSV Studio — Pitch Effects Laboratory</p>
+
+<button id="toggle">Start Sustained C3</button>
+
+<h2>Pitch Shift Presets</h2>
+
+<button data-pitch="-12">−12 Octave Down</button>
+<button data-pitch="0">0 Unison</button>
+<button data-pitch="7">+7 Perfect Fifth</button>
+<button data-pitch="12">+12 Octave Up</button>
+
+<label>
+  Pitch Shift:
+  <output id="pitchValue">+7</output> semitones
+  <input id="pitch" type="range"
+    min="-12" max="12" step="1" value="7">
+</label>
+
+<label>
+  Window Size:
+  <output id="windowValue">0.08</output> seconds
+  <input id="window" type="range"
+    min="0.03" max="0.1" step="0.01" value="0.08">
+</label>
+
+<label>
+  Feedback:
+  <output id="feedbackValue">0</output>
+  <input id="feedback" type="range"
+    min="0" max="0.5" step="0.05" value="0">
+</label>
+
+<label>
+  Wet Mix:
+  <output id="wetValue">0.75</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="0.75">
+</label>
+
+<label>
+  <input id="bypass" type="checkbox">
+  Bypass Pitch Shifter
+</label>
+
+<p id="status" role="status">Audio has not started.</p>
+
+<p class="notice">
+  Keep listening volume low.
+  Set Wet Mix to 1 for isolated pitch shifting.
+  Stop the note before changing Window Size.
+</p>
+
+<script type="module">
+import { start, Synth } from "tone";
+import { createPitchShift } from "../fx019-pitch-shift.js";
+
+const status = document.querySelector("#status");
+const toggle = document.querySelector("#toggle");
+const pitchSlider = document.querySelector("#pitch");
+const pitchValue = document.querySelector("#pitchValue");
+
+try {
+  const fx = createPitchShift();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -30,
+    oscillator: { type: "triangle" },
+    envelope: {
+      attack: 0.04,
+      decay: 0.15,
+      sustain: 0.8,
+      release: 0.3
+    }
+  }).connect(fx.node);
+
+  let playing = false;
+
+  toggle.addEventListener("click", async () => {
+    toggle.disabled = true;
+
+    try {
+      await start();
+
+      if (playing) {
+        synth.triggerRelease();
+        playing = false;
+        toggle.textContent = "Start Sustained C3";
+        status.textContent = "Note stopped.";
+      } else {
+        synth.triggerAttack("C3");
+        playing = true;
+        toggle.textContent = "Stop Sustained C3";
+        status.textContent =
+          "Playing C3. Change pitch to audition.";
+      }
+    } catch (error) {
+      status.textContent =
+        "Audio error: " + error.message;
+      console.error(error);
+    } finally {
+      toggle.disabled = false;
+    }
+  });
+
+  function changePitch(value) {
+    try {
+      fx.setPitch(value);
+
+      const actual = fx.getPitch();
+      pitchSlider.value = actual;
+      pitchValue.textContent =
+        actual > 0 ? "+" + actual : String(actual);
+
+      status.textContent =
+        "Pitch shift: " + actual + " semitones.";
+    } catch (error) {
+      status.textContent =
+        "Pitch error: " + error.message;
+      console.error(error);
+    }
+  }
+
+  pitchSlider.addEventListener("input", event => {
+    changePitch(Number(event.target.value));
+  });
+
+  document.querySelectorAll("[data-pitch]")
+    .forEach(button => {
+      button.addEventListener("click", () => {
+        changePitch(Number(button.dataset.pitch));
+      });
+    });
+
+  document.querySelector("#window")
+    .addEventListener("input", event => {
+      try {
+        const value = Number(event.target.value);
+        fx.setWindowSize(value);
+
+        document.querySelector("#windowValue")
+          .textContent = value.toFixed(2);
+      } catch (error) {
+        status.textContent =
+          "Window error: " + error.message;
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#feedback")
+    .addEventListener("input", event => {
+      try {
+        const value = Number(event.target.value);
+        fx.setFeedback(value);
+
+        document.querySelector("#feedbackValue")
+          .textContent = value;
+      } catch (error) {
+        status.textContent =
+          "Feedback error: " + error.message;
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#wet")
+    .addEventListener("input", event => {
+      try {
+        const value = Number(event.target.value);
+        fx.setWet(value);
+
+        document.querySelector("#wetValue")
+          .textContent = value;
+      } catch (error) {
+        status.textContent =
+          "Wet mix error: " + error.message;
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#bypass")
+    .addEventListener("change", event => {
+      try {
+        fx.setBypass(event.target.checked);
+
+        status.textContent = event.target.checked
+          ? "Pitch shifter bypassed."
+          : "Pitch shifter active.";
+      } catch (error) {
+        status.textContent =
+          "Bypass error: " + error.message;
+        console.error(error);
+      }
+    });
+
+  window.addEventListener("pagehide", () => {
+    if (playing) synth.triggerRelease();
+    synth.dispose();
+    fx.dispose();
+  });
+
+} catch (error) {
+  status.textContent =
+    "Initialization error: " + error.message;
+
+  document.querySelectorAll("button")
+    .forEach(button => button.disabled = true);
+
+  console.error(error);
+}
+</script>
+</body>
+</html>
