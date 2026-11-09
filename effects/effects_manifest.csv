@@ -18,3 +18,4 @@
 "FX017","Overdrive","Tone.js 15.1.22","drive;tone;level;oversample;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX018","Bitcrusher","Tone.js 15.1.22","bits;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX019","Pitch Shifter","Tone.js 15.1.22","pitch;windowSize;feedback;wet;bypass","Prototype","Manual PASS 2026-11-09"
+"FX020","Auto-Panner","Tone.js 15.1.22","rate;depth;waveform;wet;bypass","Prototype","Manual PASS 2026-11-09"

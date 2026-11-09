@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX020 Auto-Panner</title>
+<style>
+body {
+  background: #17202b;
+  color: #f0f3f7;
+  font: 16px system-ui;
+  max-width: 640px;
+  margin: 40px auto;
+  padding: 16px;
+}
+h1 { color: #82cfff; }
+h2 { margin-top: 28px; }
+label { display: block; margin: 24px 0; }
+input[type=range] { width: 100%; }
+button, select {
+  padding: 12px 16px;
+  margin: 5px;
+  font-size: 15px;
+}
+button { cursor: pointer; }
+#status { color: #a7dbff; }
+.notice { color: #d4dce6; }
+</style>
+</head>
+<body>
+
+<h1>FX020 — Auto-Panner</h1>
+<p>SymphonyCSV Studio — Stereo Effects Laboratory</p>
+
+<button id="toggle">Start Sustained C3</button>
+
+<h2>Rate Presets</h2>
+<button data-rate="0.1">Slow — 0.1 Hz</button>
+<button data-rate="0.5">Medium — 0.5 Hz</button>
+<button data-rate="3">Fast — 3 Hz</button>
+<button data-rate="10">Rapid — 10 Hz</button>
+
+<label>
+  Rate:
+  <output id="rateValue">0.5</output> Hz
+  <input id="rate" type="range"
+    min="0.05" max="15" step="0.05" value="0.5">
+</label>
+
+<label>
+  Depth:
+  <output id="depthValue">0.8</output>
+  <input id="depth" type="range"
+    min="0" max="1" step="0.05" value="0.8">
+</label>
+
+<label>
+  Waveform:
+  <select id="waveform">
+    <option value="sine" selected>Sine — Smooth</option>
+    <option value="triangle">Triangle — Linear sweep</option>
+    <option value="square">Square — Hard switching</option>
+  </select>
+</label>
+
+<label>
+  Wet Mix:
+  <output id="wetValue">1</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="1">
+</label>
+
+<label>
+  <input id="bypass" type="checkbox">
+  Bypass Auto-Panner
+</label>
+
+<p id="status" role="status">Audio has not started.</p>
+
+<p class="notice">
+  Use stereo headphones or two speakers.
+  Start with low listening volume.
+  At higher rates, panning may sound like flutter.
+</p>
+
+<script type="module">
+import { start, Synth } from "tone";
+import { createAutoPanner } from "../fx020-auto-panner.js";
+
+const status = document.querySelector("#status");
+const toggle = document.querySelector("#toggle");
+
+const rateSlider = document.querySelector("#rate");
+const rateValue = document.querySelector("#rateValue");
+
+try {
+  const fx = createAutoPanner();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -30,
+    oscillator: { type: "triangle" },
+    envelope: {
+      attack: 0.05,
+      decay: 0.15,
+      sustain: 0.85,
+      release: 0.3
+    }
+  }).connect(fx.node);
+
+  let playing = false;
+
+  toggle.addEventListener("click", async () => {
+    toggle.disabled = true;
+
+    try {
+      await start();
+
+      if (playing) {
+        synth.triggerRelease();
+        playing = false;
+
+        toggle.textContent = "Start Sustained C3";
+        status.textContent = "Note stopped.";
+      } else {
+        synth.triggerAttack("C3");
+        playing = true;
+
+        toggle.textContent = "Stop Sustained C3";
+        status.textContent =
+          "Playing C3. Listen to stereo movement.";
+      }
+    } catch (error) {
+      status.textContent =
+        "Audio error: " + error.message;
+
+      console.error(error);
+    } finally {
+      toggle.disabled = false;
+    }
+  });
+
+  function changeRate(value) {
+    try {
+      fx.setRate(value);
+
+      rateSlider.value = value;
+      rateValue.textContent = value;
+
+      status.textContent =
+        "Panning rate: " + value + " Hz.";
+    } catch (error) {
+      status.textContent =
+        "Rate error: " + error.message;
+
+      console.error(error);
+    }
+  }
+
+  rateSlider.addEventListener("input", event => {
+    changeRate(Number(event.target.value));
+  });
+
+  document.querySelectorAll("[data-rate]")
+    .forEach(button => {
+      button.addEventListener("click", () => {
+        changeRate(Number(button.dataset.rate));
+      });
+    });
+
+  document.querySelector("#depth")
+    .addEventListener("input", event => {
+      try {
+        const value = Number(event.target.value);
+
+        fx.setDepth(value);
+
+        document.querySelector("#depthValue")
+          .textContent = value;
+      } catch (error) {
+        status.textContent =
+          "Depth error: " + error.message;
+
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#waveform")
+    .addEventListener("change", event => {
+      try {
+        fx.setWaveform(event.target.value);
+
+        status.textContent =
+          "Waveform: " + event.target.value;
+      } catch (error) {
+        status.textContent =
+          "Waveform error: " + error.message;
+
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#wet")
+    .addEventListener("input", event => {
+      try {
+        const value = Number(event.target.value);
+
+        fx.setWet(value);
+
+        document.querySelector("#wetValue")
+          .textContent = value;
+      } catch (error) {
+        status.textContent =
+          "Wet-mix error: " + error.message;
+
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#bypass")
+    .addEventListener("change", event => {
+      try {
+        fx.setBypass(event.target.checked);
+
+        status.textContent = event.target.checked
+          ? "Auto-Panner bypassed."
+          : "Auto-Panner active.";
+      } catch (error) {
+        status.textContent =
+          "Bypass error: " + error.message;
+
+        console.error(error);
+      }
+    });
+
+  window.addEventListener("pagehide", () => {
+    if (playing) synth.triggerRelease();
+    synth.dispose();
+    fx.dispose();
+  });
+
+} catch (error) {
+  status.textContent =
+    "Initialization error: " + error.message;
+
+  document.querySelectorAll("button")
+    .forEach(button => button.disabled = true);
+
+  console.error(error);
+}
+</script>
+</body>
+</html>
