@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX013 Compressor</title>
+<style>
+body {
+  background:#17202b;
+  color:#f0f3f7;
+  font:16px system-ui;
+  max-width:620px;
+  margin:40px auto;
+  padding:16px;
+}
+h1 { color:#82cfff; }
+h2 { color:#b9ddff; }
+label { display:block; margin:20px 0; }
+input[type=range] { width:100%; }
+button {
+  padding:14px 20px;
+  margin:6px;
+  font-size:16px;
+  cursor:pointer;
+}
+.meter {
+  padding:18px;
+  background:#26364a;
+  border-radius:8px;
+  margin:20px 0;
+}
+.meter strong {
+  font-size:28px;
+  color:#8edcb3;
+}
+#status { color:#a7dbff; }
+</style>
+</head>
+<body>
+
+<h1>FX013 — Compressor</h1>
+<p>SymphonyCSV Studio — Dynamics Laboratory</p>
+
+<h2>Test different note velocities</h2>
+<button id="soft">Play Soft C4</button>
+<button id="strong">Play Strong C4</button>
+
+<div class="meter">
+  Current gain reduction:
+  <strong id="reduction">0.0 dB</strong>
+  <p>
+    Peak reduction this note:
+    <strong id="peak">0.0 dB</strong>
+  </p>
+</div>
+
+<label>Threshold:
+  <output id="thresholdValue">-28</output> dB
+  <input id="threshold" type="range"
+    min="-60" max="0" step="1" value="-28">
+</label>
+
+<label>Ratio:
+  <output id="ratioValue">4</output>:1
+  <input id="ratio" type="range"
+    min="1" max="20" step="1" value="4">
+</label>
+
+<label>Attack:
+  <output id="attackValue">0.01</output> seconds
+  <input id="attack" type="range"
+    min="0.001" max="0.5" step="0.001" value="0.01">
+</label>
+
+<label>Release:
+  <output id="releaseValue">0.2</output> seconds
+  <input id="release" type="range"
+    min="0.01" max="1" step="0.01" value="0.2">
+</label>
+
+<label>Knee:
+  <output id="kneeValue">10</output> dB
+  <input id="knee" type="range"
+    min="0" max="40" step="1" value="10">
+</label>
+
+<label>Wet Mix:
+  <output id="wetValue">1</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="1">
+</label>
+
+<label>
+  <input id="bypass" type="checkbox"> Bypass compressor
+</label>
+
+<p id="status">Audio has not started.</p>
+<p>
+  Compare soft and strong notes. Watch the peak gain
+  reduction and experiment with threshold and ratio.
+</p>
+
+<script type="module">
+import { start, Synth } from "tone";
+import { createCompressor } from "../fx013-compressor.js";
+
+const status = document.querySelector("#status");
+
+try {
+  const fx = createCompressor();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -18,
+    oscillator: { type: "sawtooth" },
+    envelope: {
+      attack: 0.01,
+      decay: 0.1,
+      sustain: 0.9,
+      release: 0.2
+    }
+  }).connect(fx.node);
+
+  let peakReduction = 0;
+
+  function updateMeter() {
+    const reduction = fx.getReduction();
+
+    if (Number.isFinite(reduction)) {
+      peakReduction = Math.min(peakReduction, reduction);
+
+      document.querySelector("#reduction")
+        .textContent = reduction.toFixed(1) + " dB";
+
+      document.querySelector("#peak")
+        .textContent = peakReduction.toFixed(1) + " dB";
+    }
+
+    requestAnimationFrame(updateMeter);
+  }
+
+  updateMeter();
+
+  async function playNote(velocity, label) {
+    try {
+      await start();
+
+      peakReduction = 0;
+
+      synth.triggerAttackRelease(
+        "C4", "2m", undefined, velocity
+      );
+
+      status.textContent =
+        "Playing " + label + " C4. Watch gain reduction.";
+    } catch (error) {
+      status.textContent = "Audio error: " + error.message;
+      console.error(error);
+    }
+  }
+
+  document.querySelector("#soft")
+    .addEventListener("click", () => playNote(0.2, "soft"));
+
+  document.querySelector("#strong")
+    .addEventListener("click", () => playNote(1, "strong"));
+
+  for (const [id, method] of [
+    ["threshold", "setThreshold"],
+    ["ratio", "setRatio"],
+    ["attack", "setAttack"],
+    ["release", "setRelease"],
+    ["knee", "setKnee"],
+    ["wet", "setWet"]
+  ]) {
+    document.querySelector("#" + id)
+      .addEventListener("input", event => {
+        try {
+          const value = event.target.value;
+          fx[method](value);
+          document.querySelector("#" + id + "Value")
+            .textContent = value;
+        } catch (error) {
+          status.textContent =
+            "Control error: " + error.message;
+          console.error(error);
+        }
+      });
+  }
+
+  document.querySelector("#bypass")
+    .addEventListener("change", event => {
+      fx.setBypass(event.target.checked);
+      status.textContent = event.target.checked
+        ? "Compressor bypassed."
+        : "Compressor active.";
+    });
+
+} catch (error) {
+  status.textContent =
+    "Initialization error: " + error.message;
+  document.querySelector("#soft").disabled = true;
+  document.querySelector("#strong").disabled = true;
+  console.error(error);
+}
+</script>
+</body>
+</html>

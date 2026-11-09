@@ -11,3 +11,4 @@
 "FX010","Low-Pass Filter","Tone.js 15.1.22","cutoff;resonance;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX011","High-Pass Filter","Tone.js 15.1.22","cutoff;resonance;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX012","Auto-Wah","Tone.js 15.1.22","sensitivity;baseFrequency;octaves;resonance;wet;bypass","Prototype","Manual PASS 2026-11-09"
+"FX013","Compressor","Tone.js 15.1.22","threshold;ratio;attack;release;knee;wet;bypass","Prototype","Manual PASS 2026-11-09"
