@@ -1,0 +1,28 @@
+{
+  "name": "symphonycsvstudio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tarjin/SymphonyCSVStudio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tarjin/SymphonyCSVStudio/issues"
+  },
+  "homepage": "https://github.com/tarjin/SymphonyCSVStudio#readme",
+  "private": true,
+  "dependencies": {
+    "tone": "15.1.22"
+  }
+}
