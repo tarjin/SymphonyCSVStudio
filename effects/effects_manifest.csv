@@ -14,3 +14,4 @@
 "FX013","Compressor","Tone.js 15.1.22","threshold;ratio;attack;release;knee;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX014","Limiter","Tone.js 15.1.22","threshold;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX015","Noise Gate","Tone.js 15.1.22","threshold;smoothing;wet;bypass","Prototype","Manual PASS 2026-11-09"
+"FX016","Distortion","Tone.js 15.1.22","distortion;oversample;wet;bypass","Prototype","Manual PASS 2026-11-09"
