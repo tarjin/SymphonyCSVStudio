@@ -6,3 +6,4 @@
 "FX005","Flanger","Tone.js 15.1.22","rate;depth;feedback;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX006","Phaser","Tone.js 15.1.22","rate;octaves;baseFrequency;resonance;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX007","Tremolo","Tone.js 15.1.22","rate;depth;wet;bypass","Prototype","Manual PASS 2026-11-09"
+"FX008","Vibrato","Tone.js 15.1.22","rate;depth;wet;bypass","Prototype","Manual PASS 2026-11-09"
