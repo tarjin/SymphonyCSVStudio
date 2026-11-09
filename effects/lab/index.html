@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SymphonyCSV Studio - FX001</title>
+  <style>
+    body { background:#17202b; color:#f0f3f7;
+           font:16px system-ui; margin:40px auto; max-width:560px; }
+    h1 { color:#82cfff; }
+    label { display:block; margin:22px 0; }
+    input[type=range] { width:100%; }
+    button { padding:14px 24px; font-size:18px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h1>FX001 — Feedback Delay</h1>
+  <p>SymphonyCSV Studio — Effects Laboratory</p>
+
+  <button id="play">Play Test Note (C4)</button>
+
+  <label>Delay Time: <output id="timeValue">0.35</output> seconds
+    <input id="time" type="range"
+           min="0.1" max="0.9" step="0.05" value="0.35">
+  </label>
+
+  <label>Feedback: <output id="feedbackValue">0.35</output>
+    <input id="feedback" type="range"
+           min="0" max="0.7" step="0.05" value="0.35">
+  </label>
+
+  <label>Wet Mix: <output id="wetValue">0.55</output>
+    <input id="wet" type="range"
+           min="0" max="1" step="0.05" value="0.55">
+  </label>
+
+  <label>
+    <input id="bypass" type="checkbox"> Bypass effect
+  </label>
+
+  <p id="status">Audio has not started.</p>
+
+  <script type="module">
+    import { start, Synth } from "tone";
+    import { createFeedbackDelay } from "../fx001-feedback-delay.js";
+
+    const fx = createFeedbackDelay();
+    fx.node.toDestination();
+
+    const synth = new Synth({
+      volume: -18,
+      oscillator: { type: "triangle" },
+      envelope: {
+        attack: 0.01,
+        decay: 0.15,
+        sustain: 0.1,
+        release: 0.2
+      }
+    }).connect(fx.node);
+
+    document.querySelector("#play").addEventListener("click", async () => {
+      try {
+        await start();
+        synth.triggerAttackRelease("C4", "16n");
+        document.querySelector("#status").textContent =
+          "Test note triggered. Listen for repeats.";
+      } catch (error) {
+        document.querySelector("#status").textContent = error.message;
+        console.error(error);
+      }
+    });
+
+    for (const [id, method] of [
+      ["time", "setDelay"],
+      ["feedback", "setFeedback"],
+      ["wet", "setWet"]
+    ]) {
+      document.querySelector("#" + id).addEventListener("input", (event) => {
+        const value = event.target.value;
+        fx[method](value);
+        document.querySelector("#" + id + "Value").textContent = value;
+      });
+    }
+
+    document.querySelector("#bypass").addEventListener("change", (event) => {
+      fx.setBypass(event.target.checked);
+    });
+  </script>
+</body>
+</html>

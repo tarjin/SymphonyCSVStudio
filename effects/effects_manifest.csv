@@ -1,1 +1,2 @@
 ﻿EffectID,Name,Engine,Parameters,Status,AudioVerified
+"FX001","Feedback Delay","Tone.js 15.1.22","delayTime;feedback;wet;bypass","Prototype","Manual PASS 2026-11-09"
