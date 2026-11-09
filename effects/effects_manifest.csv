@@ -4,3 +4,4 @@
 "FX003","Reverb","Tone.js 15.1.22","decay;preDelay;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX004","Ping-Pong Delay","Tone.js 15.1.22","delayTime;feedback;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX005","Flanger","Tone.js 15.1.22","rate;depth;feedback;wet;bypass","Prototype","Manual PASS 2026-11-09"
+"FX006","Phaser","Tone.js 15.1.22","rate;octaves;baseFrequency;resonance;wet;bypass","Prototype","Manual PASS 2026-11-09"

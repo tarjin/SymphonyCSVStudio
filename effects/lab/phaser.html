@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX006 Phaser</title>
+<style>
+body {
+  background: #17202b;
+  color: #f0f3f7;
+  font: 16px system-ui;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 16px;
+}
+h1 { color: #82cfff; }
+label { display: block; margin: 20px 0; }
+input[type=range] { width: 100%; }
+button {
+  padding: 14px 24px;
+  font-size: 18px;
+  cursor: pointer;
+}
+#status { color: #a7dbff; }
+</style>
+</head>
+<body>
+
+<h1>FX006 — Phaser</h1>
+<p>SymphonyCSV Studio — Effects Laboratory</p>
+
+<button id="play">Play Sustained C3</button>
+
+<label>Modulation Rate:
+  <output id="rateValue">0.6</output> Hz
+  <input id="rate" type="range"
+    min="0.05" max="8" step="0.05" value="0.6">
+</label>
+
+<label>Sweep Octaves:
+  <output id="octavesValue">4</output>
+  <input id="octaves" type="range"
+    min="1" max="8" step="1" value="4">
+</label>
+
+<label>Base Frequency:
+  <output id="baseValue">350</output> Hz
+  <input id="base" type="range"
+    min="100" max="900" step="50" value="350">
+</label>
+
+<label>Resonance:
+  <output id="resonanceValue">8</output>
+  <input id="resonance" type="range"
+    min="0.5" max="20" step="0.5" value="8">
+</label>
+
+<label>Wet Mix:
+  <output id="wetValue">0.7</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="0.7">
+</label>
+
+<label>
+  <input id="bypass" type="checkbox"> Bypass effect
+</label>
+
+<p id="status">Audio has not started.</p>
+<p>Listen for a sweeping, hollow, swirling tone.</p>
+
+<script type="module">
+import { start, Synth } from "tone";
+import { createPhaser } from "../fx006-phaser.js";
+
+const status = document.querySelector("#status");
+const play = document.querySelector("#play");
+
+try {
+  const fx = createPhaser();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -24,
+    oscillator: { type: "sawtooth" },
+    envelope: {
+      attack: 0.05,
+      decay: 0.2,
+      sustain: 0.7,
+      release: 0.5
+    }
+  }).connect(fx.node);
+
+  play.addEventListener("click", async () => {
+    try {
+      await start();
+      synth.triggerAttackRelease("C3", "2m");
+      status.textContent =
+        "Playing sustained C3. Listen for modulation.";
+    } catch (error) {
+      status.textContent = "Audio error: " + error.message;
+      console.error(error);
+    }
+  });
+
+  for (const [id, method] of [
+    ["rate", "setRate"],
+    ["octaves", "setOctaves"],
+    ["base", "setBaseFrequency"],
+    ["resonance", "setResonance"],
+    ["wet", "setWet"]
+  ]) {
+    document.querySelector("#" + id)
+      .addEventListener("input", event => {
+        try {
+          const value = event.target.value;
+          fx[method](value);
+          document.querySelector("#" + id + "Value")
+            .textContent = value;
+        } catch (error) {
+          status.textContent = error.message;
+          console.error(error);
+        }
+      });
+  }
+
+  document.querySelector("#bypass")
+    .addEventListener("change", event => {
+      fx.setBypass(event.target.checked);
+    });
+
+} catch (error) {
+  status.textContent =
+    "Initialization error: " + error.message;
+  play.disabled = true;
+  console.error(error);
+}
+</script>
+</body>
+</html>
