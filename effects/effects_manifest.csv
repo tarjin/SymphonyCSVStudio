@@ -2,3 +2,4 @@
 "FX001","Feedback Delay","Tone.js 15.1.22","delayTime;feedback;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX002","Chorus","Tone.js 15.1.22","frequency;depth;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX003","Reverb","Tone.js 15.1.22","decay;preDelay;wet;bypass","Prototype","Manual PASS 2026-11-09"
+"FX004","Ping-Pong Delay","Tone.js 15.1.22","delayTime;feedback;wet;bypass","Prototype","Manual PASS 2026-11-09"
