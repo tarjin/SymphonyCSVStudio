@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX018 Bitcrusher</title>
+<style>
+body {
+  background: #17202b;
+  color: #f0f3f7;
+  font: 16px system-ui;
+  max-width: 620px;
+  margin: 40px auto;
+  padding: 16px;
+}
+h1 { color: #82cfff; }
+label { display: block; margin: 24px 0; }
+input[type=range] { width: 100%; }
+button {
+  padding: 12px 18px;
+  margin: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+#status { color: #a7dbff; }
+</style>
+</head>
+<body>
+
+<h1>FX018 — Bitcrusher</h1>
+<p>SymphonyCSV Studio — Lo-Fi Effects Laboratory</p>
+
+<button id="toggle">Start Sustained C3</button>
+
+<h2>Bit Depth Presets</h2>
+<button data-bits="16">16-bit</button>
+<button data-bits="8">8-bit</button>
+<button data-bits="4">4-bit</button>
+<button data-bits="2">2-bit</button>
+
+<label>
+  Bit Depth:
+  <output id="bitsValue">8</output> bits
+  <input id="bits" type="range"
+    min="1" max="16" step="1" value="8">
+</label>
+
+<label>
+  Wet Mix:
+  <output id="wetValue">0.75</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="0.75">
+</label>
+
+<label>
+  <input id="bypass" type="checkbox">
+  Bypass Bitcrusher
+</label>
+
+<p id="status">Audio has not started.</p>
+
+<p>
+  Start at low speaker volume.
+  Compare 16-bit, 8-bit, 4-bit and 2-bit audio.
+  Lower bit depth should produce stronger
+  digital distortion.
+</p>
+
+<script type="module">
+import { start, Synth } from "tone";
+import { createBitcrusher } from "../fx018-bitcrusher.js";
+
+const status = document.querySelector("#status");
+const toggle = document.querySelector("#toggle");
+const bitsSlider = document.querySelector("#bits");
+const bitsValue = document.querySelector("#bitsValue");
+
+try {
+  const fx = createBitcrusher();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -30,
+    oscillator: { type: "triangle" },
+    envelope: {
+      attack: 0.05,
+      decay: 0.2,
+      sustain: 0.85,
+      release: 0.3
+    }
+  }).connect(fx.node);
+
+  let playing = false;
+
+  toggle.addEventListener("click", async () => {
+    toggle.disabled = true;
+
+    try {
+      await start();
+
+      if (playing) {
+        synth.triggerRelease();
+        playing = false;
+        toggle.textContent = "Start Sustained C3";
+        status.textContent = "Note stopped.";
+      } else {
+        synth.triggerAttack("C3");
+        playing = true;
+        toggle.textContent = "Stop Sustained C3";
+        status.textContent =
+          "C3 playing. Change bit depth.";
+      }
+    } catch (error) {
+      status.textContent =
+        "Audio error: " + error.message;
+      console.error(error);
+    } finally {
+      toggle.disabled = false;
+    }
+  });
+
+  function changeBits(value) {
+    try {
+      fx.setBits(value);
+
+      bitsSlider.value = value;
+      bitsValue.textContent = fx.getBits();
+
+      status.textContent =
+        "Bit depth: " + fx.getBits() + " bits.";
+    } catch (error) {
+      status.textContent =
+        "Bit-depth error: " + error.message;
+      console.error(error);
+    }
+  }
+
+  bitsSlider.addEventListener("input", event => {
+    changeBits(Number(event.target.value));
+  });
+
+  document.querySelectorAll("[data-bits]")
+    .forEach(button => {
+      button.addEventListener("click", () => {
+        changeBits(Number(button.dataset.bits));
+      });
+    });
+
+  document.querySelector("#wet")
+    .addEventListener("input", event => {
+      try {
+        const value = Number(event.target.value);
+        fx.setWet(value);
+
+        document.querySelector("#wetValue")
+          .textContent = value;
+      } catch (error) {
+        status.textContent =
+          "Wet-mix error: " + error.message;
+        console.error(error);
+      }
+    });
+
+  document.querySelector("#bypass")
+    .addEventListener("change", event => {
+      try {
+        fx.setBypass(event.target.checked);
+
+        status.textContent = event.target.checked
+          ? "Bitcrusher bypassed."
+          : "Bitcrusher active.";
+      } catch (error) {
+        status.textContent =
+          "Bypass error: " + error.message;
+        console.error(error);
+      }
+    });
+
+  window.addEventListener("pagehide", () => {
+    if (playing) synth.triggerRelease();
+    synth.dispose();
+    fx.dispose();
+  });
+
+} catch (error) {
+  status.textContent =
+    "Initialization error: " + error.message;
+
+  document.querySelectorAll("button")
+    .forEach(button => button.disabled = true);
+
+  console.error(error);
+}
+</script>
+</body>
+</html>

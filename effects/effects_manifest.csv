@@ -16,3 +16,4 @@
 "FX015","Noise Gate","Tone.js 15.1.22","threshold;smoothing;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX016","Distortion","Tone.js 15.1.22","distortion;oversample;wet;bypass","Prototype","Manual PASS 2026-11-09"
 "FX017","Overdrive","Tone.js 15.1.22","drive;tone;level;oversample;wet;bypass","Prototype","Manual PASS 2026-11-09"
+"FX018","Bitcrusher","Tone.js 15.1.22","bits;wet;bypass","Prototype","Manual PASS 2026-11-09"
