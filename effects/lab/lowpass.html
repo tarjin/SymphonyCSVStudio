@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX010 Low-Pass Filter</title>
+<style>
+body {
+  background: #17202b;
+  color: #f0f3f7;
+  font: 16px system-ui;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 16px;
+}
+h1 { color: #82cfff; }
+label { display: block; margin: 24px 0; }
+input[type=range] { width: 100%; }
+button {
+  padding: 14px 24px;
+  font-size: 18px;
+  cursor: pointer;
+}
+#status { color: #a7dbff; }
+</style>
+</head>
+<body>
+
+<h1>FX010 — Low-Pass Filter</h1>
+<p>SymphonyCSV Studio — Filter Laboratory</p>
+
+<button id="play">Play Sustained C3</button>
+
+<label>
+  Cutoff Frequency:
+  <output id="cutoffValue">1200</output> Hz
+  <input id="cutoff" type="range"
+    min="80" max="12000" step="20" value="1200">
+</label>
+
+<label>
+  Resonance:
+  <output id="resonanceValue">1</output>
+  <input id="resonance" type="range"
+    min="0.1" max="12" step="0.1" value="1">
+</label>
+
+<label>
+  Wet Mix:
+  <output id="wetValue">1</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="1">
+</label>
+
+<label>
+  <input id="bypass" type="checkbox"> Bypass filter
+</label>
+
+<p id="status">Audio has not started.</p>
+<p>
+  Lower the cutoff to remove high frequencies.
+  Raise it to restore brightness.
+</p>
+
+<script type="module">
+import { start, Synth } from "tone";
+import { createLowPassFilter }
+  from "../fx010-low-pass-filter.js";
+
+const status = document.querySelector("#status");
+const play = document.querySelector("#play");
+
+try {
+  const fx = createLowPassFilter();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -27,
+    oscillator: { type: "sawtooth" },
+    envelope: {
+      attack: 0.04,
+      decay: 0.2,
+      sustain: 0.8,
+      release: 0.5
+    }
+  }).connect(fx.node);
+
+  play.addEventListener("click", async () => {
+    try {
+      await start();
+      synth.triggerAttackRelease("C3", "2m");
+      status.textContent =
+        "Playing C3. Adjust the filter cutoff.";
+    } catch (error) {
+      status.textContent = "Audio error: " + error.message;
+      console.error(error);
+    }
+  });
+
+  for (const [id, method] of [
+    ["cutoff", "setCutoff"],
+    ["resonance", "setResonance"],
+    ["wet", "setWet"]
+  ]) {
+    document.querySelector("#" + id)
+      .addEventListener("input", event => {
+        try {
+          const value = event.target.value;
+          fx[method](value);
+          document.querySelector("#" + id + "Value")
+            .textContent = value;
+          status.textContent = "Filter settings updated.";
+        } catch (error) {
+          status.textContent =
+            "Control error: " + error.message;
+          console.error(error);
+        }
+      });
+  }
+
+  document.querySelector("#bypass")
+    .addEventListener("change", event => {
+      fx.setBypass(event.target.checked);
+    });
+
+} catch (error) {
+  status.textContent =
+    "Initialization error: " + error.message;
+  play.disabled = true;
+  console.error(error);
+}
+</script>
+</body>
+</html>
