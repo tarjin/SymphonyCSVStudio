@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio - FX015 Noise Gate</title>
+<style>
+body {
+  background:#17202b;
+  color:#f0f3f7;
+  font:16px system-ui;
+  max-width:620px;
+  margin:40px auto;
+  padding:16px;
+}
+h1 { color:#82cfff; }
+label { display:block; margin:22px 0; }
+input[type=range] { width:100%; }
+button {
+  padding:12px 18px;
+  margin:6px;
+  font-size:16px;
+  cursor:pointer;
+}
+#status { color:#a7dbff; }
+</style>
+</head>
+<body>
+
+<h1>FX015 — Noise Gate</h1>
+<p>SymphonyCSV Studio — Dynamics Laboratory</p>
+
+<h2>Musical test</h2>
+<button id="soft">Play Quiet C4</button>
+<button id="strong">Play Strong C4</button>
+
+<h2>Noise suppression test</h2>
+<button id="noise">Start Test Noise</button>
+
+<p>Compare the same noise with the gate active
+and bypassed. Stop the noise before testing notes.</p>
+
+<label>
+  Threshold:
+  <output id="thresholdValue">-35</output> dB
+  <input id="threshold" type="range"
+    min="-70" max="-10" step="1" value="-35">
+</label>
+
+<label>
+  Smoothing:
+  <output id="smoothingValue">0.08</output> seconds
+  <input id="smoothing" type="range"
+    min="0.01" max="0.5" step="0.01" value="0.08">
+</label>
+
+<label>
+  Wet Mix:
+  <output id="wetValue">1</output>
+  <input id="wet" type="range"
+    min="0" max="1" step="0.05" value="1">
+</label>
+
+<label>
+  <input id="bypass" type="checkbox"> Bypass gate
+</label>
+
+<p id="status">Audio has not started.</p>
+
+<script type="module">
+import { start, Synth, Noise } from "tone";
+import { createNoiseGate } from "../fx015-noise-gate.js";
+
+const status = document.querySelector("#status");
+const noiseButton = document.querySelector("#noise");
+
+try {
+  const fx = createNoiseGate();
+  fx.node.toDestination();
+
+  const synth = new Synth({
+    volume: -18,
+    oscillator: { type: "sawtooth" },
+    envelope: {
+      attack: 0.01,
+      decay: 0.15,
+      sustain: 0.7,
+      release: 0.3
+    }
+  }).connect(fx.node);
+
+  const noise = new Noise({
+    type: "pink",
+    volume: -32
+  }).connect(fx.node);
+
+  let noisePlaying = false;
+
+  async function playNote(velocity, label) {
+    try {
+      if (noisePlaying) {
+        status.textContent =
+          "Stop test noise before playing a note.";
+        return;
+      }
+
+      await start();
+      synth.triggerAttackRelease(
+        "C4", "2n", undefined, velocity
+      );
+
+      status.textContent =
+        "Playing " + label + " C4.";
+    } catch (error) {
+      status.textContent = error.message;
+      console.error(error);
+    }
+  }
+
+  document.querySelector("#soft")
+    .addEventListener("click", () => {
+      playNote(0.25, "quiet");
+    });
+
+  document.querySelector("#strong")
+    .addEventListener("click", () => {
+      playNote(1, "strong");
+    });
+
+  noiseButton.addEventListener("click", async () => {
+    try {
+      await start();
+
+      if (noisePlaying) {
+        noise.stop();
+        noisePlaying = false;
+        noiseButton.textContent = "Start Test Noise";
+        status.textContent = "Test noise stopped.";
+      } else {
+        noise.start();
+        noisePlaying = true;
+        noiseButton.textContent = "Stop Test Noise";
+        status.textContent =
+          "Test noise running. Compare gate and bypass.";
+      }
+    } catch (error) {
+      status.textContent = error.message;
+      console.error(error);
+    }
+  });
+
+  for (const [id, method] of [
+    ["threshold", "setThreshold"],
+    ["smoothing", "setSmoothing"],
+    ["wet", "setWet"]
+  ]) {
+    document.querySelector("#" + id)
+      .addEventListener("input", event => {
+        try {
+          const value = event.target.value;
+          fx[method](value);
+
+          document.querySelector("#" + id + "Value")
+            .textContent = value;
+        } catch (error) {
+          status.textContent = error.message;
+          console.error(error);
+        }
+      });
+  }
+
+  document.querySelector("#bypass")
+    .addEventListener("change", event => {
+      fx.setBypass(event.target.checked);
+
+      status.textContent = event.target.checked
+        ? "Gate bypassed."
+        : "Gate active.";
+    });
+
+} catch (error) {
+  status.textContent =
+    "Initialization error: " + error.message;
+
+  document.querySelectorAll("button")
+    .forEach(button => button.disabled = true);
+
+  console.error(error);
+}
+</script>
+</body>
+</html>
