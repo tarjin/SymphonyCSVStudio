@@ -1,0 +1,1817 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>SymphonyCSV Studio — Exploration 01.8 (Dual Pitched Tracks)</title>
+<style>
+:root{--bg:#0b0a13;--sidebar:#0f0d18;--surface:#171322;--surface2:#1d182b;--surface3:#262037;--border:#342b48;--ink:#f5f0ff;--muted:#a89ebb;--purple:#9862ea;--purple2:#ba8bff;--purple-deep:#41246f;--green:#78e0ad;--greenbg:#163d35;--radius:16px;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);color-scheme:dark}
+*{box-sizing:border-box}html,body{padding:0;margin:0;min-height:100%;background:var(--bg)}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--purple2);outline-offset:2px}h1,h2,h3,p{margin:0}h1{font-family:Georgia,serif;font-size:clamp(30px,3vw,49px);line-height:1.1;font-weight:650;letter-spacing:-.7px}h2{font-family:Georgia,serif;font-size:30px;font-weight:600}h3{font-size:18px;line-height:1.3;margin:4px 0 8px}.shell{min-height:100vh;overflow:hidden}.appbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 35px 0 23px;border-bottom:1px solid #38224e;background:linear-gradient(100deg,#180f27 3%,#161126 58%,#221135 100%);position:relative}.appbar:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.17;background:repeating-radial-gradient(ellipse at 90% -50%,transparent 0,transparent 17px,#8a40ff 18px,transparent 19px,transparent 31px)}.brand,.top-right{display:flex;align-items:center;gap:12px;z-index:1}.brand{font-family:Georgia,serif;font-size:25px;font-weight:bold}.brand-logo{font-family:Georgia,serif;font-size:42px;line-height:1;color:var(--purple2)}.brand-csv{color:var(--purple2)}.brand small{font-size:15px;font-weight:400;color:#c2addf}.avatar{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;background:#51327d;color:#f5eafe;font-weight:700}.pill{border-radius:100px;padding:6px 11px;font-size:11px;letter-spacing:.6px;font-weight:750}.top-pill{border:1px solid #513c71;background:#2a1c40;color:#ddc9f9}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}.violet{background:var(--purple2)}.app-columns{display:grid;grid-template-columns:254px minmax(0,1fr);min-height:calc(100vh - 76px)}.sidebar{background:linear-gradient(165deg,#14101e,#100e19);border-right:1px solid #322640;padding:36px 16px 23px;display:flex;flex-direction:column;min-height:calc(100vh - 76px)}.nav-label{color:#8e80a7;font-size:11px;letter-spacing:1.5px;font-weight:800;margin:0 15px 14px}.view-nav{display:grid;gap:8px}.nav-item{height:47px;padding:0 14px;display:flex;align-items:center;gap:12px;border:1px solid transparent;background:transparent;color:#bdb2ce;border-radius:9px;text-align:left;font-weight:600;font-size:14px}.nav-item:hover{background:#21192f;color:#fff}.nav-item.active{background:linear-gradient(90deg,#50318a,#302147);border-color:#644399;color:#fff;box-shadow:inset 3px 0 0 #c491ff}.nav-icon{width:23px;text-align:center;font-size:19px;color:#c694ff}.nav-divider{height:1px;background:#302740;margin:29px 10px}.song-sidebar{padding:0 14px;display:grid;gap:13px}.song-mini{display:flex;gap:12px;margin:3px 0 10px;align-items:center}.song-mini strong{display:block;font-family:Georgia,serif;font-size:16px}.song-mini small{display:block;margin-top:5px;color:#9b8bad;font-size:11px}.song-icon{display:grid;place-items:center;background:#3e285a;color:#bd8cff;width:38px;height:38px;border-radius:9px;font-size:23px}.meta-row{display:flex;justify-content:space-between;gap:8px;font-size:12px}.meta-row span{color:#9487aa}.meta-row strong{font-weight:600;color:#dfd7e9;text-align:right}.side-bottom{margin-top:auto;padding:14px 16px 0}.side-bottom p{margin-top:9px;color:#9488a7;font-size:12px;line-height:1.6}.nav-foot{display:block;color:#7f6b98;margin-top:21px;font-size:10px;font-weight:800;letter-spacing:1.3px}.workspace{position:relative;min-width:0;padding:28px clamp(20px,3vw,52px) 22px;background:radial-gradient(ellipse at 85% -15%,#2e1747 0%,transparent 38%),linear-gradient(110deg,#13101e,#0d0b16 70%);display:flex;flex-direction:column}.view{display:none;min-width:0}.view.active{display:block}.view-top{display:flex;gap:20px;justify-content:space-between;align-items:flex-end;margin-bottom:24px}.eyebrow,.tiny-label{font-size:10px;letter-spacing:1.65px;color:#b89ad7;font-weight:850}.view-top .eyebrow{margin-bottom:9px}.under-title{color:#c4b5d3;font-size:14px;margin-top:13px}.under-title span{color:#8b5db6;margin:0 7px}.under-title em{font-size:12px;color:#9787aa;font-style:normal}.top-actions{padding-bottom:4px}.soft-button,.control-button,.primary-button{border:1px solid #544365;color:#e8def5;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;background:#251d34;white-space:nowrap}.soft-button:hover,.control-button:hover{background:#3c2a58;border-color:#8156af}.primary-button{background:linear-gradient(135deg,#6a40ac,#874ec2);color:white;border-color:#9864cd}.primary-button:hover{background:linear-gradient(135deg,#7e4ac9,#9d63dc)}.soft-button span{color:#bb91ef}.playback-hero{display:grid;grid-template-columns:43% minmax(0,1fr);gap:15px;margin-bottom:17px}.voice-card,.transport-card,.measure-panel,.info-panel,.edit-panel,.effect-card{border:1px solid var(--border);background:linear-gradient(135deg,#1e182b,#16121f);border-radius:16px;box-shadow:0 7px 30px #05020820}.voice-card{padding:20px 24px}.voice-name{display:flex;align-items:center;gap:11px;font-size:23px;margin:13px 0 21px}.keys-icon{font-size:26px;color:#c9a5ff}.muted-pill{background:#31253f;color:#bea9d4;border:1px solid #49375b;font-size:10px;letter-spacing:0}.voice-detail{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #2e273a;padding:8px 0;font-size:12px;color:#ab9fb9}.voice-detail strong{color:#f0e6fa;text-align:right;font-size:12px}.concept-tag{font-weight:500;color:#b49cbd;font-size:10px}.voice-detail .preview-note{font-size:11px;color:#d2baef}.transport-card{padding:16px 24px;background:radial-gradient(ellipse at 50% 75%,#3e216f 0,transparent 60%),linear-gradient(120deg,#1e142e,#120f20);text-align:center}.transport-label{color:#c4a9e6;font-size:10px;font-weight:800;letter-spacing:1.6px}.clock{font-size:clamp(36px,5vw,67px);font-weight:300;letter-spacing:2.5px;font-variant-numeric:tabular-nums;color:#fbf5ff;text-shadow:0 0 26px #a25cff80;margin:8px 0 10px}.transport-lower{display:flex;align-items:center;justify-content:center;gap:16px}.transport-buttons{display:flex;gap:10px}.transport-button{border:1px solid #5b4273;border-radius:11px;width:43px;height:40px;background:#282039;color:white;font-size:17px}.transport-button:hover{border-color:#be93ec}.purple-button{background:#6a3eac;box-shadow:0 0 18px #754bc055;border-color:#9c69d6}.transport-status{color:#d2c1e5;font-size:11px;min-width:130px;text-align:left}.progress-track{height:5px;border-radius:6px;background:#3e2e5b;margin:16px 2px 0;overflow:hidden}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#8150d8,#d1a1ff)}.playback-controls{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:17px;background:#1b1626;border:1px solid #342b46;border-radius:12px;padding:11px}.measure-jump,.range-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.range-controls label,.jump-label{font-size:11px;color:#b8abc8;display:flex;gap:8px;align-items:center}.jump-label input,.range-controls input{color:#f1e8ff;background:#110e1a;border:1px solid #564168;border-radius:7px;width:54px;padding:8px 6px;text-align:center;font-variant-numeric:tabular-nums}.emphasized{background:#49306d;border-color:#68488f}.main-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(230px,.7fr);gap:17px}.measure-panel{padding:24px 26px;border-color:#5d417e;background:linear-gradient(145deg,#211832,#1a1526);min-height:370px}.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:23px}.panel-heading .eyebrow{margin-bottom:8px}.state-label{color:#c4bbd1;border:1px solid #544365;padding:8px 13px;border-radius:50px;font-size:11px;letter-spacing:.8px;font-weight:800;background:#2c243b}.state-label.playing{background:#194238;border-color:#3e896c;color:#8ff3bd}.event-table{border-collapse:separate;border-spacing:0;width:100%;font-variant-numeric:tabular-nums}.event-table thead{background:#2b223d}.event-table th{text-align:left;font-size:12px;color:#cab9de;font-weight:650;padding:13px 17px;border-block:1px solid #3d3152}.event-table th:first-child{border-radius:9px 0 0 9px}.event-table th:last-child{border-radius:0 9px 9px 0}.event-table td{font-size:16px;padding:11px 17px;border-bottom:1px solid #382b4a;color:#eae0f8;transition:background .09s}.event-table tr.onset td{background:#1c4b3b;color:#b5ffdf;border-color:#45785d}.event-table tr.onset td:first-child{box-shadow:inset 4px 0 #6ee5ad}.event-table tr.onset td:nth-child(2){font-weight:700}.event-table tr.past td{color:#a59ab4}.event-table .muted-event td{color:#8c7d9f}.measure-footer{display:flex;justify-content:space-between;gap:15px;margin-top:18px;padding-top:15px;border-top:1px solid #483855;color:#bcaecc;font-size:13px}.measure-footer strong{color:#ece0fb;font-variant-numeric:tabular-nums}.right-rail,.editor-side{display:grid;align-content:start;gap:16px}.info-panel{padding:24px}.info-panel h3{font-family:Georgia,serif;font-weight:550;font-size:19px;color:#eee5fb}.info-panel p:not(.eyebrow){font-size:13px;color:#b9abc7;line-height:1.65;margin-top:10px}.info-panel .eyebrow{margin-bottom:11px}.sample-legend{display:flex;gap:8px;align-items:center;margin-top:21px;font-size:12px;color:#c7dfcf}.legend-swatch{width:15px;height:15px;background:#226046;border-left:3px solid #6febad;border-radius:3px}.small-divider{height:1px;background:#372d46;margin:15px 0}.info-panel .technical-note,.technical-note{font-size:11px!important;color:#9787a9!important;line-height:1.6!important}.workspace-footer{margin-top:auto;padding:22px 3px 0;display:flex;justify-content:space-between;gap:18px;color:#857499;font-size:10px;letter-spacing:.7px}.workspace-footer span:first-child{font-weight:850}.toast{position:fixed;bottom:24px;right:24px;padding:12px 19px;color:white;background:#57327b;border:1px solid #a16dd8;border-radius:10px;box-shadow:0 8px 30px #0009;font-size:13px;opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s;pointer-events:none;max-width:400px}.toast.visible{opacity:1;transform:translateY(0)}
+.editor-layout,.effects-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,.8fr);gap:18px}.edit-panel{padding:25px;align-self:start}.inline-buttons{display:flex;gap:8px}.note-entry{background:#2a2139;border:1px solid #554169;padding:19px;border-radius:13px;margin-bottom:16px}.entry-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px}.entry-header h3{margin:0}.mini-caption{font-size:11px;color:#ae9bbc}.entry-fields{display:grid;grid-template-columns:1fr 1fr 1.2fr 1fr;gap:10px}.entry-fields label{display:grid;gap:6px;font-size:11px;color:#c4b4d5}.entry-fields input,.entry-fields select{width:100%;background:#15111f;border:1px solid #59456f;padding:10px 9px;border-radius:7px;color:#eee6f6;font-size:13px}.entry-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}.muted-micro{font-size:10px;color:#927fa7}.edit-table td{padding:10px 15px;font-size:14px}.delete-button{border:1px solid #643e5d;background:#34203a;color:#efbdde;border-radius:7px;padding:5px 10px;font-size:12px}.delete-button:hover{background:#653558}.status-stat{display:flex;align-items:center;justify-content:space-between;padding:12px 0;color:#aa9abf;border-bottom:1px solid #382d49;font-size:12px}.status-stat strong{color:#ebe0f7;font-size:19px}.full-width{width:100%;margin-top:13px}.effects-list{display:grid;gap:12px}.effect-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}.effect-card{padding:20px}.effect-top{display:flex;align-items:center;gap:14px}.effect-top>div:nth-child(2){flex:1}.effect-top h3{margin:0;font-family:Georgia,serif;font-size:19px}.effect-top p{font-size:12px;color:#b3a3c2;margin-top:4px}.effect-symbol{display:grid;place-items:center;font-size:23px;color:#d5b1ff;background:#3a2553;width:47px;height:47px;border-radius:10px}.toggle{display:flex;align-items:center;gap:7px;font-size:11px;color:#c9bcdb;cursor:pointer}.toggle input{position:absolute;opacity:0}.toggle-ui{width:34px;height:20px;display:block;border-radius:20px;background:#4c415d;position:relative;transition:.2s}.toggle-ui:after{position:absolute;content:"";width:14px;height:14px;background:#ddd6e7;border-radius:50%;left:3px;top:3px;transition:.2s}.toggle input:checked+.toggle-ui{background:#7a4db6}.toggle input:checked+.toggle-ui:after{left:17px;background:white}.toggle input:focus-visible+.toggle-ui{outline:2px solid #c28eff;outline-offset:2px}.fx-parameter{display:grid;grid-template-columns:115px minmax(0,1fr) 52px;align-items:center;gap:12px;margin-top:18px}.fx-parameter label{font-size:12px;color:#baadca}.fx-parameter input{width:100%;accent-color:#aa78ed}.fx-parameter output{font-variant-numeric:tabular-nums;font-size:12px;color:#dbc9f0;text-align:right}@media(max-width:1230px){.app-columns{grid-template-columns:205px minmax(0,1fr)}.sidebar{padding-inline:11px}.workspace{padding:24px}.playback-hero{grid-template-columns:1fr 1.1fr}.main-grid,.editor-layout,.effects-layout{grid-template-columns:minmax(0,1.3fr) minmax(220px,.8fr)}.range-controls{margin-top:5px}.entry-fields{grid-template-columns:repeat(2,1fr)}}@media(max-width:970px){.app-columns{display:block}.sidebar{min-height:unset;display:block;padding:10px 20px}.sidebar .nav-label,.song-sidebar,.nav-divider,.side-bottom{display:none}.view-nav{display:flex;gap:9px}.nav-item{flex:1;justify-content:center}.workspace{padding:22px}.main-grid,.editor-layout,.effects-layout{grid-template-columns:1fr}.right-rail{grid-template-columns:1fr 1fr}.workspace-footer{margin-top:22px}}@media(max-width:680px){.appbar{padding:0 14px;height:60px}.brand{font-size:19px}.brand-logo{font-size:31px}.brand small{font-size:12px}.top-pill{display:none}.app-columns{min-height:calc(100vh - 60px)}.sidebar{padding:10px}.nav-item{font-size:11px;gap:5px;padding:0 6px;height:40px}.nav-icon{font-size:14px}.workspace{padding:20px 12px}.view-top{display:block}.top-actions{margin-top:17px}.playback-hero{grid-template-columns:1fr}.voice-card,.transport-card,.measure-panel,.info-panel,.edit-panel,.effect-card{padding:16px}.main-grid,.right-rail{grid-template-columns:1fr}.clock{font-size:45px}.view-top h1{font-size:32px}.entry-fields{grid-template-columns:repeat(2,1fr)}.workspace-footer{display:block;line-height:1.9}.playback-controls{display:block}.range-controls{margin-top:12px}.event-table td{padding:10px}.transport-lower{display:grid;justify-items:center}.transport-status{text-align:center}.fx-parameter{grid-template-columns:80px 1fr 43px;gap:6px}.under-title{font-size:12px}}
+
+
+/* Transport fix 01.1: keyboard-accessible, truly seekable timeline. */
+.seek-wrapper{margin-top:13px;text-align:left}
+.seek-label{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#ceb3f4;font-size:10px;font-weight:750;letter-spacing:.85px;margin:0 2px 9px}
+.seek-label span{color:#ac9bbc;letter-spacing:0;font-size:11px;font-weight:400}
+.seek-slider{display:block;width:100%;height:9px;border:0;border-radius:999px;cursor:pointer;padding:0;margin:0;appearance:none;-webkit-appearance:none;background:linear-gradient(to right,#c58eff 0%,#9c5af4 var(--seek-percent,0%),#4a3768 var(--seek-percent,0%),#4a3768 100%)}
+.seek-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:#f1dcff;border:3px solid #ab72f0;box-shadow:0 0 0 3px #291b43,0 0 9px #c28af366}
+.seek-slider::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#f1dcff;border:3px solid #ab72f0;box-shadow:0 0 0 3px #291b43}
+.seek-slider:hover::-webkit-slider-thumb{background:#fff}
+.seek-ends{display:flex;justify-content:space-between;color:#9e8aaf;font-size:10px;font-variant-numeric:tabular-nums;padding:7px 0 0}
+.beginning-button{background:#39254f;border-color:#74509a;color:#f2ddff}
+
+.source-banner{display:flex;gap:14px;align-items:center;margin:-9px 0 16px;padding:12px 16px;border:1px solid #594572;border-radius:11px;background:#21162e;color:#c8b6dc;font-size:12px;line-height:1.5}
+.source-banner strong{color:#d9b6ff;font-size:11px;letter-spacing:.7px;white-space:nowrap}
+@media(max-width:860px){.source-banner{flex-direction:column;align-items:flex-start}}
+
+.local-sf2-panel{margin-top:16px;background:#251b36;border:1px dashed #9e72d4;padding:13px;border-radius:11px}
+.sf2-label{display:block;color:#f3dcff;font-size:13px;font-weight:750;margin-bottom:8px}
+#soundFontPicker{display:block;max-width:100%;font-size:12px;color:#ddd2ef;cursor:pointer}
+#soundFontPicker::file-selector-button{border:1px solid #ac78e5;border-radius:8px;background:#56347d;color:#fff;padding:8px 13px;margin-right:9px;cursor:pointer}
+.sf2-status{color:#ab99bd;font-size:11px;line-height:1.5;margin-top:9px!important;overflow-wrap:anywhere}
+.sf2-status.success{color:#9dedc7}
+.sf2-status.error{color:#ffbaba}
+@media(max-width:680px){.local-sf2-panel{padding:10px}}
+
+/* Exploration 01.5 — dual-staff onset colours. Only visual display changes; no sound data changes.
+   Staff identity is sourced from the original MIDI track (Upper staff / Lower staff),
+   not inferred from note pitch. Explicit U/L chips add non-colour identification. */
+.event-table tr.onset.staff-upper td{background:#17483a;color:#b5ffe0;border-bottom-color:#326d56}
+.event-table tr.onset.staff-upper td:first-child{box-shadow:inset 4px 0 #6ee5ad}
+.event-table tr.onset.staff-lower td{background:#624019;color:#fff0c2;border-bottom-color:#916329}
+.event-table tr.onset.staff-lower td:first-child{box-shadow:inset 4px 0 #ffc46a}
+.event-table tr.onset.staff-unspecified td{background:#423058;color:#eee0ff;border-bottom-color:#795b97}
+.event-table tr.onset.staff-unspecified td:first-child{box-shadow:inset 4px 0 #bd91ef}
+.staff-chip{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;min-width:20px;height:19px;margin-left:12px;border:1px solid;border-radius:5px;font-size:10px;letter-spacing:.4px;font-weight:850}
+.staff-chip.upper{color:#8ee4b7;border-color:#43735c;background:#1b352d}
+.staff-chip.lower{color:#f4ca82;border-color:#926733;background:#45301d}
+.staff-chip.unspecified{color:#d0b7ef;border-color:#6e5489;background:#33243f}
+.staff-legend{display:grid;gap:11px;margin-top:19px;padding:13px;background:#211a2d;border:1px solid #423750;border-radius:10px}
+.staff-legend-entry{display:flex;align-items:center;gap:10px;font-size:12px;color:#dfd4ed}
+.staff-legend-entry strong{color:#f5eafa}
+.staff-legend-entry small{color:#a69ab8;font-size:11px}
+.staff-legend-swatch{display:inline-block;width:20px;height:20px;border-radius:5px;flex:none;border-left:4px solid}
+.staff-legend-upper{background:#17483a;border-left-color:#6ee5ad}
+.staff-legend-lower{background:#624019;border-left-color:#ffc46a}
+
+
+/* Exploration 01.6 — LOWER (left) and UPPER (right) share exactly one audio-clock playhead.
+   Sustained MIDI note events remain visible and illuminated until their note-off,
+   including when their original onset was in a previous measure. */
+.main-grid{grid-template-columns:minmax(0,1fr)}
+.measure-panel{min-width:0;padding:22px 24px}
+.right-rail{grid-template-columns:repeat(2,minmax(0,1fr))}
+.measure-panel .panel-heading{margin-bottom:16px}
+.sync-context{border:1px solid #5f467f;background:linear-gradient(90deg,#29213b,#1b172c);border-radius:12px;padding:13px 17px;margin-bottom:16px}
+.sync-line{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.sync-line strong{color:#dec3ff;font-size:11px;letter-spacing:.8px}
+.sync-line span{font-size:12px;color:#c9b7df;font-variant-numeric:tabular-nums}
+.measure-timeline{height:14px;background:#4c3b62;border-radius:8px;position:relative;overflow:hidden;border:1px solid #6c4d8d}
+.measure-beat-marks{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);pointer-events:none}
+.measure-beat-marks span{border-right:1px solid #c5a3ed55}
+.measure-progress-fill{position:absolute;top:0;left:0;height:100%;width:0;background:linear-gradient(90deg,#9260d7,#cc99f2);opacity:.72}
+.measure-progress-needle{position:absolute;top:-2px;left:0;height:18px;width:3px;transform:translateX(-50%);background:#fff1ff;box-shadow:0 0 7px #e3aaff}
+.beat-labels{display:grid;grid-template-columns:repeat(4,1fr);margin-top:7px;color:#a998bd;font-size:10px}
+.beat-labels span:last-child{text-align:left}
+.staff-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.staff-window{border:1px solid #493754;border-radius:14px;min-width:0;padding:15px 15px 16px;background:#191523}
+.staff-window-lower{border-color:#78512d;background:linear-gradient(150deg,#2b2027,#1b1723)}
+.staff-window-upper{border-color:#2d7058;background:linear-gradient(150deg,#192c28,#191722)}
+.staff-window-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.staff-window-title{font-family:Georgia,serif;font-size:21px;line-height:1.2;margin:4px 0 2px;color:#fff3ff}
+.staff-window-lower .staff-window-title{color:#ffdbab}
+.staff-window-upper .staff-window-title{color:#c4ffe2}
+.staff-window-eyebrow{letter-spacing:1.1px;font-size:10px;font-weight:850}
+.staff-window-lower .staff-window-eyebrow{color:#ffc46a}
+.staff-window-upper .staff-window-eyebrow{color:#80eab9}
+.staff-window-count{flex:none;border-radius:99px;font-size:10px;font-weight:750;padding:7px 10px;border:1px solid #625074;color:#baaac9;background:#2b2437;white-space:nowrap}
+.staff-window-lower .staff-window-count.live{color:#ffd89e;background:#5b3a1d;border-color:#a77436}
+.staff-window-upper .staff-window-count.live{color:#bfffe0;background:#164434;border-color:#2a9870}
+.staff-window-caption{margin:10px 0 14px;color:#ab9bb9;font-size:11px;line-height:1.45}
+.sounding-container{border:1px solid #3e354a;border-radius:10px;padding:12px;background:#201b2c;margin-bottom:14px;min-height:117px}
+.sound-label{font-size:10px;letter-spacing:.85px;font-weight:850;color:#c2afdc;margin-bottom:9px}
+.live-notes{display:flex;flex-wrap:wrap;gap:7px;align-items:start}
+.no-live-notes{color:#9688a9;font-size:12px;line-height:1.55}
+.note-sustain{padding:9px 10px;border-radius:9px;min-width:102px;flex:1 1 120px;max-width:100%;border:1px solid #87745d;background:#49311f}
+.staff-window-upper .note-sustain{border-color:#448069;background:#184434}
+.note-sustain .note-name{display:flex;align-items:center;justify-content:space-between;gap:6px;color:#ffe9cb;font-size:17px;font-weight:800}
+.staff-window-upper .note-sustain .note-name{color:#c4ffe2}
+.note-sustain .note-mode{font-size:9px;letter-spacing:.4px;color:#ffc46a;font-weight:800}
+.staff-window-upper .note-sustain .note-mode{color:#81ebbb}
+.note-sustain .origin-note{color:#dec3a0;font-size:10px;margin:4px 0 7px}
+.staff-window-upper .note-sustain .origin-note{color:#a0d9bc}
+.note-hold-track{height:5px;border-radius:4px;background:#38281f;overflow:hidden}
+.staff-window-upper .note-hold-track{background:#103022}
+.note-hold-fill{height:100%;border-radius:4px;background:#ffc46a;width:0}
+.staff-window-upper .note-hold-fill{background:#77f0b7}
+.event-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;color:#ccb9e4;font-size:10px;letter-spacing:.75px;font-weight:750;margin-bottom:9px}
+.event-heading small{font-size:10px;letter-spacing:0;font-weight:450;color:#a394b7}
+.staff-event-scroll{max-height:380px;overflow:auto;overscroll-behavior:contain;border:1px solid #43364f;border-radius:10px;background:#181320}
+.staff-events-table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.staff-events-table th{position:sticky;top:0;z-index:2;background:#30253e;color:#c9b3df;font-size:10px;text-align:left;padding:10px 10px;border-bottom:1px solid #51415d}
+.staff-events-table th:nth-child(1){width:92px}.staff-events-table th:nth-child(3){width:78px}
+.staff-events-table td{padding:9px 10px;color:#c5b8d4;border-bottom:1px solid #30273b;transition:background .1s;vertical-align:middle}
+.staff-events-table tr:last-child td{border-bottom:0}
+.staff-events-table tr.staff-held td{background:#584022;color:#ffe5bd}
+.staff-window-upper .staff-events-table tr.staff-held td{background:#1b523e;color:#d2ffe8}
+.staff-events-table tr.staff-held td:first-child{box-shadow:inset 4px 0 #ffc46a}
+.staff-window-upper .staff-events-table tr.staff-held td:first-child{box-shadow:inset 4px 0 #7cf3b6}
+.staff-events-table tr.staff-paused td{background:#51402c;color:#ffe4ba}
+.staff-window-upper .staff-events-table tr.staff-paused td{background:#255241;color:#c2ffdc}
+.staff-events-table tr.staff-finished td{opacity:.5}
+.staff-events-table .staff-note-pitch{font-size:15px;font-weight:750;color:#f5e9ff;white-space:nowrap}
+.staff-events-table tr.staff-held .staff-note-pitch{color:#ffe7bc}
+.staff-window-upper .staff-events-table tr.staff-held .staff-note-pitch{color:#ceffe4}
+.staff-events-table .staff-note-source{display:block;font-size:9px;color:#b3a1c4;white-space:nowrap;margin-top:2px}
+.staff-events-table .staff-note-duration{font-size:10px;color:#ae9fc2}
+.staff-events-table .staff-state{font-size:10px;font-weight:700;white-space:nowrap}
+.staff-events-table .staff-state.held{color:#ffcc85}
+.staff-window-upper .staff-events-table .staff-state.held{color:#94efc2}
+.staff-events-table .staff-state.future{color:#a99ab9}
+.staff-events-table .staff-state.done{color:#897e93}
+.sustain-explanation{font-size:11px;color:#b5a5c9;margin:14px 0 0;line-height:1.5}
+.unassigned-notes{margin-top:12px;color:#e9c8ef;border:1px solid #7a5188;padding:12px;border-radius:9px;font-size:12px}
+.unassigned-notes[hidden]{display:none}
+@media(max-width:1100px){.staff-event-scroll{max-height:340px}.staff-events-table th,.staff-events-table td{padding:8px 7px}.staff-events-table th:nth-child(1){width:80px}}
+@media(max-width:720px){.staff-panels{grid-template-columns:1fr}.right-rail{grid-template-columns:1fr}.measure-panel{padding:16px}.staff-window{padding:12px}}
+
+/* Exploration 01.7 — distinguish the source composition voice from the selected SF2 timbre. */
+.voice-name #voiceDisplayName{overflow-wrap:anywhere;min-width:0;line-height:1.28}
+#sidebarInstrument{overflow-wrap:anywhere;text-align:right}
+/* Exploration 01.8 — persistent Pitched track status */
+.pitch-track-strip{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:22px;
+}
+.pitch-track-slot{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:15px 18px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--surface);
+}
+.pitch-track-slot strong{font-size:16px}
+.pitch-track-slot small{color:var(--muted);font-size:11px}
+.pitch-track-id{
+  color:var(--purple2);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+.pitch-track-active{
+  border-color:var(--purple);
+  background:#291d3c;
+  box-shadow:inset 4px 0 0 var(--purple2);
+}
+.pitch-track-pending{opacity:.7}
+@media(max-width:680px){
+  .pitch-track-strip{grid-template-columns:1fr}
+}
+/* Exploration 01.8 — single-button track selector */
+.pitch-track-strip {
+  display:none !important;
+}
+.track-cycle-button {
+  width:min(100%,540px);
+  min-height:76px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  padding:14px 20px;
+  margin:0 0 18px;
+  background:var(--surface);
+  border:1px solid var(--purple);
+  border-left:4px solid var(--purple2);
+  border-radius:12px;
+  color:inherit;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+.track-cycle-button:hover {
+  background:#291d3c;
+}
+.track-cycle-button:focus-visible {
+  outline:2px solid var(--purple2);
+  outline-offset:3px;
+}
+.track-cycle-copy {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+#trackCycleLabel {
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:var(--purple2);
+}
+.track-cycle-copy strong {
+  font-size:19px;
+}
+#trackCycleNext {
+  color:var(--purple2);
+  font-size:12px;
+  white-space:nowrap;
+}
+/* Exploration 01.8: six-track navigation */
+.track-tabs-scroll {
+  width:100%;
+  overflow-x:auto;
+  margin-bottom:18px;
+}
+#sixTrackNav {
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:9px;
+  min-width:720px;
+}
+.track-tab {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:67px;
+  min-width:0;
+  padding:10px 6px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--surface);
+  color:inherit;
+  cursor:pointer;
+  font:inherit;
+}
+.track-tab:hover {
+  background:#291d3c;
+  border-color:var(--purple2);
+}
+.track-tab.selected {
+  background:#291d3c;
+  border:2px solid var(--purple2);
+}
+.track-tab:focus-visible {
+  outline:2px solid var(--purple2);
+  outline-offset:2px;
+}
+.track-tab-number {
+  font-size:12px;
+  font-weight:800;
+}
+.track-tab-type {
+  color:var(--purple2);
+  font-size:10px;
+}
+.workspace.six-track-pending > .view {
+  display:none !important;
+}
+.track-pending-panel {
+  padding:28px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--surface);
+}
+.track-pending-panel h2 {
+  margin:10px 0;
+}
+.track-pending-panel p {
+  color:var(--muted);
+}
+/* Step 31 — staff-panel stompbox muting */
+.staff-window {
+  cursor:pointer;
+  transition:filter .18s,background .18s,border-color .18s;
+}
+.staff-window:focus-visible {
+  outline:3px solid #cca3ff;
+  outline-offset:3px;
+}
+.staff-window.is-muted {
+  filter:grayscale(1);
+  background:#24222a;
+  border-color:#77717c;
+}
+.staff-mute-state {
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.5px;
+  color:#d8c9eb;
+}
+.staff-window.is-muted .staff-mute-state {
+  color:#f0e9f5;
+}
+/* Step 32 — track volume sliders */
+.track-channel {
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  gap:7px;
+}
+.track-channel .track-tab {
+  width:100%;
+}
+.track-volume {
+  display:block;
+  box-sizing:border-box;
+  width:calc(100% - 12px);
+  height:16px;
+  margin:0 6px 4px;
+  accent-color:#a67ce0;
+  cursor:pointer;
+}
+.track-volume:focus-visible {
+  outline:2px solid #cca3ff;
+  outline-offset:3px;
+  border-radius:6px;
+}
+.track-volume:disabled {
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+/* SymphonyCSV Step 37: blank startup — no song, instruments still configured. */
+body.scsv-no-song #view-playback .source-banner,
+body.scsv-no-song #view-playback .transport-card,
+body.scsv-no-song #view-playback .playback-controls,
+body.scsv-no-song #view-playback .main-grid,
+body.scsv-no-song #view-editor .editor-layout { display:none !important; }
+body.scsv-no-song #view-playback .playback-hero { grid-template-columns:minmax(280px,650px); }
+body.scsv-no-song .scsv-shared-title .under-title { color: #c4b5d3; }
+
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="appbar">
+    <div class="brand"><span class="brand-logo" aria-hidden="true">𝄞</span><span>Symphony<span class="brand-csv">CSV</span> <small>Studio</small></span></div>
+    <div class="top-right"><span class="pill top-pill"><span class="dot violet"></span> HTML EXPLORATION 01.8</span><span class="avatar">S</span></div>
+  </header>
+  <div class="app-columns">
+    <aside class="sidebar" aria-label="Studio views">
+      <p class="nav-label">WORKSPACES</p>
+      <nav class="view-nav">
+        <button type="button" class="nav-item active" data-view="playback"><span class="nav-icon">▶</span><span>Playback Viewer</span></button>
+        <button type="button" class="nav-item" data-view="editor"><span class="nav-icon">▦</span><span>Measure Editor</span></button>
+        <button type="button" class="nav-item" data-view="effects"><span class="nav-icon">☷</span><span>Effects Editor</span></button>
+      </nav>
+      <div class="nav-divider"></div>
+      <p class="nav-label">CURRENT COMPOSITION</p>
+      <div class="song-sidebar">
+        <div class="song-mini"><span class="song-icon">♫</span><div><strong>A Criminal Mind</strong><small>Actual MIDI notes · full 143-measure composition</small></div></div>
+        <div class="meta-row"><span>Composition voice</span><strong>Piano</strong></div>
+        <div class="meta-row"><span>Loaded instrument</span><strong id="sidebarInstrument">Test piano synth</strong></div>
+        <div class="meta-row"><span>Tempo</span><strong>92 BPM</strong></div>
+        <div class="meta-row"><span>Meter</span><strong>4/4</strong></div>
+        <div class="meta-row"><span>SoundFont</span><strong id="sidebarFont">No SF2 selected</strong></div>
+      </div>
+      <div class="side-bottom"><span class="muted-micro">Choose a local SF2. The SoundFont stays on your computer.</span><p>Designed to explore a measure-by-measure composition workflow before the PRD.</p><span class="nav-foot">BLACK · PURPLE · MUSIC · DATA</span></div>
+    </aside>
+
+    <main class="workspace">
+      <section class="pitch-track-strip" aria-label="Pitched track status">
+        <div class="pitch-track-slot pitch-track-active" aria-current="true">
+          <span class="pitch-track-id">PITCHED 1 · ACTIVE</span>
+          <strong>Preferred: Upright Piano KW</strong>
+          <small>NOT LOADED · test synthesizer active</small>
+        </div>
+        <div class="pitch-track-slot pitch-track-pending">
+          <span class="pitch-track-id">PITCHED 2 · PENDING</span>
+          <strong>Preferred: Synth Strings 2</strong>
+          <small>NOT LOADED · Track 2 pending</small>
+        </div>
+      </section>
+      <section class="view active" id="view-playback" aria-labelledby="playback-title">
+        <div class="view-top">
+          <div><p class="eyebrow">PLAYBACK VIEWER</p><h1 id="playback-title">A Criminal Mind</h1><p class="under-title">Piano <span>•</span> 92 BPM <span>•</span> 4/4 <span>•</span> <em>2,027 original MIDI-derived notes · all 143 measures</em></p></div>
+          <div class="top-actions"><button type="button" class="soft-button" id="openEditorFromPlayback">Edit this measure <span>↗</span></button></div>
+        </div>
+
+        <div class="source-banner"><strong>REAL MIDI DATA · FULL SONG · MEASURES 001–143</strong><span>2,027 notes reconstructed from your uploaded MIDI. Original pitches, velocities, onsets and durations from two MIDI piano tracks. Controller events are not yet rendered. Select your own local .sf2 SoundFont for sampled playback; no file leaves this computer. Original 85-column CSV is untouched.</span></div>
+        <div class="playback-hero">
+          <div class="voice-card">
+            <div class="tiny-label">INSTRUMENT VOICE</div><div class="voice-name"><span class="keys-icon">▥</span><strong id="voiceDisplayName">Piano · test synth</strong><span class="pill muted-pill">Piano composition · 2 MIDI tracks</span></div>
+            <div class="voice-detail"><span>SoundFont</span><strong id="loadedFontName">None loaded — test synth available</strong></div>
+            <div class="local-sf2-panel"><label for="soundFontPicker" class="sf2-label">🎹 Load a local SoundFont (.sf2)</label>
+              <input type="file" id="soundFontPicker" accept=".sf2,audio/x-sf2,application/octet-stream" aria-describedby="sf2LoadStatus">
+              <p id="sf2LoadStatus" class="sf2-status" role="status">Choose UprightPianoKW or FM-Piano1 from C:\SymphonyCSVStudio\soundfonts\piano. The file stays on your laptop.</p>
+            </div>
+            <div class="voice-detail"><span>Effects</span><strong id="playbackFxSummary">Reverb · Delay</strong></div>
+            <div class="voice-detail"><span>Audio</span><strong class="preview-note" id="audioEngineLabel">Test synth until SF2 is loaded</strong></div>
+          </div>
+          <div class="transport-card">
+            <div class="transport-label">ELAPSED COMPOSITION TIME</div>
+            <div class="clock" id="elapsedClock" aria-live="off">00:00.000</div>
+            <div class="transport-lower"><div class="transport-buttons">
+                <button type="button" id="playButton" class="transport-button" aria-label="Play" title="Play">▶</button>
+                <button type="button" id="pauseButton" class="transport-button purple-button" aria-label="Pause" title="Pause">Ⅱ</button>
+                <button type="button" id="stopButton" class="transport-button" aria-label="Stop" title="Stop">■</button>
+              </div><span class="transport-status" id="transportStatus">Ready to audition · 2,027 real note events</span></div>
+            <div class="seek-wrapper">
+              <label for="seekSlider" class="seek-label">COMPOSITION TIMELINE <span>Drag or use arrow keys to seek</span></label>
+              <input type="range" id="seekSlider" class="seek-slider" min="0" max="20870" step="1" value="0" aria-label="Seek to position in composition" title="Drag to seek playback position">
+              <div class="seek-ends"><span>00:00.000</span><span id="durationLabel">06:13.044</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="playback-controls">
+          <div class="measure-jump"><button type="button" class="control-button beginning-button" id="beginningButton" title="Return to beginning of composition">⏮ Beginning</button><button type="button" class="control-button" id="previousMeasure">‹ Previous</button><label class="jump-label" for="measureJump">Jump to measure <input id="measureJump" type="number" min="1" max="143" value="1" aria-label="Measure number"></label><button type="button" class="control-button" id="jumpButton">Go</button><button type="button" class="control-button" id="nextMeasure">Next ›</button></div>
+          <div class="range-controls"><label for="rangeFrom">From <input type="number" id="rangeFrom" min="1" value="1" aria-label="First measure"></label><label for="rangeTo">To <input type="number" id="rangeTo" min="1" value="143" aria-label="Last measure"></label><button type="button" class="control-button emphasized" id="playRange">▶ Play range</button><button type="button" class="control-button" id="playAll">Play all</button></div>
+        </div>
+
+        <div class="main-grid">
+          <section class="measure-panel">
+            <div class="panel-heading"><div><p class="eyebrow">NOW VIEWING</p><h2 id="measureTitle">Measure 001</h2></div><span id="measureState" class="state-label">READY</span></div>
+            <div class="sync-context" aria-label="One shared synchronized musical timeline for both piano staves">
+              <div class="sync-line"><strong>ONE SHARED PLAYHEAD · BOTH STAVES</strong><span id="measureCursor">00:00.000 / 00:02.609</span></div>
+              <div class="measure-timeline" role="progressbar" aria-label="Progress through current measure" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="measureProgress" >
+                <div class="measure-beat-marks" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                <div id="measureProgressFill" class="measure-progress-fill"></div><div id="measureProgressNeedle" class="measure-progress-needle"></div>
+              </div>
+              <div class="beat-labels" aria-hidden="true"><span>Beat 1</span><span>Beat 2</span><span>Beat 3</span><span>Beat 4</span></div>
+            </div>
+            <div class="staff-panels" role="group" aria-label="Two independently sustaining piano staves, synchronized to the same timing">
+              <section class="staff-window staff-window-lower" aria-label="Lower staff left panel">
+                <div class="staff-window-heading"><div><p class="staff-window-eyebrow">LEFT PANEL · BASS CLEF</p><h3 class="staff-window-title">Lower staff</h3></div><span class="staff-window-count" id="lowerActiveCount">—</span></div>
+                <p class="staff-window-caption">Amber notes remain held for their MIDI duration while the upper staff plays.</p>
+                <div class="sounding-container"><p class="sound-label">HELD AT SHARED PLAYHEAD</p><div class="live-notes" id="lowerSounding"><span class="no-live-notes">No held notes at cursor</span></div></div>
+                <div class="event-heading"><span>LOWER STAFF EVENTS</span><small>Onset · Pitch · State</small></div>
+                <div class="staff-event-scroll"><table class="staff-events-table" aria-label="Lower staff note onsets and durations"><thead><tr><th>Time</th><th>Note / duration</th><th>State</th></tr></thead><tbody id="lowerPlaybackRows"></tbody></table></div>
+              </section>
+              <section class="staff-window staff-window-upper" aria-label="Upper staff right panel">
+                <div class="staff-window-heading"><div><p class="staff-window-eyebrow">RIGHT PANEL · TREBLE CLEF</p><h3 class="staff-window-title">Upper staff</h3></div><span class="staff-window-count" id="upperActiveCount">—</span></div>
+                <p class="staff-window-caption">Green notes follow their own onsets and note-offs using the same playback clock.</p>
+                <div class="sounding-container"><p class="sound-label">HELD AT SHARED PLAYHEAD</p><div class="live-notes" id="upperSounding"><span class="no-live-notes">No held notes at cursor</span></div></div>
+                <div class="event-heading"><span>UPPER STAFF EVENTS</span><small>Onset · Pitch · State</small></div>
+                <div class="staff-event-scroll"><table class="staff-events-table" aria-label="Upper staff note onsets and durations"><thead><tr><th>Time</th><th>Note / duration</th><th>State</th></tr></thead><tbody id="upperPlaybackRows"></tbody></table></div>
+              </section>
+            </div>
+            <div class="unassigned-notes" id="unassignedPlayback" hidden></div>
+            <p class="sustain-explanation">A note stays bright until its actual MIDI note-off, even if it began in the previous measure. SoundFont sample tails may decay naturally after note-off. Effects and sustain-pedal controller events are not represented by these note-duration indicators.</p>
+            <div class="measure-footer"><span>Measure ends at</span><strong id="measureEnd">00:02.609</strong></div>
+          </section>
+          <div class="right-rail">
+            <div class="info-panel"><p class="eyebrow">THE VISUAL PLAYHEAD</p><h3>Two panels. One clock.</h3><p>Left: sustained lower-staff notes in amber. Right: upper-staff notes in green. Both panels share the same playback position; active notes remain visible until their own MIDI note-off, even across measures. The held-note strip remains visible above each event list.</p>
+              <div class="staff-legend" aria-label="Playback staff highlight colours">
+                <div class="staff-legend-entry"><span class="staff-legend-swatch staff-legend-upper" aria-hidden="true"></span><span><strong>Upper staff</strong> · green <small>(right hand)</small></span></div>
+                <div class="staff-legend-entry"><span class="staff-legend-swatch staff-legend-lower" aria-hidden="true"></span><span><strong>Lower staff</strong> · amber <small>(left hand)</small></span></div>
+              </div></div>
+            <div class="info-panel"><p class="eyebrow">NAVIGATION</p><h3 id="nextMeasureLabel">Next: Measure 002</h3><p>Jump to a measure, audition a selected range, or play the complete 143-measure composition.</p><div class="small-divider"></div><p class="technical-note">Authentic MIDI-derived pitches, velocities, onset ticks and durations. A selected local .sf2 plays sampled piano notes, using the same actual source-MIDI timing. Without a file, a test synthesizer remains available. Long notes can cross measures. Sustain pedal/other MIDI controller events are not yet interpreted.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-editor" aria-labelledby="editor-title">
+        <div class="view-top"><div><p class="eyebrow">MEASURE EDITOR</p><h1 id="editor-title">Compose one measure at a time.</h1><p class="under-title">Piano <span>•</span> 92 BPM <span>•</span> 4/4 <span>•</span> Source-MIDI data · experimental in-memory edits only</p></div><div class="top-actions"><button type="button" class="soft-button" id="previewThisMeasure">▶ Audition this measure</button></div></div>
+        <div class="editor-layout">
+          <div class="edit-panel">
+            <div class="panel-heading"><div><p class="eyebrow">FOCUSED EDITING</p><h2 id="editorMeasureTitle">Measure 001</h2></div><div class="inline-buttons"><button class="control-button" type="button" id="editorPrev">‹</button><button class="control-button" type="button" id="editorNext">Next measure ›</button></div></div>
+            <div class="note-entry">
+              <div class="entry-header"><h3>Add a note or chord</h3><span class="mini-caption">Source notes retain original MIDI timing</span></div>
+              <div class="entry-fields">
+                <label>32nd-note slot <input type="number" id="editSlot" min="1" max="32" value="1"></label>
+                <label>Pitch <select id="editPitch"><option>C4</option><option>C#4</option><option>D4</option><option>D#4</option><option>E4</option><option>F4</option><option>F#4</option><option>G4</option><option>G#4</option><option>A4</option><option>A#4</option><option>B4</option><option>C5</option><option>G3</option></select></label>
+                <label>Duration <select id="editDuration"><option value="8">Quarter</option><option value="4">Eighth</option><option value="2">16th</option><option value="1">32nd</option><option value="16">Half</option><option value="32">Whole</option></select></label>
+                <label>Velocity <input type="number" id="editVelocity" min="1" max="127" value="90"></label>
+              </div>
+              <div class="entry-actions"><button id="addNote" type="button" class="primary-button">+ Add note</button><button id="addChord" type="button" class="soft-button">+ Add C major chord</button><span class="muted-micro">Chord shares one onset</span></div>
+            </div>
+            <table class="event-table edit-table"><thead><tr><th>Onset (ms)</th><th>Pitch</th><th>Duration (ms)</th><th>Action</th></tr></thead><tbody id="editorRows"></tbody></table>
+            <div class="measure-footer"><span>Selected measure ends</span><strong id="editorMeasureEnd">00:02.609</strong></div>
+          </div>
+          <div class="editor-side">
+            <div class="info-panel"><p class="eyebrow">COMPOSITION BUILDER</p><h3>Full 143-measure source composition</h3><p>Inspect the original 2,027 MIDI-derived notes across 143 measures. Experimental edits remain in memory and never modify the recovered 85-column CSV.</p><div class="status-stat"><span>Measures in test draft</span><strong id="editorMeasureCount">143</strong></div><div class="status-stat"><span>Events in test draft</span><strong id="editorEventCount">0</strong></div><button type="button" class="control-button full-width" id="createMeasure" disabled title="143-measure source composition; adding outside the imported piece is not yet supported">+ Append measure (outside source composition)</button></div>
+            <div class="info-panel"><p class="eyebrow">VERSIONING CONCEPT</p><h3>Export an experimental 143-measure draft</h3><p>Download a simplified experimental CSV containing all 143 measures. This is not a lossless replacement for the recovered 85-column source. Original file is unchanged.</p><button type="button" class="primary-button full-width" id="exportTestCsv">↓ Download prototype CSV</button><p class="technical-note">This experimental export is NOT the 85-column SymphonyCSV specification. Export to the complete native format is still an engineering task.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-effects" aria-labelledby="effects-title">
+        <div class="view-top"><div><p class="eyebrow">EFFECTS EDITOR</p><h1 id="effects-title">Make the sound your own.</h1><p class="under-title">Instrument: Piano <span>•</span> Effects chain audition laboratory</p></div><div class="top-actions"><button type="button" class="soft-button" id="auditionChord">♫ Audition C major chord</button></div></div>
+        <div class="effects-layout">
+          <div class="effects-list">
+            <div class="effect-heading"><span class="tiny-label">PIANO · AUDIO CHAIN</span><span class="pill muted-pill">Web Audio demo</span></div>
+            <div class="effect-card" id="effect-reverb"><div class="effect-top"><div class="effect-symbol">◉</div><div><h3>Reverb</h3><p>Small hall convolution</p></div><label class="toggle"><input type="checkbox" id="reverbEnabled" checked><span class="toggle-ui"></span><span>Enabled</span></label></div><div class="fx-parameter"><label for="reverbMix">Wet mix</label><input id="reverbMix" type="range" min="0" max="100" value="25"><output id="reverbMixOutput">25%</output></div></div>
+            <div class="effect-card" id="effect-delay"><div class="effect-top"><div class="effect-symbol">◷</div><div><h3>Delay</h3><p>Echo with adjustable feedback</p></div><label class="toggle"><input type="checkbox" id="delayEnabled" checked><span class="toggle-ui"></span><span>Enabled</span></label></div><div class="fx-parameter"><label for="delayMix">Wet mix</label><input id="delayMix" type="range" min="0" max="100" value="18"><output id="delayMixOutput">18%</output></div><div class="fx-parameter"><label for="delayFeedback">Feedback</label><input id="delayFeedback" type="range" min="0" max="75" value="24"><output id="delayFeedbackOutput">24%</output></div></div>
+            <div class="effect-card" id="effect-chorus"><div class="effect-top"><div class="effect-symbol">≈</div><div><h3>Chorus</h3><p>Subtle modulated delay</p></div><label class="toggle"><input type="checkbox" id="chorusEnabled"><span class="toggle-ui"></span><span>Enabled</span></label></div><div class="fx-parameter"><label for="chorusMix">Wet mix</label><input id="chorusMix" type="range" min="0" max="100" value="20"><output id="chorusMixOutput">20%</output></div></div>
+            <div class="effect-card" id="effect-compressor"><div class="effect-top"><div class="effect-symbol">↕</div><div><h3>Compressor</h3><p>Dynamics control</p></div><label class="toggle"><input type="checkbox" id="compressorEnabled" checked><span class="toggle-ui"></span><span>Enabled</span></label></div><div class="fx-parameter"><label for="compressorThreshold">Threshold</label><input id="compressorThreshold" type="range" min="-48" max="0" value="-20"><output id="compressorThresholdOutput">-20 dB</output></div></div>
+          </div>
+          <div class="editor-side"><div class="info-panel"><p class="eyebrow">INSTRUMENT VOICE</p><h3 id="effectsFontName">Piano · Test Synth</h3><p>Each instrument has its own effects controls. This page experiments with sound shaping, not composition data changes.</p><button type="button" id="auditionNotesHere" class="primary-button full-width">▶ Hear sample phrase</button><button type="button" id="stopEffectPreview" class="control-button full-width">■ Stop audio</button><p class="technical-note">The file-selected SF2 sample engine is experimental. It supports key/velocity regions, pitch, note-off envelopes and simple loops; not a fully compliant SoundFont synthesizer. Effects order and preset persistence remain engineering questions.</p></div><div class="info-panel"><p class="eyebrow">ENGINEERING EXPERIMENT</p><h3>Effects respond live</h3><p>Toggle a pedal or move a slider, then audition the notes to compare the result. Reverb, delay, chorus, and compressor all use actual browser audio nodes.</p><div class="small-divider"></div><p class="technical-note">No changes to the existing SymphonyCSV format or your original project files.</p></div></div>
+        </div>
+      </section>
+
+      <footer class="workspace-footer"><span><span class="dot violet"></span> PLDD DUAL-STAFF COLOUR EXPERIMENT · NOT A RELEASE</span><span id="footerMessage">2,027 authentic note events from source MIDI · select a local .sf2 to audition</span></footer>
+    </main>
+  </div>
+</div>
+<div role="status" class="toast" id="toast" aria-live="polite"></div>
+<script src="/SymphonyCSV_CSV_Import_Prototype_v01.js"></script>
+<script src="/SymphonyCSV_Browser_Import_Dropzone_v02.js"></script>
+<script>
+/* SymphonyCSV Studio: bounded SF2 (SoundFont v2) browser playback experiment.
+   Entirely client-side; no external library, network, or permanent file storage.
+   Handles instrument/preset zones, key/velocity splits, mono/stereo samples, pitch/tune,
+   percussion-like velocity ranges, sample loop and envelope approximations.
+   Not a substitute for production FluidSynth or a fully conforming SF2 synthesizer.
+*/
+class LocalSF2 {
+  constructor(arrayBuffer, label) {
+    this.label = label;
+    this.raw = arrayBuffer;
+    this.view = new DataView(arrayBuffer);
+    this.bytes = new Uint8Array(arrayBuffer);
+    this.chunks = {};
+    this.cache = new Map();
+    this.presetName = '';
+    this.regions = [];
+    this._parse();
+  }
+  _s(o,n){if(o<0||o+n>this.raw.byteLength) throw Error('Invalid SoundFont offset');return String.fromCharCode(...this.bytes.subarray(o,o+n));}
+  _u16(o){return this.view.getUint16(o,true);}
+  _s16(o){return this.view.getInt16(o,true);}
+  _u32(o){return this.view.getUint32(o,true);}
+  _name(o,n){const bytes=this.bytes.subarray(o,o+n);let i=bytes.indexOf(0);if(i<0)i=bytes.length;return new TextDecoder('latin1').decode(bytes.subarray(0,i)).trim();}
+  _walk(start,end,visit){let pos=start;while(pos+8<=end){const tag=this._s(pos,4),n=this._u32(pos+4),data=pos+8;if(data+n>end)throw Error('Corrupt or truncated SF2 chunk '+tag);visit(tag,data,n);pos=data+n+(n&1);}}
+  _parse(){
+    if(this._s(0,4)!=='RIFF'||this._s(8,4)!=='sfbk')throw Error('Not a SoundFont 2 RIFF (.sf2) file');
+    const end=Math.min(this.raw.byteLength,8+this._u32(4));
+    this._walk(12,end,(tag,data,n)=>{if(tag==='LIST'){
+      const list=this._s(data,4);if(list==='sdta'||list==='pdta')this._walk(data+4,data+n,(child,offset,size)=>{this.chunks[child]={offset,size};});
+    }});
+    const req=['smpl','phdr','pbag','pgen','inst','ibag','igen','shdr'];
+    for(const name of req)if(!this.chunks[name])throw Error('This SoundFont lacks '+name);
+    const read=(name,size,fn)=>{const {offset,length}= {offset:this.chunks[name].offset,length:this.chunks[name].size};
+      if(length%size)throw Error('Malformed '+name+' records');return Array.from({length:length/size},(_,i)=>fn(offset+i*size));};
+    const phdr=read('phdr',38,o=>({name:this._name(o,20),bank:this._u16(o+22),preset:this._u16(o+20),bag:this._u16(o+24)}));
+    const pbag=read('pbag',4,o=>({gen:this._u16(o)}));
+    const pgen=read('pgen',4,o=>({op:this._u16(o),amt:this._u16(o+2)}));
+    const inst=read('inst',22,o=>({name:this._name(o,20),bag:this._u16(o+20)}));
+    const ibag=read('ibag',4,o=>({gen:this._u16(o)}));
+    const igen=read('igen',4,o=>({op:this._u16(o),amt:this._u16(o+2)}));
+    const shdr=read('shdr',46,o=>({name:this._name(o,20),start:this._u32(o+20),end:this._u32(o+24),loopStart:this._u32(o+28),loopEnd:this._u32(o+32),rate:this._u32(o+36),pitch:this.bytes[o+40],correction:this.view.getInt8(o+41),link:this._u16(o+42),type:this._u16(o+44)}));
+    // Program 0, bank 0 where provided, otherwise first playable preset.
+    const presets=phdr.slice(0,-1);
+    const selected=presets.find(x=>x.bank===0&&x.preset===0) || presets[0];
+    if(!selected) throw Error('No playable preset');
+    this.presetName=selected.name||'Unnamed preset';
+    this.bank=selected.bank;this.preset=selected.preset;
+    const nextPresetBag=phdr[phdr.indexOf(selected)+1].bag;
+    const getGen=(arr,from,to)=>{const g={};for(let k=from;k<to;k++){
+      const item=arr[k];if(item)g[item.op]=item.amt;
+    }return g;};
+    const pzones=[];
+    for(let j=selected.bag;j<nextPresetBag;j++)pzones.push(getGen(pgen,pbag[j].gen,pbag[j+1].gen));
+    const pGlobal=pzones.find(z=>!Object.hasOwn(z,41))||{};
+    for(const pz of pzones){if(!Object.hasOwn(pz,41))continue;
+      const iId=pz[41],instrument=inst[iId],next=inst[iId+1];if(!instrument||!next)continue;
+      const izones=[];
+      for(let k=instrument.bag;k<next.bag;k++)izones.push(getGen(igen,ibag[k].gen,ibag[k+1].gen));
+      const iGlobal=izones.find(z=>!Object.hasOwn(z,53))||{};
+      for(const iz of izones){if(!Object.hasOwn(iz,53))continue;
+        const sample=shdr[iz[53]];if(!sample||!sample.rate||sample.end<=sample.start||(sample.type&0x8000))continue;
+        const g=this._merge(pGlobal,pz,iGlobal,iz);
+        if(g.key[0]>g.key[1]||g.velocity[0]>g.velocity[1])continue;
+        this.regions.push({sampleId:iz[53],sample,g,instName:instrument.name});
+      }
+    }
+    if(!this.regions.length) throw Error('No playable regions found for selected piano preset');
+  }
+  _merge(...sources){
+    const g={key:[0,127],velocity:[0,127],coarse:0,fine:0,atten:0,pan:0,scale:100,root:null,loopMode:0,releaseTC:-3000,attackTC:-12000,decayTC:-12000,sustain:0};
+    for(const source of sources){
+      if(Object.hasOwn(source,43)){const a=source[43]&255,b=(source[43]>>8)&255;g.key=[Math.max(g.key[0],a),Math.min(g.key[1],b)];}
+      if(Object.hasOwn(source,44)){const a=source[44]&255,b=(source[44]>>8)&255;g.velocity=[Math.max(g.velocity[0],a),Math.min(g.velocity[1],b)];}
+      if(Object.hasOwn(source,51))g.coarse+=(source[51]<<16)>>16;
+      if(Object.hasOwn(source,52))g.fine+=(source[52]<<16)>>16;
+      if(Object.hasOwn(source,48))g.atten+=source[48];
+      if(Object.hasOwn(source,17))g.pan+=((source[17]<<16)>>16);
+      if(Object.hasOwn(source,56))g.scale=source[56];
+      if(Object.hasOwn(source,58))g.root=source[58];
+      if(Object.hasOwn(source,54))g.loopMode=source[54];
+      for(const [code,key] of [[38,'releaseTC'],[34,'attackTC'],[36,'decayTC'],[37,'sustain']])if(Object.hasOwn(source,code))g[key]=code===37?source[code]:(source[code]<<16)>>16;
+    }
+    return g;
+  }
+  regionsFor(note,velocity){let found=this.regions.filter(r=>note>=r.g.key[0]&&note<=r.g.key[1]&&velocity>=r.g.velocity[0]&&velocity<=r.g.velocity[1]);
+    // FreePats piano normally covers the entire instrument; don't silently fall back to unrelated samples.
+    return found.slice(0,8);
+  }
+  _sampleBuffer(ctx,region){
+    const key=region.sampleId;const existing=this.cache.get(key);if(existing)return existing;
+    const {sample}=region,smpl=this.chunks.smpl;
+    const framesAvailable=Math.floor(smpl.size/2);
+    const start=Math.max(0,Math.min(sample.start,framesAvailable)),end=Math.max(start+1,Math.min(sample.end,framesAvailable));
+    const frames=end-start;
+    if(frames>4000000)throw Error('SF2 sample is unreasonably large');
+    const rate=Math.max(8000,Math.min(192000,sample.rate));
+    const buf=ctx.createBuffer(1,frames,rate),output=buf.getChannelData(0);
+    const byteOffset=smpl.offset+start*2;
+    for(let i=0;i<frames;i++)output[i]=this.view.getInt16(byteOffset+i*2,true)/32768;
+    const v={buffer:buf,start,len:frames,rate};this.cache.set(key,v);return v;
+  }
+  prewarm(ctx,events){
+    const seen=new Set();for(const note of events){for(const region of this.regionsFor(note.midi,note.velocity)){
+      if(seen.has(region.sampleId))continue;seen.add(region.sampleId);this._sampleBuffer(ctx,region);
+    }}return seen.size;
+  }
+  note(ctx,output,midi,velocity,when,duration,offsetSeconds=0){
+    const voices=[];
+    for(const region of this.regionsFor(midi,velocity)){
+      const {sample,g}=region;const obj=this._sampleBuffer(ctx,region);
+      const src=ctx.createBufferSource();src.buffer=obj.buffer;
+      const root=g.root===null||g.root===255?sample.pitch:g.root;
+      const cents=(midi-root)*g.scale+g.coarse*100+g.fine-sample.correction;
+      const playbackRate=Math.pow(2,cents/1200);
+      src.playbackRate.setValueAtTime(playbackRate,when);
+      const isLoop=(g.loopMode&1) && sample.loopEnd>sample.loopStart+8 && sample.loopStart>=obj.start && sample.loopEnd<=obj.start+obj.len;
+      if(isLoop){src.loop=true;src.loopStart=(sample.loopStart-obj.start)/obj.rate;src.loopEnd=(sample.loopEnd-obj.start)/obj.rate;}
+      const gain=ctx.createGain();
+      const base=Math.min(0.36,0.16*Math.pow(Math.max(0.05,velocity/105),1.4))*Math.pow(10,-g.atten/200);
+      const attack=Math.min(0.15,Math.max(0.002,Math.pow(2,g.attackTC/1200)));
+      const release=Math.min(1.8,Math.max(.04,Math.pow(2,g.releaseTC/1200)));
+      const stopAt=when+Math.max(.025,duration);
+      const endAt=stopAt+release+0.03;
+      gain.gain.setValueAtTime(0.00001,when);
+      gain.gain.linearRampToValueAtTime(Math.max(0.00003,base),when+attack);
+      gain.gain.setValueAtTime(Math.max(0.00003,base),Math.max(when+attack,stopAt));
+      gain.gain.exponentialRampToValueAtTime(0.00001,endAt);
+      // SF2 range: -500 left to +500 right
+      if(ctx.createStereoPanner){const pan=ctx.createStereoPanner();pan.pan.value=Math.max(-1,Math.min(1,g.pan/500));src.connect(gain);gain.connect(pan);pan.connect(output);}else{src.connect(gain);gain.connect(output);}
+      const sampleSeek=isLoop?0:Math.max(0,offsetSeconds*playbackRate);
+      if(sampleSeek>=obj.buffer.duration)continue;
+      src.start(when,sampleSeek);
+      try{src.stop(endAt+.02);}catch{}
+      voices.push({source:src,gain,stopAt:endAt+.02});
+    }
+    return voices;
+  }
+}
+
+/* SymphonyCSV Studio UI Exploration 01.3
+   This prototype embeds all 2,027 note-on events taken directly from the user-provided
+   92 BPM "A Criminal Mind" MIDI-derived 85-column reconstruction, measures 1–143 inclusive.
+   Source track/velocity/absolute onset tick and duration ticks retained unchanged.
+   MIDI ticks are timing authority (480 ticks/quarter, 652175 us/quarter).
+   Local SF2 sample-based playback is an engineering experiment; MIDI/CSV import/export
+   and fully compliant SF2 engine features are NOT yet implemented.
+*/
+(() => {
+  'use strict';
+  const BPM = 92;
+  const US_PER_QUARTER = 652175; // actual tempo meta event in supplied MIDI
+  const TICKS_PER_QUARTER = 480;
+  const MS_PER_TICK = US_PER_QUARTER / (TICKS_PER_QUARTER * 1000);
+  const MEASURE_TICKS = 4 * TICKS_PER_QUARTER;
+  const MEASURE_MS = MEASURE_TICKS * MS_PER_TICK;
+  const SLOT_MS = MEASURE_MS / 32; // ONLY used for new experimental edits
+  const $ = (id) => document.getElementById(id);
+  const $$ = (selector) => [...document.querySelectorAll(selector)];
+  let sequence = 0;
+  const sourceNotes = [];
+
+  const measures = sourceNotes.map((rows) => rows.map((e) => ({
+    ...e, id: ++sequence, atMs: e.tick * MS_PER_TICK,
+    durationMs: e.durationTicks * MS_PER_TICK, source: 'source-MIDI',
+    // Retain the exact original tick even if it is not a display-grid position.
+  })));
+  function event(m,slot,pitch,durSlots=8,velocity=90){
+    return {id:++sequence,slot,pitch,durSlots,velocity,
+      atMs:measureStartMs(m)+(slot-1)*SLOT_MS,durationMs:durSlots*SLOT_MS,
+      source:'experimental-edit'};
+  }
+  const state = {
+    measures: [], hasSong: false, view: 'playback', displayMeasure: 1, editorMeasure: 1,
+    mode: 'stopped', positionMs: 0, rangeStart: 1, rangeEnd: 0,
+    isScrubbing: false, scrubPreviewMs: null, scrubWasPlaying: false,
+    startPosMs: 0, endPosMs: 0,
+    audioStartSeconds: 0, scheduledIdx: 0, scheduledEvents: [],
+    audio: null, voices: [], toastHide: null, sf2: null, sf2Busy: false, sf2File: null,
+    effects: { reverb: true, delay: true, chorus: false, compressor: true, reverbMix: 25, delayMix: 18, delayFeedback: 24, chorusMix: 20, compressorThreshold: -20 }
+  };
+
+  const measureStartMs = (m) => (m - 1) * MEASURE_MS;
+  const measureEndMs = (m) => m * MEASURE_MS;
+  const absoluteOnsetMs = (m, ev) => ev.atMs;
+  const msText = (value) => String(Math.max(0, Math.round(value)));
+  const timerText = (ms) => {
+    const n = Math.max(0, Math.round(ms));
+    return `${String(Math.floor(n / 60000)).padStart(2,'0')}:${String(Math.floor(n / 1000) % 60).padStart(2,'0')}.${String(n % 1000).padStart(3,'0')}`;
+  };
+  const maxMeasure = () => state.measures.length;
+  const clampInt = (v, lo, hi) => Math.max(lo, Math.min(hi, Math.round(Number(v) || lo)));
+  const escapeHTML = (value) => String(value).replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const sorted = (m) => (state.measures[m - 1] || []).slice().sort((a,b) => a.atMs-b.atMs || a.midi-b.midi || a.pitch.localeCompare(b.pitch));
+  const timeline = (from=1,to=maxMeasure()) => {
+    const arr = [];
+    const start = measureStartMs(from), end = measureEndMs(to);
+    // Include held notes from preceding measures when seeking into their sustain.
+    for(let m=1;m<=to;m++) for(const ev of sorted(m)) {
+      if(ev.atMs < end && ev.atMs+ev.durationMs > start)
+        arr.push({...ev,measure:m,at:ev.atMs,duration:ev.durationMs});
+    }
+    return arr.sort((a,b)=>a.at-b.at || a.pitch.localeCompare(b.pitch));
+  };
+  const notice = (message) => {
+    const el = $('toast'); el.textContent = message; el.classList.add('visible');
+    if(state.toastHide) clearTimeout(state.toastHide);
+    state.toastHide = setTimeout(()=>el.classList.remove('visible'),3300);
+    $('footerMessage').textContent = message;
+  };
+
+  function setView(view){
+    if (view==='editor' && !state.hasSong) view='playback';
+    if(state.activePitchedTrack===2 && view!=='playback'){
+      notice('Pitched 2 is pending; editor disabled.');
+      view='playback';
+    }
+    if(!['playback','editor','effects'].includes(view)) return;
+    state.view=view;
+    $$('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.view===view));
+    $$('.view').forEach(el=>el.classList.toggle('active',el.id===`view-${view}`));
+    if(location.hash!==`#${view}`) history.replaceState(null,'',`#${view}`);
+    if(view==='editor') renderEditor();
+    if(view==='playback') renderPlayback();
+    if(view==='effects') renderEffectUI();
+  }
+
+  // ---- Web Audio audition laboratory ------------------------------------
+  function createImpulse(ctx,seconds=1.55,decay=2.8){
+    const length=Math.floor(ctx.sampleRate*seconds);
+    const buffer=ctx.createBuffer(2,length,ctx.sampleRate);
+    for(let c=0;c<2;c++){
+      const data=buffer.getChannelData(c);
+      for(let i=0;i<length;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/length,decay)*.36;
+    }
+    return buffer;
+  }
+  async function ensureAudio(){
+    if(state.audio){await state.audio.ctx.resume();return state.audio;}
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if(!Ctx){notice('Web Audio API is unavailable in this browser.');return null;}
+    const ctx=new Ctx();
+    const source=ctx.createGain();
+    source.gain.value=state.trackVolumes?.[0] ?? 1;
+    const mixed=ctx.createGain();
+    const dry=ctx.createGain(); dry.gain.value=.62; source.connect(dry);dry.connect(mixed);
+    const rv=ctx.createConvolver();rv.buffer=createImpulse(ctx);
+    const rvWet=ctx.createGain();source.connect(rv);rv.connect(rvWet);rvWet.connect(mixed);
+    const delay=ctx.createDelay(2);delay.delayTime.value=.33;
+    const feedback=ctx.createGain();
+    const delayWet=ctx.createGain();source.connect(delay);delay.connect(delayWet);delayWet.connect(mixed);delay.connect(feedback);feedback.connect(delay);
+    const chorusDelay=ctx.createDelay(.1);chorusDelay.delayTime.value=.025;
+    const chorusWet=ctx.createGain();source.connect(chorusDelay);chorusDelay.connect(chorusWet);chorusWet.connect(mixed);
+    const lfo=ctx.createOscillator();lfo.frequency.value=.8;
+    const lfoGain=ctx.createGain();lfoGain.gain.value=.004;lfo.connect(lfoGain);lfoGain.connect(chorusDelay.delayTime);lfo.start();
+    const comp=ctx.createDynamicsCompressor();comp.ratio.value=3;comp.attack.value=.008;comp.release.value=.18;
+    const compWet=ctx.createGain();const compDry=ctx.createGain();
+    const master=ctx.createGain();master.gain.value=.66;
+    mixed.connect(comp);comp.connect(compWet);compWet.connect(master);
+    mixed.connect(compDry);compDry.connect(master);master.connect(ctx.destination);
+    const staffGains=Object.create(null);
+    for(const staff of ['Lower staff','Upper staff']){
+      const gain=ctx.createGain();
+      gain.gain.value=state.staffMuted?.[staff]?0:1;
+      gain.connect(source);
+      staffGains[staff]=gain;
+    }
+    state.audio={ctx,source,staffGains,rvWet,delayWet,feedback,chorusWet,comp,compWet,compDry,lfo,master};
+    applyEffects();await ctx.resume();return state.audio;
+  }
+  function applyEffects(){
+    if(!state.audio)return;
+    const a=state.audio,e=state.effects,t=a.ctx.currentTime;
+    a.rvWet.gain.setTargetAtTime(e.reverb ? e.reverbMix/100*.58 : 0,t,.03);
+    a.delayWet.gain.setTargetAtTime(e.delay ? e.delayMix/100*.65 : 0,t,.03);
+    a.feedback.gain.setTargetAtTime(e.delay ? e.delayFeedback/100 : 0,t,.03);
+    a.chorusWet.gain.setTargetAtTime(e.chorus ? e.chorusMix/100*.52 : 0,t,.03);
+    a.comp.threshold.setTargetAtTime(e.compressorThreshold,t,.03);
+    a.compWet.gain.setTargetAtTime(e.compressor?1:0,t,.025);
+    a.compDry.gain.setTargetAtTime(e.compressor?0:1,t,.025);
+  }
+  function midiForPitch(pitch){
+    const match=/^([A-G])(#?)(-?\d+)$/.exec(pitch);
+    if(!match)return 60;
+    const semis={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+    return (parseInt(match[3],10)+1)*12+semis[match[1]]+(match[2] ? 1:0);
+  }
+  function synthesize(pitch,when,lasting,velocity=90,midiOverride=null,missedSeconds=0,staff=null){
+    const a=state.audio;if(!a)return;
+    const output=staff && a.staffGains?.[staff]
+      ? a.staffGains[staff] : a.source;
+    const ctx=a.ctx,midi=Number.isFinite(midiOverride)?midiOverride:midiForPitch(pitch);
+    if(state.sf2){
+      try{
+        const voices=state.sf2.note(ctx,output,midi,velocity,when,lasting,missedSeconds);
+        if(voices.length){for(const voice of voices){
+          state.voices.push(voice);
+          voice.source.onended=()=>{state.voices=state.voices.filter(v=>v!==voice);try{voice.gain.disconnect();}catch{}};
+        }return;}
+      }catch(err){console.warn('SF2 note failed:',err);notice('SoundFont note could not play: '+err.message);return;}
+    }
+    const frequency=440*Math.pow(2,(midi-69)/12);
+    const gain=ctx.createGain();
+    const amount=.16*Math.max(.3,Math.min(1,velocity/110));
+    const releaseAt=when+Math.max(.07,lasting);
+    gain.gain.setValueAtTime(.0001,when);gain.gain.exponentialRampToValueAtTime(amount,when+.009);
+    gain.gain.exponentialRampToValueAtTime(Math.max(.0002,amount*.48),Math.min(releaseAt,when+.27));
+    gain.gain.exponentialRampToValueAtTime(.0001,releaseAt+.1);
+    gain.connect(output);
+    const oscillators=[];
+    for(const [type,multiplier,level] of [['sine',1,1],['triangle',2,.25]]){
+      const osc=ctx.createOscillator(), partial=ctx.createGain();
+      osc.type=type;osc.frequency.value=frequency*multiplier;partial.gain.value=level;
+      osc.connect(partial);partial.connect(gain);osc.start(when);osc.stop(releaseAt+.15);oscillators.push(osc);
+    }
+    const voice={oscillators,gain,stopAt:releaseAt+.16};
+    state.voices.push(voice);
+    oscillators[0].onended=()=>{state.voices=state.voices.filter(v=>v!==voice);try{gain.disconnect();}catch{}};
+  }
+  function stopVoices(){
+    if(!state.audio)return;
+    const when=state.audio.ctx.currentTime+.012;
+    for(const v of state.voices){
+      try{v.gain.gain.cancelScheduledValues(when);v.gain.gain.setTargetAtTime(.0001,when,.006);}catch{}
+      for(const osc of (v.oscillators|| (v.source?[v.source]:[])))try{osc.stop(when+.06);}catch{}
+    }
+    state.voices=[];
+  }
+  function currentPosition(){
+    if(state.mode!=='playing'||!state.audio)return state.positionMs;
+    const time=Math.max(0,state.audio.ctx.currentTime-state.audioStartSeconds);
+    return Math.min(state.endPosMs,state.startPosMs+time*1000);
+  }
+  async function startTransport({from=state.displayMeasure,to=maxMeasure(),fromPosition=null}={}){
+    if (!state.hasSong) { notice('Import a SymphonyCSV into Track 1 before playing.'); return; }
+    if(state.sf2Busy){notice('SoundFont is still loading.');return;}
+    if(state.activePitchedTrack===2){
+      notice('Pitched 2 is not ready.');return;
+    }
+    if(['localhost','127.0.0.1'].includes(location.hostname) && !state.sf2){
+      notice('Upright Piano KW is not loaded.');return;
+    }
+    const a=await ensureAudio();if(!a)return;
+    if(state.defaultPianoPendingWarm === state.sf2){
+      try{
+        state.sf2.prewarm(a.ctx,timeline(1,maxMeasure()));
+        state.defaultPianoPendingWarm=null;
+      }catch(err){
+        console.error('SF2 preparation failed',err);
+        notice('Cannot prepare Upright Piano KW: '+String(err?.message||err));
+        return;
+      }
+    }
+    const first=clampInt(from,1,maxMeasure()),last=clampInt(to,first,maxMeasure());
+    stopVoices();
+    state.rangeStart=first;state.rangeEnd=last;
+    const minStart=measureStartMs(first),end=measureEndMs(last);
+    state.startPosMs=fromPosition===null ? minStart:Math.min(end,Math.max(minStart,fromPosition));
+    state.positionMs=state.startPosMs;state.endPosMs=end;
+    state.audioStartSeconds=a.ctx.currentTime+.09;
+    state.scheduledEvents=timeline(first,last).filter(ev=>ev.at+ev.duration>state.startPosMs);
+    state.scheduledIdx=0;state.mode='playing';state.displayMeasure=clampInt(Math.floor(state.positionMs/MEASURE_MS)+1,1,maxMeasure());
+    updateTransportNow();renderPlayback();
+  }
+  function pauseTransport(){
+    if(state.mode!=='playing')return;
+    state.positionMs=currentPosition();state.mode='paused';stopVoices();updateTransportNow();renderPlayback();
+  }
+  function stopTransport({reset=true}={}){
+    state.mode='stopped';stopVoices();
+    if(reset)state.positionMs=measureStartMs(state.displayMeasure);
+    updateTransportNow();renderPlayback();
+  }
+  // A dedicated return-to-start action stops playback and resets the visible measure.
+  function goToBeginning(){
+    state.mode='stopped';stopVoices();
+    state.isScrubbing=false;state.scrubPreviewMs=null;state.scrubWasPlaying=false;
+    state.positionMs=0;state.startPosMs=0;
+    state.rangeStart=1;state.rangeEnd=maxMeasure();state.endPosMs=maxMeasure()*MEASURE_MS;
+    state.displayMeasure=1;
+    renderPlayback();notice('Returned to Measure 001 at 00:00.000. Press Play to audition.');
+  }
+  const clampPosition = (v) => Math.max(0,Math.min(maxMeasure()*MEASURE_MS,Number(v)||0));
+  function seekPosition(ms,{resume=false}={}){
+    const position=clampPosition(ms);
+    state.isScrubbing=false;state.scrubPreviewMs=null;state.scrubWasPlaying=false;
+    state.positionMs=position;
+    state.displayMeasure=clampInt(Math.floor(position/MEASURE_MS)+1,1,maxMeasure());
+    if(resume && position<maxMeasure()*MEASURE_MS){
+      const inRange=position>=measureStartMs(state.rangeStart) && position<measureEndMs(state.rangeEnd);
+      const from=inRange?state.rangeStart:state.displayMeasure;
+      const to=inRange?state.rangeEnd:maxMeasure();
+      startTransport({from,to,fromPosition:position});
+    }else{
+      // Preserve paused state when scrubbing a paused composition, unless user is at the end.
+      if(position>=maxMeasure()*MEASURE_MS)state.mode='stopped';
+      if(position<measureStartMs(state.rangeStart)||position>=measureEndMs(state.rangeEnd)){
+        state.rangeStart=state.displayMeasure;state.rangeEnd=maxMeasure();
+        state.endPosMs=maxMeasure()*MEASURE_MS;
+      }
+      renderPlayback();
+    }
+  }
+  function seekMeasure(m){
+    const n=clampInt(m,1,maxMeasure());
+    const wasPlaying=state.mode==='playing';
+    state.displayMeasure=n;state.positionMs=measureStartMs(n);
+    $('measureJump').value=n;
+    if(wasPlaying)startTransport({from:n,to:maxMeasure()});
+    else{state.mode='stopped';updateTransportNow();renderPlayback();}
+  }
+  function scheduleAudio(){
+    if(state.mode!=='playing'||!state.audio)return;
+    const a=state.audio,ctx=a.ctx,windowEnd=ctx.currentTime+(document.hidden?8:1.15);
+    while(state.scheduledIdx<state.scheduledEvents.length){
+      const ev=state.scheduledEvents[state.scheduledIdx];
+      const when=state.audioStartSeconds+(ev.at-state.startPosMs)/1000;
+      if(when>windowEnd)break;
+      const start=Math.max(when,ctx.currentTime+.006);
+      const missed=Math.max(0,ctx.currentTime+.006-when);
+      if(ev.duration/1000>missed) synthesize(ev.pitch,start,ev.duration/1000-missed,ev.velocity,ev.midi ?? null,missed,ev.staff);
+      state.scheduledIdx++;
+    }
+  }
+
+  // ---- Exploration 01.6: synchronized two-staff visual sustain -----------
+  // Display the events starting within this measure plus any prior events whose
+  // MIDI note-off is after the beginning of the currently visible measure.
+  // This is purely visual: every event still derives from its original atMs
+  // and durationMs, exactly as the existing SoundFont scheduler does.
+  function notesVisibleInMeasure(m){
+    const left=measureStartMs(m),right=measureEndMs(m),notes=[];
+    for(let i=0;i<m;i++)for(const ev of state.measures[i]){
+      if(ev.atMs<right && ev.atMs+ev.durationMs>left)
+        notes.push({...ev,sourceMeasure:i+1,carried:ev.atMs<left});
+    }
+    return notes.sort((a,b)=>a.atMs-b.atMs || (a.midi??0)-(b.midi??0) || a.id-b.id);
+  }
+  function notesAtCursor(notes,pos){
+    return notes.filter(ev=>ev.atMs<=pos && pos<ev.atMs+ev.durationMs);
+  }
+  function renderOneStaff(staff,notes,pos){
+    const key=staff==='Lower staff'?'lower':'upper';
+    const group=notes.filter(ev=>ev.staff===staff);
+    const held=notesAtCursor(group,pos);
+    const actuallyPlaying=state.mode==='playing' && !state.isScrubbing;
+    const paused=state.mode==='paused' || state.isScrubbing;
+    const label=actuallyPlaying?'sounding':paused?'at pause':'at cursor';
+    const countEl=$(key+'ActiveCount');
+    countEl.textContent=`${held.length} ${label}`;
+    countEl.classList.toggle('live',held.length>0 && actuallyPlaying);
+    const soundingEl=$(key+'Sounding');
+    soundingEl.innerHTML=held.length?held.map(ev=>{
+      const elapsed=Math.max(0,pos-ev.atMs);
+      const remain=Math.max(0,ev.durationMs-elapsed);
+      const progress=Math.max(0,Math.min(100,100*elapsed/Math.max(1,ev.durationMs)));
+      const origin=ev.sourceMeasure<state.displayMeasure?`Held from M${String(ev.sourceMeasure).padStart(3,'0')}`:`Onset ${timerText(ev.atMs)}`;
+      const mode=actuallyPlaying?'SOUNDING':paused?'PAUSED · HELD':'AT CURSOR';
+      return `<div class="note-sustain" data-sustain-id="${ev.id}" data-source-measure="${ev.sourceMeasure}" role="status" aria-label="${escapeHTML(ev.pitch)} ${mode.toLowerCase()}, ${timerText(remain)} until MIDI note off"><div class="note-name"><span>${escapeHTML(ev.pitch)}</span><span class="note-mode">${mode}</span></div><div class="origin-note">${origin} · ${(remain/1000).toFixed(2)}s left</div><div class="note-hold-track"><div class="note-hold-fill" style="width:${progress.toFixed(2)}%"></div></div></div>`;
+    }).join(''):'<span class="no-live-notes">No notes held at this position</span>';
+    const rows=$(key+'PlaybackRows');
+    rows.innerHTML=group.length?group.map(ev=>{
+      const isHeld=ev.atMs<=pos&&pos<ev.atMs+ev.durationMs;
+      const future=pos<ev.atMs;
+      const status=isHeld?(actuallyPlaying?'HELD':paused?'PAUSED':'AT CURSOR'):future?'UPCOMING':'RELEASED';
+      const rowClass=isHeld?(actuallyPlaying?'staff-held':'staff-paused'):future?'staff-upcoming':'staff-finished';
+      const statusClass=isHeld?'held':future?'future':'done';
+      const source=ev.carried?`↳ from M${String(ev.sourceMeasure).padStart(3,'0')}`:ev.source==='experimental-edit'?'experimental edit':'current measure';
+      return `<tr class="${rowClass}" data-event="${ev.id}" data-source-measure="${ev.sourceMeasure}" data-staff="${key}" data-duration-ms="${msText(ev.durationMs)}" aria-label="${escapeHTML(ev.pitch)} ${status.toLowerCase()} ${source}"><td>${timerText(ev.atMs)}</td><td><span class="staff-note-pitch">${escapeHTML(ev.pitch)}</span><span class="staff-note-source">${source} · ${msText(ev.durationMs)} ms</span></td><td><span class="staff-state ${statusClass}">${status}</span></td></tr>`;
+    }).join(''):'<tr class="muted-event"><td colspan="3">No notes in this staff for this measure</td></tr>';
+  }
+
+  function activeOnset(m,ev){
+    if(state.mode!=='playing')return false;
+    const pos=currentPosition(),at=absoluteOnsetMs(m,ev);
+    return pos>=at-8 && pos<at+170;
+  }
+  function updateTransportNow(){
+    const ms=state.isScrubbing?state.scrubPreviewMs:currentPosition();$('elapsedClock').textContent=timerText(ms);
+    $('transportStatus').textContent=state.mode==='playing'?(state.sf2?'Playing through '+state.sf2.presetName:'Playing original MIDI · test synth'):state.mode==='paused'?'Paused':(state.sf2?state.sf2.presetName+' ready':'Ready · select a SoundFont');
+    const slider=$('seekSlider');
+    slider.max=Math.round(maxMeasure()*MEASURE_MS);
+    slider.value=Math.round(ms);
+    slider.style.setProperty('--seek-percent',`${Math.max(0,Math.min(100,100*ms/(maxMeasure()*MEASURE_MS)))}%`);
+    slider.title=`Seek to position: ${timerText(ms)}`;
+    slider.setAttribute('aria-valuetext',timerText(ms));
+    $('durationLabel').textContent=timerText(maxMeasure()*MEASURE_MS);
+    $('measureState').textContent=state.mode==='playing'?'● PLAYING':state.mode==='paused'?'PAUSED':'READY';
+    $('measureState').classList.toggle('playing',state.mode==='playing');
+  }
+  function renderPlayback(){
+    if (!state.hasSong) return;
+    const m=state.displayMeasure;
+    $('measureTitle').textContent=`Measure ${String(m).padStart(3,'0')}`;
+    $('measureJump').max=maxMeasure();$('measureJump').value=m;
+    $('rangeFrom').max=maxMeasure();$('rangeTo').max=maxMeasure();
+    $('nextMeasureLabel').textContent=m<maxMeasure()?`Next: Measure ${String(m+1).padStart(3,'0')}`:'Final measure: 143 / 143';
+    $('measureEnd').textContent=timerText(measureEndMs(m));
+    const pos=state.isScrubbing?state.scrubPreviewMs:currentPosition();
+    const events=notesVisibleInMeasure(m);
+    const fraction=Math.max(0,Math.min(1,(pos-measureStartMs(m))/MEASURE_MS));
+    $('measureProgressFill').style.width=`${(100*fraction).toFixed(2)}%`;
+    $('measureProgressNeedle').style.left=`${(100*fraction).toFixed(2)}%`;
+    $('measureProgress').setAttribute('aria-valuenow',String(Math.round(100*fraction)));
+    $('measureCursor').textContent=`${timerText(Math.max(0,pos-measureStartMs(m)))} / ${timerText(MEASURE_MS)}`;
+    renderOneStaff('Lower staff',events,pos);
+    renderOneStaff('Upper staff',events,pos);
+    // Experimental editor events without a Staff are never silently assigned.
+    const unassigned=events.filter(ev=>ev.staff!=='Lower staff'&&ev.staff!=='Upper staff');
+    $('unassignedPlayback').hidden=!unassigned.length;
+    $('unassignedPlayback').textContent=unassigned.length?`${unassigned.length} unassigned experimental note event(s) in this measure; the official source notes retain their original upper/lower staff.`:'';
+    updateTransportNow();updateFxSummary();
+  }
+  function updateFxSummary(){
+    const e=state.effects;
+    const enabled=['reverb','delay','chorus','compressor'].filter(x=>e[x]).map(x=>x[0].toUpperCase()+x.slice(1));
+    $('playbackFxSummary').textContent=enabled.join(' · ')||'Bypassed';
+  }
+
+  // ---- Measure Editor ----------------------------------------------------
+  function renderEditor(){
+    if (!state.hasSong) return;
+    const m=state.editorMeasure; $('editorMeasureTitle').textContent=`Measure ${String(m).padStart(3,'0')}`;
+    $('editorMeasureEnd').textContent=timerText(measureEndMs(m));
+    $('editorMeasureCount').textContent=maxMeasure();
+    $('editorEventCount').textContent=state.measures.reduce((sum,x)=>sum+x.length,0);
+    const entries=sorted(m);
+    $('editorRows').innerHTML=entries.length?entries.map(ev=>`<tr><td>${msText(absoluteOnsetMs(m,ev))}</td><td>${escapeHTML(ev.pitch)}</td><td>${msText(ev.durationMs)}</td><td><button type="button" class="delete-button" data-delete-id="${ev.id}" aria-label="Delete ${escapeHTML(ev.pitch)} event">Remove</button></td></tr>`).join(''):`<tr class="muted-event"><td>—</td><td>Blank measure</td><td>—</td><td>—</td></tr>`;
+  }
+  function addEventForEditor(pitch){
+    const slot=clampInt($('editSlot').value,1,32),durSlots=clampInt($('editDuration').value,1,32),velocity=clampInt($('editVelocity').value,1,127);
+    state.measures[state.editorMeasure-1].push(event(state.editorMeasure,slot,pitch,durSlots,velocity));
+  }
+  function appendMeasure(){
+    state.measures.push([]);state.editorMeasure=maxMeasure();
+    $('rangeTo').value=maxMeasure();$('measureJump').max=maxMeasure();
+    renderEditor();renderPlayback();notice(`Blank measure ${String(maxMeasure()).padStart(3,'0')} added to prototype draft.`);
+  }
+  function exportCSV(){
+    const rows=['measure,onset_ms,pitch,duration_ms,velocity,midi_track,source'];
+    for(let m=1;m<=maxMeasure();m++) for(const ev of sorted(m)){
+      rows.push([m,msText(absoluteOnsetMs(m,ev)),ev.pitch,msText(ev.durationMs),ev.velocity,ev.track ?? '',ev.source].join(','));
+    }
+    const blob=new Blob([rows.join('\r\n')+'\r\n'],{type:'text/csv;charset=utf-8'});
+    const anchor=document.createElement('a');const url=URL.createObjectURL(blob);
+    anchor.href=url;anchor.download=`SymphonyCSV_STUDIO_EXPERIMENTAL_FULL_143_MEASURES_NOT_NATIVE_${Date.now()}.csv`;
+    document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);
+    notice('Experimental full-song CSV downloaded (simplified schema; NOT the official 85-column SymphonyCSV).');
+  }
+
+  // ---- Effects Editor ----------------------------------------------------
+  function renderEffectUI(){
+    const e=state.effects;
+    for(const name of ['reverb','delay','chorus','compressor']) $(name+'Enabled').checked=e[name];
+    for(const [id,value,unit] of [['reverbMix',e.reverbMix,'%'],['delayMix',e.delayMix,'%'],['delayFeedback',e.delayFeedback,'%'],['chorusMix',e.chorusMix,'%'],['compressorThreshold',e.compressorThreshold,' dB']]){
+      $(id).value=value;$(id+'Output').textContent=value+unit;
+    }
+    updateFxSummary();
+  }
+  async function auditionChord(){
+    const a=await ensureAudio();if(!a)return;
+    for(const p of ['C4','E4','G4']) synthesize(p,a.ctx.currentTime+.04,1.2,86);
+    notice('Auditioning C major '+(state.sf2?'through '+state.sf2.presetName+'.':'using the test synthesizer.'));
+  }
+  async function auditionPhrase(){
+    if(state.mode==='playing')pauseTransport();
+    await startTransport({from:state.editorMeasure,to:state.editorMeasure});
+    setView('playback');
+  }
+
+
+  async function loadLocalPianoSoundFont(file){
+    if(!file)return;
+    const status=$('sf2LoadStatus');
+    if(!/\.sf2$/i.test(file.name)){status.textContent='Please select a .sf2 SoundFont file.';status.className='sf2-status error';return;}
+    if(file.size>256*1024*1024){status.textContent='This experiment limits SF2 files to 256 MB.';status.className='sf2-status error';return;}
+    state.sf2Busy=true;
+    const wasPlaying=state.mode==='playing';
+    if(wasPlaying)pauseTransport();
+    status.textContent='Reading and preparing '+file.name+' ('+(file.size/1048576).toFixed(1)+' MB)…';
+    status.className='sf2-status';$('audioEngineLabel').textContent='Loading SF2…';
+    // Allow status to visibly update before parsing a large local piano library.
+    await new Promise(resolve=>setTimeout(resolve,30));
+    try{
+      const array=await file.arrayBuffer();
+      const sf=new LocalSF2(array,file.name);
+      const audio=await ensureAudio();if(!audio)throw Error('Web Audio is unavailable');
+      const warmed=sf.prewarm(audio.ctx,timeline(1,maxMeasure()));
+      stopVoices();
+      state.sf2=sf;state.sf2File=file.name;
+      const p1Status=document.querySelector(
+        '.pitch-track-slot:first-child small'
+      );
+      if(p1Status) {
+        p1Status.textContent=
+          'LOADED: '+file.name+' · '+sf.presetName;
+      }
+      $('loadedFontName').textContent=file.name+' · '+sf.presetName;
+       $('voiceDisplayName').textContent=sf.presetName;
+       $('sidebarInstrument').textContent=sf.presetName;
+      $('sidebarFont').textContent=file.name;
+      $('effectsFontName').textContent=sf.presetName+' · Piano composition voice';
+      $('audioEngineLabel').textContent='Local SF2 sampled instrument · experimental';
+      status.textContent='Ready: '+sf.presetName+' (bank '+sf.bank+', preset '+sf.preset+'). '+warmed+' sample buffers prepared. No upload.';
+      status.className='sf2-status success';
+      notice('SoundFont instrument ready: '+sf.presetName+'. Press Play all.');
+    }catch(err){
+      console.error('Unable to load local SoundFont',err);
+      $('audioEngineLabel').textContent=state.sf2?'Previous SF2 still loaded':'Test synth (SF2 failed)';
+      status.textContent='Could not load this SF2: '+String(err?.message||err);
+      status.className='sf2-status error';
+      notice('SoundFont load failed; test synthesizer remains available.');
+    }finally{state.sf2Busy=false;updateTransportNow();}
+  }
+
+  // Exploration 01.8: track selection, presentation only.
+  state.activePitchedTrack = 1;
+  const pitchedCards = $$('.pitch-track-slot');
+  if(pitchedCards.length!==2) throw Error('Expected two pitched cards');
+
+  const trackNotice=document.createElement('p');
+  trackNotice.setAttribute('role','status');
+  trackNotice.style.cssText='margin:-8px 0 20px;color:#cbb5e9;font-size:12px';
+  document.querySelector('.pitch-track-strip').after(trackNotice);
+
+  function selectPitchedTrack(n){
+    const pending=n===2;
+    if(pending) stopTransport({reset:true});
+    state.activePitchedTrack=n;
+    if(pending) setView('playback');
+
+    pitchedCards.forEach((card,i)=>{
+      const active=i+1===n;
+      card.classList.toggle('pitch-track-active',active);
+      card.classList.toggle('pitch-track-pending',!active && i===1);
+      card.setAttribute('aria-pressed',String(active));
+      if(active) card.setAttribute('aria-current','true');
+      else card.removeAttribute('aria-current');
+      card.querySelector('.pitch-track-id').textContent=
+        'PITCHED '+(i+1)+(active?' · SELECTED':i===1?' · PENDING':' · AVAILABLE');
+    });
+
+    for(const id of [
+      'openEditorFromPlayback','playButton','playAll',
+      'playRange','soundFontPicker'
+    ]) $(id).disabled=pending;
+
+    for(const nav of $$('.nav-item')){
+      if(nav.dataset.view==='editor'||nav.dataset.view==='effects')
+        nav.disabled=pending;
+    }
+
+    $('sidebarInstrument').textContent=pending?
+      'Not loaded (Pitched 2)':
+      (state.sf2?.presetName||'Test piano synth');
+
+    $('sidebarFont').textContent=pending?
+      'Synth Strings 2 (assigned only)':
+      (state.sf2File||'No SF2 selected');
+
+    $('voiceDisplayName').textContent=pending?
+      'Synth Strings 2 · pending':
+      (state.sf2?.presetName||'Piano · test synth');
+
+    $('loadedFontName').textContent=pending?
+      'No Pitched 2 SoundFont loaded':
+      (state.sf2File?
+        state.sf2File+' · '+state.sf2.presetName:
+        'None loaded — test synth available');
+
+    $('effectsFontName').textContent=pending?
+      'Synth Strings 2 · pending':
+      (state.sf2?.presetName||'Piano · Test Synth');
+
+    $('audioEngineLabel').textContent=pending?
+      'Pitched 2 audio not implemented':
+      (state.sf2?
+        'Local SF2 sampled instrument · experimental':
+        'Test synth until SF2 is loaded');
+
+    trackNotice.textContent=pending?
+      'Pitched 2 selected for UI review only. Editing and playback are disabled. Displayed source notes still belong to Pitched 1.':
+      'Editing context: Pitched 1 · Upright Piano KW (default assignment; load SF2 separately).';
+  }
+
+  pitchedCards.forEach((card,i)=>{
+    card.setAttribute('role','button');
+    card.tabIndex=0;
+    card.style.cursor='pointer';
+    card.style.outlineOffset='3px';
+
+    card.addEventListener('click',()=>selectPitchedTrack(i+1));
+    card.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){
+        e.preventDefault();
+        selectPitchedTrack(i+1);
+      }
+    });
+  });
+
+  selectPitchedTrack(1);
+  // Exploration 01.8 — compact cycling track selector.
+  // Reuse existing safe track selection logic.
+  const trackStrip=document.querySelector('.pitch-track-strip');
+
+  const cycleButton=document.createElement('button');
+  cycleButton.type='button';
+  cycleButton.id='trackCycleButton';
+  cycleButton.className='track-cycle-button';
+
+  cycleButton.innerHTML=`
+    <span class="track-cycle-copy">
+      <span id="trackCycleLabel"></span>
+      <strong>Piano Roll</strong>
+    </span>
+    <span id="trackCycleNext"></span>
+  `;
+
+  trackStrip.before(cycleButton);
+  trackStrip.hidden=true;
+
+  function updateTrackCycle(){
+    const current=state.activePitchedTrack;
+    const next=current===1?2:1;
+
+    $('trackCycleLabel').textContent=
+      'TRACK '+current+
+      (current===2?' · PENDING':' · SELECTED');
+
+    $('trackCycleNext').textContent=
+      'Track '+next+' →';
+
+    cycleButton.setAttribute(
+      'aria-label',
+      'Track '+current+' Piano Roll. Switch to Track '+next
+    );
+
+    trackNotice.hidden=current===1;
+    trackNotice.textContent=current===2?
+      'Track 2 is not connected yet. Editing and playback are disabled.':
+      '';
+  }
+
+  cycleButton.addEventListener('click',()=>{
+    const next=state.activePitchedTrack===1?2:1;
+    selectPitchedTrack(next);
+    updateTrackCycle();
+  });
+
+  updateTrackCycle();
+  // Exploration 01.8: six-track UI navigation.
+  // Only Track 1 has independent musical data today.
+  const slotTypes=[
+    'Piano Roll','Piano Roll','TAB',
+    'TAB','Drums','Drums'
+  ];
+
+  const tabScroll=document.createElement('div');
+  tabScroll.className='track-tabs-scroll';
+
+  const sixTrackNav=document.createElement('nav');
+  sixTrackNav.id='sixTrackNav';
+  sixTrackNav.setAttribute(
+    'aria-label','Select instrument track'
+  );
+
+  tabScroll.append(sixTrackNav);
+  cycleButton.before(tabScroll);
+  cycleButton.style.display='none';
+  trackStrip.style.display='none';
+  trackNotice.style.display='none';
+
+  const pendingPanel=document.createElement('section');
+  pendingPanel.id='sixTrackPending';
+  pendingPanel.className='track-pending-panel';
+  pendingPanel.setAttribute('role','status');
+  pendingPanel.style.display='none';
+  trackNotice.after(pendingPanel);
+
+  state.trackVolumes=Array(6).fill(1);
+
+  for(let number=1;number<=6;number++){
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='track-tab';
+    button.dataset.track=String(number);
+    button.innerHTML=
+      '<span class="track-tab-number">TRACK '+number+'</span>'+
+      '<span class="track-tab-type">'+
+      slotTypes[number-1]+'</span>';
+
+    button.addEventListener('click',()=>{
+      showTrackSlot(number);
+    });
+    // Track button selects the editor.
+    // Its separate slider controls audio level.
+    const channel=document.createElement('div');
+    channel.className='track-channel';
+
+    const volume=document.createElement('input');
+    volume.type='range';
+    volume.className='track-volume';
+    volume.min='0';
+    volume.max='100';
+    volume.step='1';
+    volume.value='100';
+    volume.dataset.volumeTrack=String(number);
+    volume.setAttribute(
+      'aria-label','Track '+number+' volume'
+    );
+
+    // Only Track 1 has a working audio voice today.
+    volume.disabled=number!==1;
+
+    volume.title=number===1
+      ? 'Track 1 volume: 100%'
+      : 'Volume available when Track '+number+
+        ' audio is implemented';
+
+    volume.addEventListener('input',()=>{
+      const percent=Number(volume.value);
+      const level=percent/100;
+
+      state.trackVolumes[number-1]=level;
+      volume.title='Track '+number+
+        ' volume: '+percent+'%';
+
+      // The existing audio source currently carries
+      // Track 1's upper and lower staff together.
+      // Both staff stompboxes remain independent.
+      if(number===1 && state.audio?.source){
+        const audio=state.audio;
+        const now=audio.ctx.currentTime;
+        const gain=audio.source.gain;
+
+        gain.cancelScheduledValues(now);
+        gain.setTargetAtTime(level,now,.015);
+      }
+    });
+
+    channel.append(button,volume);
+    sixTrackNav.append(channel);
+  }
+
+  function showTrackSlot(number){
+    const ready=number===1;
+
+    // All pending slots reuse the protected,
+    // non-editable state until their own data exists.
+    selectPitchedTrack(ready?1:2);
+    state.selectedTrackSlot=number;
+    updateTrackCycle();
+
+    document.querySelector('main.workspace')
+      .classList.toggle('six-track-pending',!ready);
+
+    pendingPanel.style.display=ready?'none':'block';
+
+    if(!ready){
+      pendingPanel.replaceChildren();
+
+      const eyebrow=document.createElement('p');
+      eyebrow.className='eyebrow';
+      eyebrow.textContent=
+        'TRACK '+number+' · '+slotTypes[number-1].toUpperCase();
+
+      const title=document.createElement('h2');
+      title.textContent=
+        'Track '+number+' is not connected yet';
+
+      const detail=document.createElement('p');
+      const importedForSlot=window.SymphonyCSVImportSession?.tracks?.[number-1];
+      detail.textContent=importedForSlot
+        ? 'Track '+number+' CSV validated: '+importedForSlot.summary.noteEvents+
+          ' notes. Audio and measure editing are not connected yet.'
+        : 'This '+slotTypes[number-1]+
+          ' track has no assigned notes, CSV or audio yet.';
+
+      pendingPanel.append(eyebrow,title,detail);
+
+      $('sidebarInstrument').textContent=number===2
+        ? 'Synth Strings 2 (pending)'
+        : 'Not assigned';
+      $('sidebarFont').textContent='No SF2 loaded';
+    }
+
+    const compositionVoice=document.querySelector(
+      '.song-sidebar .meta-row strong'
+    );
+    if(compositionVoice){
+      compositionVoice.textContent=ready
+        ? 'Piano'
+        : slotTypes[number-1];
+    }
+
+    for(const button of sixTrackNav.querySelectorAll(
+      'button[data-track]'
+    )){
+      const active=Number(button.dataset.track)===number;
+      button.classList.toggle('selected',active);
+      button.setAttribute('aria-pressed',String(active));
+      button.setAttribute(
+        'aria-label',
+        'Track '+button.dataset.track+', '+
+        slotTypes[Number(button.dataset.track)-1]+
+        (active?', selected':'')
+      );
+    }
+  }
+
+  showTrackSlot(1);
+
+  // Exploration 01.8 — automatic default instrument.
+  // Fetch/parse now; audio preparation occurs on Play.
+  async function autoLoadDefaultPiano(){
+    if(!['localhost','127.0.0.1'].includes(location.hostname))return;
+    if(state.sf2 || state.sf2Busy)return;
+
+    const filename='UprightPianoKW-20220221.sf2';
+    const url='/soundfonts/piano/UprightPianoKW-SF2-20220221/'+filename;
+    const status=$('sf2LoadStatus');
+    const picker=$('soundFontPicker');
+
+    state.sf2Busy=true;
+    picker.disabled=true;
+    status.textContent='Loading default Upright Piano KW…';
+    status.className='sf2-status';
+
+    try{
+      const response=await fetch(url);
+      if(!response.ok)throw Error('HTTP '+response.status);
+
+      const buffer=await response.arrayBuffer();
+      if(buffer.byteLength!==57377848){
+        throw Error('Unexpected SoundFont file size');
+      }
+
+      const bytes=new Uint8Array(buffer,0,12);
+      const tag=(a,b)=>String.fromCharCode(...bytes.slice(a,b));
+      if(tag(0,4)!=='RIFF'||tag(8,12)!=='sfbk'){
+        throw Error('Invalid SoundFont header');
+      }
+
+      const sf=new LocalSF2(buffer,filename);
+      state.sf2=sf;
+      state.sf2File=filename;
+      state.defaultPianoPendingWarm=sf;
+
+      const card=document.querySelector(
+        '.pitch-track-slot:first-child small'
+      );
+      if(card)card.textContent='LOADED: '+filename+' · '+sf.presetName;
+
+      if(state.activePitchedTrack===1){
+        $('sidebarInstrument').textContent=sf.presetName;
+        $('sidebarFont').textContent=filename;
+        $('voiceDisplayName').textContent=sf.presetName;
+        $('loadedFontName').textContent=filename+' · '+sf.presetName;
+        $('effectsFontName').textContent=sf.presetName+' · Pitched 1';
+        $('audioEngineLabel').textContent=
+          'Local SF2 loaded · samples prepare on Play';
+      }
+
+      status.textContent='Default loaded: '+sf.presetName+
+        ' (bank '+sf.bank+', preset '+sf.preset+
+        '). Press Play to prepare samples.';
+      status.className='sf2-status success';
+
+    }catch(err){
+      console.error('Default piano load failed',err);
+
+      const card=document.querySelector(
+        '.pitch-track-slot:first-child small'
+      );
+      if(card)card.textContent='AUTO-LOAD FAILED · select SF2 manually';
+
+      status.textContent='Default loading failed: '+
+        String(err?.message||err)+'. Choose an SF2 file manually.';
+      status.className='sf2-status error';
+
+      if(state.activePitchedTrack===1){
+        $('sidebarInstrument').textContent='No SF2 loaded';
+        $('sidebarFont').textContent='Default load failed';
+        $('voiceDisplayName').textContent='Piano · SF2 unavailable';
+        $('loadedFontName').textContent='Default SF2 unavailable';
+        $('audioEngineLabel').textContent='Playback blocked until SF2 loads';
+      }
+    }finally{
+      state.sf2Busy=false;
+      picker.disabled=state.activePitchedTrack===2;
+      updateTransportNow();
+    }
+  }
+  // Step 31 — staff mute changes audition only.
+  state.staffMuted = {
+    'Lower staff':false,
+    'Upper staff':false
+  };
+
+  for(const [staff,selector] of [
+    ['Lower staff','.staff-window-lower'],
+    ['Upper staff','.staff-window-upper']
+  ]){
+    const panel=document.querySelector(selector);
+    if(!panel)throw Error('Staff panel missing: '+selector);
+
+    panel.setAttribute('role','button');
+    panel.tabIndex=0;
+
+    const badge=document.createElement('span');
+    badge.className='staff-mute-state';
+    panel.querySelector('.staff-window-heading').append(badge);
+
+    const update=()=>{
+      const muted=state.staffMuted[staff];
+
+      panel.classList.toggle('is-muted',muted);
+      panel.setAttribute('aria-pressed',String(muted));
+      panel.setAttribute(
+        'aria-label',
+        staff+(muted
+          ?', muted. Click to unmute.'
+          :', audible. Click to mute.')
+      );
+
+      badge.textContent=muted
+        ? 'MUTED · CLICK TO RESTORE'
+        : 'ON · CLICK TO MUTE';
+
+      const gain=state.audio?.staffGains?.[staff];
+
+      if(gain){
+        const now=state.audio.ctx.currentTime;
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setTargetAtTime(muted?0:1,now,.012);
+      }
+    };
+
+    const toggle=()=>{
+      state.staffMuted[staff]=!state.staffMuted[staff];
+      update();
+    };
+
+    panel.addEventListener('click',event=>{
+      if(event.target.closest(
+        'button,input,select,textarea,a'
+      ))return;
+      toggle();
+    });
+
+    panel.addEventListener('keydown',event=>{
+      if(event.target===panel &&
+        (event.key==='Enter'||event.key===' ')){
+        event.preventDefault();
+        toggle();
+      }
+    });
+
+    update();
+  }
+
+  // Step 36 – real imported SymphonyCSV notes drive Track 1 playback.
+  // The original sourceNotes remains in this exploration as a regression fixture,
+  // but is REPLACED in state.measures after a valid Track 1 CSV import.
+  window.SymphonyCSVApplyTrack = function(slot, parsed) {
+    if (slot !== 1) return false; // Track 2–6 remain safe, validated placeholders.
+
+    // This HTML experiment's transport is fixed at 92 BPM, 4/4, TPQ=480.
+    // Its CSV importer validates other constant-tempo formats independently,
+    // but do not play them at the wrong speed. A variable clock comes later.
+    if (parsed.song.tempoBpm !== 92 || parsed.song.timeSignature !== '4/4' ||
+        parsed.song.ticksPerQuarter !== 480) {
+      throw Error('Track 1 audio currently requires 92 BPM, 4/4 and 480 TPQ. '+
+        'This CSV was not applied; variable/flexible transport is a later step.');
+    }
+    const groups = Array.from({length:parsed.song.totalMeasures},()=>[]);
+    let nextId=0;
+    for (const n of parsed.notes) {
+      if(n.measure < 1 || n.measure > groups.length) {
+        throw Error('Imported note outside the composition measure range.');
+      }
+      groups[n.measure-1].push({
+        id:++nextId, pitch:n.pitch, midi:n.midi, velocity:n.velocity,
+        staff:n.staff, tick:n.onsetTick, durationTicks:n.durationTicks,
+        atMs:n.onsetTick*MS_PER_TICK,
+        durationMs:n.durationTicks*MS_PER_TICK,
+        csvOnsetMs:n.onsetMs, csvDurationMs:n.durationMs,
+        source:'imported-SymphonyCSV', sourceRowIndex:n.rowIndex
+      });
+    }
+
+    // Stop any old scheduled piano voices before swapping the note source.
+    if (state.hasSong) stopTransport({reset:true});
+    else { state.mode='stopped'; stopVoices(); }
+    state.measures=groups;
+    state.hasSong=true;
+    document.body.classList.remove('scsv-no-song');
+    const editNav=document.querySelector('.nav-item[data-view="editor"]');
+    if(editNav) editNav.disabled=false;
+    const editAction=document.getElementById('openEditorFromPlayback');
+    if(editAction) editAction.disabled=false;
+    state.mode='stopped';
+    state.positionMs=0;state.startPosMs=0;
+    state.displayMeasure=1;state.editorMeasure=1;
+    state.rangeStart=1;state.rangeEnd=groups.length;
+    state.endPosMs=groups.length*MEASURE_MS;
+    state.scheduledEvents=[];state.scheduledIdx=0;
+    state.isScrubbing=false;state.scrubPreviewMs=null;
+    state.scrubWasPlaying=false;
+
+    const title=document.getElementById('playback-title');
+    if(title)title.textContent=parsed.song.title;
+    const miniTitle=document.querySelector('.song-mini strong');
+    if(miniTitle)miniTitle.textContent=parsed.song.title;
+    const miniDetail=document.querySelector('.song-mini small');
+    if(miniDetail)miniDetail.textContent=parsed.summary.noteEvents+
+      ' imported SymphonyCSV note events · '+groups.length+' measures';
+    const subtitle=document.querySelector('.under-title');
+    if(subtitle)subtitle.textContent='Piano · 92 BPM · 4/4 · '+
+      parsed.summary.noteEvents+' imported CSV notes · '+groups.length+' measures';
+    const banner=document.querySelector('.source-banner');
+    if(banner){
+      const b=banner.querySelector('strong'),s=banner.querySelector('span');
+      if(b)b.textContent='SYMPHONYCSV · TRACK 1 IMPORTED · '+groups.length+' MEASURES';
+      if(s)s.textContent='Player now reads '+parsed.summary.noteEvents+
+        ' note events from the validated local CSV, rather than embedded default events.';
+    }
+    const metadata=[...document.querySelectorAll('.song-sidebar .meta-row')];
+    if(metadata[2])metadata[2].querySelector('strong').textContent='92 BPM';
+    if(metadata[3])metadata[3].querySelector('strong').textContent='4/4';
+    const from=document.getElementById('rangeFrom'),to=document.getElementById('rangeTo');
+    if(from)from.value=1;
+    if(to)to.value=groups.length;
+    renderPlayback();renderEditor();
+    console.info('SymphonyCSV PLAYER connected to real Track 1 CSV',{
+      notes:nextId,measures:groups.length,filename:parsed.filename
+    });
+    return true;
+  };
+
+  // When importing a pending track, update its placeholder without implying
+  // that it has been connected to the editor or SoundFont yet.
+  window.addEventListener('symphonycsv:session-changed', event=>{
+    const slot=event.detail?.slot;
+    if(slot && slot!==1 && state.selectedTrackSlot===slot) showTrackSlot(slot);
+  });
+
+
+  // SymphonyCSV Step 37: blank startup. Keep SF2 defaults, but no music data.
+  function initializeBlankSong(){
+    document.body.classList.add('scsv-no-song');
+    document.getElementById('playback-title').textContent='No song loaded';
+    const subtitle=document.querySelector('.under-title');
+    if(subtitle) subtitle.textContent='Select any track, then import a SymphonyCSV file.';
+    const miniTitle=document.querySelector('.song-mini strong');
+    if(miniTitle) miniTitle.textContent='No song loaded';
+    const miniDetail=document.querySelector('.song-mini small');
+    if(miniDetail) miniDetail.textContent='0 of 6 tracks imported';
+    const rows=[...document.querySelectorAll('.song-sidebar .meta-row')];
+    if(rows[2]) rows[2].querySelector('strong').textContent='—';
+    if(rows[3]) rows[3].querySelector('strong').textContent='—';
+    document.addEventListener('DOMContentLoaded',()=>{
+      const status=document.getElementById('scsv-import-status');
+      if(status && !window.SymphonyCSVImportSession?.song)
+        status.textContent='No SymphonyCSV files loaded. Drop a CSV into the selected track.';
+    },{once:true});
+    const editorNav=document.querySelector('.nav-item[data-view="editor"]');
+    if(editorNav) editorNav.disabled=true;
+    const editAction=document.getElementById('openEditorFromPlayback');
+    if(editAction) editAction.disabled=true;
+  }
+
+  // If a drum, strings or TAB CSV is imported first, its file establishes
+  // song identity, without falsely enabling piano audio before Track 1 loads.
+  window.addEventListener('symphonycsv:session-changed', event=>{
+    if(state.hasSong) return;  // Track 1 bridge already updated full UI.
+    const session=window.SymphonyCSVImportSession;
+    if(!session?.song) return;
+    const song=session.song;
+    const name=document.getElementById('playback-title');
+    if(name) name.textContent=song.title;
+    const miniTitle=document.querySelector('.song-mini strong');
+    if(miniTitle) miniTitle.textContent=song.title;
+    const miniDetail=document.querySelector('.song-mini small');
+    const used=session.tracks.filter(Boolean).length;
+    if(miniDetail) miniDetail.textContent=used+' of 6 tracks imported · no playable Track 1 yet';
+    const subtitle=document.querySelector('.under-title');
+    if(subtitle) subtitle.textContent=song.tempoBpm+' BPM · '+song.timeSignature+
+      ' · '+song.totalMeasures+' measures · '+used+'/6 imported';
+    const rows=[...document.querySelectorAll('.song-sidebar .meta-row')];
+    if(rows[2]) rows[2].querySelector('strong').textContent=song.tempoBpm+' BPM';
+    if(rows[3]) rows[3].querySelector('strong').textContent=song.timeSignature;
+  });
+
+  // ---- DOM wiring --------------------------------------------------------
+  $('soundFontPicker').addEventListener('change',(e)=>loadLocalPianoSoundFont(e.target.files?.[0]));
+  $$('.nav-item').forEach(el=>el.addEventListener('click',()=>setView(el.dataset.view)));
+  $('openEditorFromPlayback').addEventListener('click',()=>{state.editorMeasure=state.displayMeasure;setView('editor');});
+  $('playButton').addEventListener('click',()=>{
+    if(state.mode==='paused' && state.positionMs<state.endPosMs)startTransport({from:state.rangeStart,to:state.rangeEnd,fromPosition:state.positionMs});
+    else {
+      const from=state.displayMeasure;
+      const pos=state.positionMs;
+      // A timeline seek should resume at its exact timestamp, not rewind to the measure boundary.
+      const within=pos>=measureStartMs(from) && pos<measureEndMs(from);
+      startTransport({from,to:maxMeasure(),fromPosition:within?pos:null});
+    }
+  });
+  $('pauseButton').addEventListener('click',pauseTransport);
+  $('stopButton').addEventListener('click',()=>stopTransport({reset:true}));
+  $('beginningButton').addEventListener('click',goToBeginning);
+  // Preview the selected position while dragging; reschedule audio only when released.
+  $('seekSlider').addEventListener('input',(e)=>{
+    const requestedPosition=clampPosition(e.target.value);
+    if(!state.isScrubbing){
+      state.scrubWasPlaying=state.mode==='playing';
+      if(state.scrubWasPlaying)pauseTransport();
+      state.isScrubbing=true;
+    }
+    state.scrubPreviewMs=requestedPosition;
+    state.positionMs=state.scrubPreviewMs;
+    state.displayMeasure=clampInt(Math.floor(state.scrubPreviewMs/MEASURE_MS)+1,1,maxMeasure());
+    renderPlayback();
+  });
+  $('seekSlider').addEventListener('change',(e)=>{
+    const wasPlaying=state.scrubWasPlaying;
+    seekPosition(e.target.value,{resume:wasPlaying});
+  });
+  $('previousMeasure').addEventListener('click',()=>seekMeasure(state.displayMeasure-1));
+  $('nextMeasure').addEventListener('click',()=>seekMeasure(state.displayMeasure+1));
+  $('jumpButton').addEventListener('click',()=>seekMeasure($('measureJump').value));
+  $('measureJump').addEventListener('keydown',(e)=>{if(e.key==='Enter')seekMeasure(e.target.value);});
+  $('playRange').addEventListener('click',()=>{
+    const from=clampInt($('rangeFrom').value,1,maxMeasure()),to=clampInt($('rangeTo').value,1,maxMeasure());
+    if(from>to){notice('The ending measure must be at least the starting measure.');return;}
+    startTransport({from,to});
+  });
+  $('playAll').addEventListener('click',()=>startTransport({from:1,to:maxMeasure()}));
+  $('editorPrev').addEventListener('click',()=>{state.editorMeasure=Math.max(1,state.editorMeasure-1);renderEditor();});
+  $('editorNext').addEventListener('click',()=>{state.editorMeasure=Math.min(maxMeasure(),state.editorMeasure+1);renderEditor();});
+  $('createMeasure').addEventListener('click',appendMeasure);
+  $('addNote').addEventListener('click',()=>{addEventForEditor($('editPitch').value);renderEditor();renderPlayback();notice('One note event added to the test draft.');});
+  $('addChord').addEventListener('click',()=>{for(const pitch of ['C4','E4','G4'])addEventForEditor(pitch);renderEditor();renderPlayback();notice('C major chord added: three notes share one onset.');});
+  $('editorRows').addEventListener('click',(e)=>{
+    const button=e.target.closest('[data-delete-id]');if(!button)return;
+    const id=Number(button.dataset.deleteId);
+    state.measures[state.editorMeasure-1]=state.measures[state.editorMeasure-1].filter(ev=>ev.id!==id);
+    renderEditor();renderPlayback();notice('Event removed from test draft.');
+  });
+  $('previewThisMeasure').addEventListener('click',auditionPhrase);
+  $('exportTestCsv').addEventListener('click',exportCSV);
+  for(const name of ['reverb','delay','chorus','compressor']){
+    $(name+'Enabled').addEventListener('change',(e)=>{state.effects[name]=e.target.checked;applyEffects();updateFxSummary();});
+  }
+  for(const name of ['reverbMix','delayMix','delayFeedback','chorusMix','compressorThreshold']){
+    $(name).addEventListener('input',(e)=>{state.effects[name]=Number(e.target.value);renderEffectUI();applyEffects();});
+  }
+  $('auditionChord').addEventListener('click',auditionChord);
+  $('auditionNotesHere').addEventListener('click',async()=>{
+    const a=await ensureAudio();if(!a)return;
+    let when=a.ctx.currentTime+.05;
+    for(const p of ['C4','E4','G4','A4','G4']){synthesize(p,when,.48,90);when+=.29;}
+    notice('Auditioning notes '+(state.sf2?'through the local SoundFont.':'through the test synthesizer.'));
+  });
+  $('stopEffectPreview').addEventListener('click',()=>{stopVoices();if(state.mode==='playing')pauseTransport();notice('Note sources stopped; effect tails may fade naturally.');});
+  window.addEventListener('hashchange',()=>setView(location.hash.replace('#','')));
+
+  // Live UI refresh. Audio scheduling is based on AudioContext clock and lookahead.
+  let lastRowsUpdate=0,lastMeasure=0,lastOnsetKey='';
+  function tick(timestamp){
+    if(state.mode==='playing' && !state.isScrubbing){
+      const pos=currentPosition();scheduleAudio();
+      if(pos>=state.endPosMs-1){
+        state.positionMs=state.endPosMs;state.mode='stopped';stopVoices();
+        state.displayMeasure=clampInt(state.rangeEnd,1,maxMeasure());
+        renderPlayback();notice('Selected playback range completed.');
+      }else{
+        const m=clampInt(Math.floor(pos/MEASURE_MS)+1,1,maxMeasure());
+        if(m!==state.displayMeasure){state.displayMeasure=m;renderPlayback();lastMeasure=m;}
+        const key=timeline(m,m).filter(e=>pos>=e.at-8&&pos<e.at+170).map(e=>e.id).join(':');
+        if(m!==lastMeasure||key!==lastOnsetKey||timestamp-lastRowsUpdate>110){
+          if(state.view==='playback') renderPlayback();
+          lastMeasure=m;lastOnsetKey=key;lastRowsUpdate=timestamp;
+        } else updateTransportNow();
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  initializeBlankSong();
+  renderPlayback();renderEditor();renderEffectUI();
+  setView(location.hash.replace('#','')||'playback');
+  autoLoadDefaultPiano();
+  // Background tabs may suppress requestAnimationFrame while the music continues.
+  // An independent timer continues to refill the Web Audio scheduler where permitted.
+  window.setInterval(()=>{if(state.mode==='playing')scheduleAudio();},100);
+  requestAnimationFrame(tick);
+})();
+
+</script>
+</body>
+</html>
