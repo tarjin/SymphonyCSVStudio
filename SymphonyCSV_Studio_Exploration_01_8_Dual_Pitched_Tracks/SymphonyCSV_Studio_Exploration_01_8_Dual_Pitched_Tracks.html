@@ -28,8 +28,8 @@
 
 .local-sf2-panel{margin-top:16px;background:#251b36;border:1px dashed #9e72d4;padding:13px;border-radius:11px}
 .sf2-label{display:block;color:#f3dcff;font-size:13px;font-weight:750;margin-bottom:8px}
-#soundFontPicker{display:block;max-width:100%;font-size:12px;color:#ddd2ef;cursor:pointer}
-#soundFontPicker::file-selector-button{border:1px solid #ac78e5;border-radius:8px;background:#56347d;color:#fff;padding:8px 13px;margin-right:9px;cursor:pointer}
+#soundFontPicker,#stringsSoundFontPicker{display:block;max-width:100%;font-size:12px;color:#ddd2ef;cursor:pointer}
+#soundFontPicker::file-selector-button,#stringsSoundFontPicker::file-selector-button{border:1px solid #ac78e5;border-radius:8px;background:#56347d;color:#fff;padding:8px 13px;margin-right:9px;cursor:pointer}
 .sf2-status{color:#ab99bd;font-size:11px;line-height:1.5;margin-top:9px!important;overflow-wrap:anywhere}
 .sf2-status.success{color:#9dedc7}
 .sf2-status.error{color:#ffbaba}
@@ -759,6 +759,17 @@ class LocalSF2 {
     const source=ctx.createGain();
     source.gain.value=state.trackVolumes?.[0] ?? 1;
     const mixed=ctx.createGain();
+    // SCVS_STEP39C_DUAL_VOICES: independent Track 2 bus, not piano.source.
+    const stringsGain=ctx.createGain();
+    stringsGain.gain.value=.55*(state.trackVolumes?.[1] ?? 1);
+    stringsGain.connect(mixed);
+    const stringsStaffGains=Object.create(null);
+    for(const staff of ['Lower staff','Upper staff']){
+      const gain=ctx.createGain();
+      gain.gain.value=state.stringsStaffMuted?.[staff]?0:1;
+      gain.connect(stringsGain);
+      stringsStaffGains[staff]=gain;
+    }
     const dry=ctx.createGain(); dry.gain.value=.62; source.connect(dry);dry.connect(mixed);
     const rv=ctx.createConvolver();rv.buffer=createImpulse(ctx);
     const rvWet=ctx.createGain();source.connect(rv);rv.connect(rvWet);rvWet.connect(mixed);
@@ -781,7 +792,7 @@ class LocalSF2 {
       gain.connect(source);
       staffGains[staff]=gain;
     }
-    state.audio={ctx,source,staffGains,rvWet,delayWet,feedback,chorusWet,comp,compWet,compDry,lfo,master};
+    state.audio={ctx,source,staffGains,rvWet,delayWet,feedback,chorusWet,comp,compWet,compDry,lfo,master,stringsGain,stringsStaffGains};
     applyEffects();await ctx.resume();return state.audio;
   }
   function applyEffects(){
@@ -848,22 +859,35 @@ class LocalSF2 {
     return Math.min(state.endPosMs,state.startPosMs+time*1000);
   }
   async function startTransport({from=state.displayMeasure,to=maxMeasure(),fromPosition=null}={}){
-    if (!state.hasSong) { notice('Import a SymphonyCSV into Track 1 before playing.'); return; }
-    if(state.sf2Busy){notice('SoundFont is still loading.');return;}
-    if(state.activePitchedTrack===2){
-      notice('Pitched 2 is not ready.');return;
-    }
-    if(['localhost','127.0.0.1'].includes(location.hostname) && !state.sf2){
+    if (!state.hasSong) { notice('Import a SymphonyCSV before playing.'); return; }
+    const pianoReady=state.pianoTrackConnected===true;
+    if(pianoReady && state.sf2Busy){notice('Piano SoundFont is still loading.');return;}
+    // A strings-only import can play without requiring a piano SoundFont.
+    if(pianoReady && ['localhost','127.0.0.1'].includes(location.hostname) && !state.sf2){
       notice('Upright Piano KW is not loaded.');return;
     }
+    if(state.stringsEvents?.length){
+      if(state.stringsSf2Busy){notice('Synth Strings 2 is still loading.');return;}
+      if(!state.stringsSf2){notice('Synth Strings 2 SoundFont is unavailable.');return;}
+    }
     const a=await ensureAudio();if(!a)return;
-    if(state.defaultPianoPendingWarm === state.sf2){
+    if(pianoReady && state.defaultPianoPendingWarm === state.sf2){
       try{
         state.sf2.prewarm(a.ctx,timeline(1,maxMeasure()));
         state.defaultPianoPendingWarm=null;
       }catch(err){
         console.error('SF2 preparation failed',err);
         notice('Cannot prepare Upright Piano KW: '+String(err?.message||err));
+        return;
+      }
+    }
+    if(state.stringsEvents?.length && state.stringsSf2PendingWarm===state.stringsSf2){
+      try {
+        state.stringsSf2.prewarm(a.ctx,state.stringsEvents);
+        state.stringsSf2PendingWarm=null;
+      } catch(err){
+        console.error('Track 2 sample preparation failed',err);
+        notice('Cannot prepare Synth Strings 2: '+String(err?.message||err));
         return;
       }
     }
@@ -874,7 +898,14 @@ class LocalSF2 {
     state.startPosMs=fromPosition===null ? minStart:Math.min(end,Math.max(minStart,fromPosition));
     state.positionMs=state.startPosMs;state.endPosMs=end;
     state.audioStartSeconds=a.ctx.currentTime+.09;
-    state.scheduledEvents=timeline(first,last).filter(ev=>ev.at+ev.duration>state.startPosMs);
+    const pianoEvents=timeline(first,last)
+      .filter(ev=>ev.at+ev.duration>state.startPosMs)
+      .map(ev=>({...ev,studioTrack:1}));
+    const stringsEvents=(state.stringsEvents||[])
+      .filter(ev=>ev.at<end && ev.at+ev.duration>state.startPosMs)
+      .map(ev=>({...ev,studioTrack:2}));
+    state.scheduledEvents=[...pianoEvents,...stringsEvents]
+      .sort((x,y)=>x.at-y.at || x.studioTrack-y.studioTrack || x.midi-y.midi);
     state.scheduledIdx=0;state.mode='playing';state.displayMeasure=clampInt(Math.floor(state.positionMs/MEASURE_MS)+1,1,maxMeasure());
     updateTransportNow();renderPlayback();
   }
@@ -925,6 +956,27 @@ class LocalSF2 {
     if(wasPlaying)startTransport({from:n,to:maxMeasure()});
     else{state.mode='stopped';updateTransportNow();renderPlayback();}
   }
+  // SCVS_STEP39C_DUAL_VOICES: sampled Track 2 uses independent SF2 and gain.
+  function synthesizeStrings(ev,when,lasting,missedSeconds){
+    const a=state.audio, sf=state.stringsSf2;
+    if(!a || !sf || !a.stringsGain) return;
+    try{
+      const output=a.stringsStaffGains?.[ev.staff]||a.stringsGain;
+      const voices=sf.note(a.ctx,output,ev.midi,ev.velocity,
+        when,lasting,missedSeconds);
+      for(const voice of voices){
+        state.voices.push(voice);
+        voice.source.onended=()=>{
+          state.voices=state.voices.filter(v=>v!==voice);
+          try{voice.gain.disconnect();}catch{}
+        };
+      }
+    }catch(err){
+      console.warn('Track 2 SF2 note failed:',err);
+      notice('Synth Strings 2 note failed: '+String(err?.message||err));
+    }
+  }
+
   function scheduleAudio(){
     if(state.mode!=='playing'||!state.audio)return;
     const a=state.audio,ctx=a.ctx,windowEnd=ctx.currentTime+(document.hidden?8:1.15);
@@ -934,7 +986,13 @@ class LocalSF2 {
       if(when>windowEnd)break;
       const start=Math.max(when,ctx.currentTime+.006);
       const missed=Math.max(0,ctx.currentTime+.006-when);
-      if(ev.duration/1000>missed) synthesize(ev.pitch,start,ev.duration/1000-missed,ev.velocity,ev.midi ?? null,missed,ev.staff);
+      if(ev.duration/1000>missed){
+        if(ev.studioTrack===2)
+          synthesizeStrings(ev,start,ev.duration/1000-missed,missed);
+        else
+          synthesize(ev.pitch,start,ev.duration/1000-missed,
+            ev.velocity,ev.midi ?? null,missed,ev.staff);
+      }
       state.scheduledIdx++;
     }
   }
@@ -946,9 +1004,20 @@ class LocalSF2 {
   // and durationMs, exactly as the existing SoundFont scheduler does.
   function notesVisibleInMeasure(m){
     const left=measureStartMs(m),right=measureEndMs(m),notes=[];
-    for(let i=0;i<m;i++)for(const ev of state.measures[i]){
-      if(ev.atMs<right && ev.atMs+ev.durationMs>left)
-        notes.push({...ev,sourceMeasure:i+1,carried:ev.atMs<left});
+    if(state.selectedTrackSlot===2){
+      for(const ev of state.stringsEvents||[]){
+        if(ev.at<right && ev.at+ev.duration>left){
+          notes.push({...ev, atMs:ev.at, durationMs:ev.duration,
+            source:'imported-SymphonyCSV',
+            sourceMeasure:ev.measure||Math.floor(ev.at/MEASURE_MS)+1,
+            carried:ev.at<left});
+        }
+      }
+    }else{
+      for(let i=0;i<m;i++)for(const ev of state.measures[i]||[]){
+        if(ev.atMs<right && ev.atMs+ev.durationMs>left)
+          notes.push({...ev,sourceMeasure:i+1,carried:ev.atMs<left});
+      }
     }
     return notes.sort((a,b)=>a.atMs-b.atMs || (a.midi??0)-(b.midi??0) || a.id-b.id);
   }
@@ -993,7 +1062,15 @@ class LocalSF2 {
   }
   function updateTransportNow(){
     const ms=state.isScrubbing?state.scrubPreviewMs:currentPosition();$('elapsedClock').textContent=timerText(ms);
-    $('transportStatus').textContent=state.mode==='playing'?(state.sf2?'Playing through '+state.sf2.presetName:'Playing original MIDI · test synth'):state.mode==='paused'?'Paused':(state.sf2?state.sf2.presetName+' ready':'Ready · select a SoundFont');
+    const selectedStrings=state.selectedTrackSlot===2;
+    const voice=selectedStrings?state.stringsSf2:state.sf2;
+    const label=selectedStrings?'Synth Strings 2':'Upright Piano KW';
+    const parts=[state.pianoTrackConnected?'piano':null,
+      state.stringsTrackConnected?'strings':null].filter(Boolean);
+    $('transportStatus').textContent=state.mode==='playing'
+      ? 'Playing shared song · '+parts.join(' + ')
+      : state.mode==='paused'?'Paused'
+      : (voice?label+' ready':label+' not loaded');
     const slider=$('seekSlider');
     slider.max=Math.round(maxMeasure()*MEASURE_MS);
     slider.value=Math.round(ms);
@@ -1010,10 +1087,24 @@ class LocalSF2 {
     $('measureTitle').textContent=`Measure ${String(m).padStart(3,'0')}`;
     $('measureJump').max=maxMeasure();$('measureJump').value=m;
     $('rangeFrom').max=maxMeasure();$('rangeTo').max=maxMeasure();
-    $('nextMeasureLabel').textContent=m<maxMeasure()?`Next: Measure ${String(m+1).padStart(3,'0')}`:'Final measure: 143 / 143';
+    $('nextMeasureLabel').textContent=m<maxMeasure()?`Next: Measure ${String(m+1).padStart(3,'0')}`:`Final measure: ${maxMeasure()} / ${maxMeasure()}`;
     $('measureEnd').textContent=timerText(measureEndMs(m));
     const pos=state.isScrubbing?state.scrubPreviewMs:currentPosition();
     const events=notesVisibleInMeasure(m);
+    const selectedStrings=state.selectedTrackSlot===2;
+    const imported=window.SymphonyCSVImportSession?.tracks?.[selectedStrings?1:0];
+    const subtitle=document.querySelector('.under-title');
+    if(subtitle && imported) subtitle.textContent=
+      (selectedStrings?(state.stringsSf2?.presetName || 'Synth Strings 2'):'Piano')+' · 92 BPM · 4/4 · '+
+      imported.summary.noteEvents+' imported CSV notes · '+maxMeasure()+' measures';
+    const banner=document.querySelector('.source-banner');
+    if(banner && imported){
+      banner.querySelector('strong').textContent='SYMPHONYCSV · TRACK '+
+        (selectedStrings?'2':'1')+' IMPORTED · '+maxMeasure()+' MEASURES';
+      banner.querySelector('span').textContent='Playback view shows '+
+        imported.summary.noteEvents+' notes from selected Track '+
+        (selectedStrings?'2':'1')+'; both tracks use the same song clock.';
+    }
     const fraction=Math.max(0,Math.min(1,(pos-measureStartMs(m))/MEASURE_MS));
     $('measureProgressFill').style.width=`${(100*fraction).toFixed(2)}%`;
     $('measureProgressNeedle').style.left=`${(100*fraction).toFixed(2)}%`;
@@ -1139,64 +1230,100 @@ class LocalSF2 {
   trackNotice.style.cssText='margin:-8px 0 20px;color:#cbb5e9;font-size:12px';
   document.querySelector('.pitch-track-strip').after(trackNotice);
 
-  function selectPitchedTrack(n){
-    const pending=n===2;
-    if(pending) stopTransport({reset:true});
-    state.activePitchedTrack=n;
-    if(pending) setView('playback');
+  // Track focus changes the display only: the shared scheduler keeps playing.
+  // Track 2 has its own local SoundFont picker; its default SF2 remains available.
+  const stringsInstrumentInfo=document.createElement('div');
+  stringsInstrumentInfo.className='local-sf2-panel';
+  stringsInstrumentInfo.id='stringsPickerPanel';
+  const stringsPickerLabel=document.createElement('label');
+  stringsPickerLabel.className='sf2-label';
+  stringsPickerLabel.htmlFor='stringsSoundFontPicker';
+  stringsPickerLabel.textContent='🎻 Load a local SoundFont (.sf2)';
+  const stringsPicker=document.createElement('input');
+  stringsPicker.type='file';
+  stringsPicker.id='stringsSoundFontPicker';
+  stringsPicker.accept='.sf2,audio/x-sf2,application/octet-stream';
+  stringsPicker.setAttribute('aria-describedby','stringsSf2LoadStatus');
+  const stringsFontStatus=document.createElement('p');
+  stringsFontStatus.id='stringsSf2LoadStatus';
+  stringsFontStatus.className='sf2-status';
+  stringsFontStatus.setAttribute('role','status');
+  stringsInstrumentInfo.append(stringsPickerLabel,stringsPicker,stringsFontStatus);
+  document.querySelector('.local-sf2-panel').after(stringsInstrumentInfo);
+  const pianoPickerPanel=document.querySelector('.local-sf2-panel');
+  const voiceTag=document.querySelector('.voice-name .muted-pill');
+  const staffCaptions={
+    lower:document.querySelector('.staff-window-lower .staff-window-caption'),
+    upper:document.querySelector('.staff-window-upper .staff-window-caption')
+  };
+  const originalCaptions={lower:staffCaptions.lower.textContent,upper:staffCaptions.upper.textContent};
+  const staffPanelContainer=document.querySelector('.staff-panels');
 
+  function updateSelectedVoicePresentation(){
+    const isStrings=state.selectedTrackSlot===2;
+    const sf=isStrings?state.stringsSf2:state.sf2;
+    const name=isStrings?'Synth Strings 2':'Upright Piano KW';
+    const filename=isStrings?state.stringsSf2File:state.sf2File;
+    const instrument=sf?.presetName||name;
+    $('sidebarInstrument').textContent=instrument;
+    $('sidebarFont').textContent=filename||'No SF2 loaded';
+    $('voiceDisplayName').textContent=instrument;
+    $('loadedFontName').textContent=filename?(filename+' · '+instrument):name+' · loading';
+    $('audioEngineLabel').textContent=sf
+      ? 'Local SF2 sampled instrument · experimental'
+      : 'SoundFont loading or unavailable';
+    if(voiceTag)voiceTag.textContent=isStrings
+      ? 'Track 2 · '+(window.SymphonyCSVImportSession?.tracks?.[1]?.summary.noteEvents ?? 0)+' imported notes'
+      : 'Track 1 · two piano staves';
+    pianoPickerPanel.style.display=isStrings?'none':'';
+    stringsInstrumentInfo.style.display=isStrings?'':'none';
+    stringsPicker.disabled=!!state.stringsSf2Busy;
+    stringsFontStatus.textContent=sf
+      ? (state.stringsSf2IsDefault===false?'Selected: ':'Default loaded: ')+
+        (filename||sf.label||'SoundFont')+' · '+sf.presetName+
+        ' (bank '+sf.bank+', preset '+sf.preset+'). Track 2 voice and volume are independent.'
+      : state.stringsSf2Busy?'Loading Track 2 SoundFont…'
+      : state.stringsSf2Error?'Track 2 SoundFont failed: '+state.stringsSf2Error
+      : 'Track 2 SoundFont not loaded yet. Choose a local .sf2 file.';
+    stringsFontStatus.className='sf2-status'+(sf?' success':state.stringsSf2Error?' error':'');
+    staffCaptions.lower.textContent=isStrings
+      ? 'Strings lower-staff notes follow the same song clock as the piano.'
+      : originalCaptions.lower;
+    staffCaptions.upper.textContent=isStrings
+      ? 'This imported strings CSV has no upper-staff notes. The panel is ready for future notes.'
+      : originalCaptions.upper;
+    staffPanelContainer.setAttribute('aria-label',isStrings
+      ? 'Independent Synth Strings 2 lower and upper staff panels'
+      : 'Independent upright piano lower and upper staff panels');
+    const sideVoice=document.querySelector('.song-sidebar .meta-row strong');
+    if(sideVoice)sideVoice.textContent=isStrings?'Synth Strings 2':'Piano';
+    $('openEditorFromPlayback').disabled=isStrings || !state.pianoTrackConnected;
+    const editorNav=document.querySelector('.nav-item[data-view="editor"]');
+    if(editorNav)editorNav.disabled=isStrings||!state.pianoTrackConnected;
+    const fxNav=document.querySelector('.nav-item[data-view="effects"]');
+    if(fxNav)fxNav.disabled=isStrings;
+    if(state.refreshStaffPanels)state.refreshStaffPanels();
+  }
+
+  function selectPitchedTrack(n){
+    state.activePitchedTrack=n;
+    // Track 2 measure editing is pending; shared playback controls remain live.
+    if(n===2 && state.view!=='playback')setView('playback');
     pitchedCards.forEach((card,i)=>{
       const active=i+1===n;
       card.classList.toggle('pitch-track-active',active);
-      card.classList.toggle('pitch-track-pending',!active && i===1);
+      card.classList.toggle('pitch-track-pending',false);
       card.setAttribute('aria-pressed',String(active));
-      if(active) card.setAttribute('aria-current','true');
+      if(active)card.setAttribute('aria-current','true');
       else card.removeAttribute('aria-current');
       card.querySelector('.pitch-track-id').textContent=
-        'PITCHED '+(i+1)+(active?' · SELECTED':i===1?' · PENDING':' · AVAILABLE');
+        'PITCHED '+(i+1)+(active?' · SELECTED':' · AVAILABLE');
     });
-
-    for(const id of [
-      'openEditorFromPlayback','playButton','playAll',
-      'playRange','soundFontPicker'
-    ]) $(id).disabled=pending;
-
-    for(const nav of $$('.nav-item')){
-      if(nav.dataset.view==='editor'||nav.dataset.view==='effects')
-        nav.disabled=pending;
-    }
-
-    $('sidebarInstrument').textContent=pending?
-      'Not loaded (Pitched 2)':
-      (state.sf2?.presetName||'Test piano synth');
-
-    $('sidebarFont').textContent=pending?
-      'Synth Strings 2 (assigned only)':
-      (state.sf2File||'No SF2 selected');
-
-    $('voiceDisplayName').textContent=pending?
-      'Synth Strings 2 · pending':
-      (state.sf2?.presetName||'Piano · test synth');
-
-    $('loadedFontName').textContent=pending?
-      'No Pitched 2 SoundFont loaded':
-      (state.sf2File?
-        state.sf2File+' · '+state.sf2.presetName:
-        'None loaded — test synth available');
-
-    $('effectsFontName').textContent=pending?
-      'Synth Strings 2 · pending':
-      (state.sf2?.presetName||'Piano · Test Synth');
-
-    $('audioEngineLabel').textContent=pending?
-      'Pitched 2 audio not implemented':
-      (state.sf2?
-        'Local SF2 sampled instrument · experimental':
-        'Test synth until SF2 is loaded');
-
-    trackNotice.textContent=pending?
-      'Pitched 2 selected for UI review only. Editing and playback are disabled. Displayed source notes still belong to Pitched 1.':
-      'Editing context: Pitched 1 · Upright Piano KW (default assignment; load SF2 separately).';
+    // Shared Play/Pause/Stop/seek must never be disabled by selecting a track.
+    for(const id of ['playButton','pauseButton','stopButton','playAll','playRange'])
+      $(id).disabled=false;
+    $('soundFontPicker').disabled=n===2||state.sf2Busy;
+    updateSelectedVoicePresentation();
   }
 
   pitchedCards.forEach((card,i)=>{
@@ -1326,7 +1453,7 @@ class LocalSF2 {
     );
 
     // Only Track 1 has a working audio voice today.
-    volume.disabled=number!==1;
+    volume.disabled=number>2;
 
     volume.title=number===1
       ? 'Track 1 volume: 100%'
@@ -1338,6 +1465,12 @@ class LocalSF2 {
       const level=percent/100;
 
       state.trackVolumes[number-1]=level;
+      if(number===2 && state.audio?.stringsGain){
+        const gain=state.audio.stringsGain.gain;
+        const now=state.audio.ctx.currentTime;
+        gain.cancelScheduledValues(now);
+        gain.setTargetAtTime(.55*level,now,.015);
+      }
       volume.title='Track '+number+
         ' volume: '+percent+'%';
 
@@ -1359,18 +1492,16 @@ class LocalSF2 {
   }
 
   function showTrackSlot(number){
-    const ready=number===1;
-
-    // All pending slots reuse the protected,
-    // non-editable state until their own data exists.
-    selectPitchedTrack(ready?1:2);
+    const ready=number<=2;
     state.selectedTrackSlot=number;
+    selectPitchedTrack(number===2?2:1);
     updateTrackCycle();
 
     document.querySelector('main.workspace')
       .classList.toggle('six-track-pending',!ready);
 
     pendingPanel.style.display=ready?'none':'block';
+    if(ready && state.hasSong)renderPlayback();
 
     if(!ready){
       pendingPanel.replaceChildren();
@@ -1392,12 +1523,43 @@ class LocalSF2 {
         : 'This '+slotTypes[number-1]+
           ' track has no assigned notes, CSV or audio yet.';
 
+      if(number===2 && state.stringsTrackConnected && importedForSlot){
+        title.textContent='Track 2 · '+(state.stringsSf2?.presetName || 'Synth Strings 2')+' ready';
+        detail.textContent='Track 2 CSV imported: '+importedForSlot.summary.noteEvents+
+          ' note events. Audio is connected to the shared song transport; measure editing is pending.';
+      }
       pendingPanel.append(eyebrow,title,detail);
+      if(number===2 && state.stringsTrackConnected && state.hasSong){
+        const actions=document.createElement('div');
+        actions.style.cssText='display:flex;gap:10px;margin-top:15px';
+        const play=document.createElement('button');
+        play.className='soft-button';play.textContent='Play both tracks';
+        play.addEventListener('click',()=>startTransport({from:1,to:maxMeasure()}));
+        const stop=document.createElement('button');
+        stop.className='soft-button';stop.textContent='Stop';
+        stop.addEventListener('click',()=>stopTransport({reset:true}));
+        actions.append(play,stop);pendingPanel.append(actions);
+      }
+      // SCVS_STEP39B_STRINGS: show the default instrument state without claiming audio.
+      if(number===2){
+        const stringsInfo=document.createElement('p');
+        stringsInfo.className='scsv-strings-default-status';
+        stringsInfo.style.cssText='margin-top:12px;font-size:12px;color:#a5e5cd';
+        stringsInfo.textContent=state.stringsSf2
+          ? 'Synth Strings 2 SoundFont ready · available when Track 2 CSV is imported.'
+          : state.stringsSf2Busy
+            ? 'Loading default Synth Strings 2 SoundFont…'
+            : state.stringsSf2Error
+              ? 'Synth Strings 2 not loaded: '+state.stringsSf2Error
+              : 'Synth Strings 2 default SoundFont not loaded yet.';
+        pendingPanel.append(stringsInfo);
+      }
 
       $('sidebarInstrument').textContent=number===2
-        ? 'Synth Strings 2 (pending)'
+        ? (state.stringsSf2?.presetName || 'Synth Strings 2 (loading)')
         : 'Not assigned';
-      $('sidebarFont').textContent='No SF2 loaded';
+      $('sidebarFont').textContent=number===2
+        ? (state.stringsSf2File || 'No SF2 loaded') : 'No SF2 loaded';
     }
 
     const compositionVoice=document.querySelector(
@@ -1508,10 +1670,10 @@ class LocalSF2 {
     }
   }
   // Step 31 — staff mute changes audition only.
-  state.staffMuted = {
-    'Lower staff':false,
-    'Upper staff':false
-  };
+  state.staffMuted = {'Lower staff':false,'Upper staff':false};
+  state.stringsStaffMuted = {'Lower staff':false,'Upper staff':false};
+  const staffRefreshers=[];
+  state.refreshStaffPanels=()=>staffRefreshers.forEach(fn=>fn());
 
   for(const [staff,selector] of [
     ['Lower staff','.staff-window-lower'],
@@ -1528,13 +1690,15 @@ class LocalSF2 {
     panel.querySelector('.staff-window-heading').append(badge);
 
     const update=()=>{
-      const muted=state.staffMuted[staff];
+      const isStrings=state.selectedTrackSlot===2;
+      const flags=isStrings?state.stringsStaffMuted:state.staffMuted;
+      const muted=flags[staff];
 
       panel.classList.toggle('is-muted',muted);
       panel.setAttribute('aria-pressed',String(muted));
       panel.setAttribute(
         'aria-label',
-        staff+(muted
+        (isStrings?'Synth Strings 2 ':'Upright Piano KW ')+staff+(muted
           ?', muted. Click to unmute.'
           :', audible. Click to mute.')
       );
@@ -1543,7 +1707,9 @@ class LocalSF2 {
         ? 'MUTED · CLICK TO RESTORE'
         : 'ON · CLICK TO MUTE';
 
-      const gain=state.audio?.staffGains?.[staff];
+      const gain=isStrings
+        ?state.audio?.stringsStaffGains?.[staff]
+        :state.audio?.staffGains?.[staff];
 
       if(gain){
         const now=state.audio.ctx.currentTime;
@@ -1553,7 +1719,8 @@ class LocalSF2 {
     };
 
     const toggle=()=>{
-      state.staffMuted[staff]=!state.staffMuted[staff];
+      const flags=state.selectedTrackSlot===2?state.stringsStaffMuted:state.staffMuted;
+      flags[staff]=!flags[staff];
       update();
     };
 
@@ -1572,6 +1739,7 @@ class LocalSF2 {
       }
     });
 
+    staffRefreshers.push(update);
     update();
   }
 
@@ -1579,7 +1747,44 @@ class LocalSF2 {
   // The original sourceNotes remains in this exploration as a regression fixture,
   // but is REPLACED in state.measures after a valid Track 1 CSV import.
   window.SymphonyCSVApplyTrack = function(slot, parsed) {
-    if (slot !== 1) return false; // Track 2–6 remain safe, validated placeholders.
+    if(slot===2){
+      if(parsed.song.tempoBpm!==92 || parsed.song.timeSignature!=='4/4' ||
+         parsed.song.ticksPerQuarter!==480){
+        throw Error('Track 2 audio currently requires 92 BPM, 4/4 and 480 TPQ.');
+      }
+      const events=parsed.notes.map((n,i)=>({
+        studioTrack:2, id:i+1, pitch:n.pitch, midi:n.midi,
+        velocity:n.velocity, at:n.onsetTick*MS_PER_TICK,
+        duration:n.durationTicks*MS_PER_TICK, staff:n.staff,
+        measure:n.measure, sourceRowIndex:n.rowIndex
+      }));
+      if(!events.every(ev=>Number.isFinite(ev.at)&&Number.isFinite(ev.duration)&&
+          ev.duration>0&&Number.isInteger(ev.midi)))
+        throw Error('Track 2 note timing or MIDI pitch is invalid.');
+      if(state.hasSong && state.mode!=='stopped')stopTransport({reset:true});
+      state.stringsEvents=events;
+      state.stringsTrackConnected=true;
+      if(!state.hasSong){
+        state.measures=Array.from({length:parsed.song.totalMeasures},()=>[]);
+        state.hasSong=true;
+        state.positionMs=0;state.startPosMs=0;
+        state.rangeStart=1;state.rangeEnd=parsed.song.totalMeasures;
+        state.endPosMs=parsed.song.totalMeasures*MEASURE_MS;
+        document.body.classList.remove('scsv-no-song');
+        $('playback-title').textContent=parsed.song.title;
+        document.querySelector('.song-mini strong').textContent=parsed.song.title;
+        const meta=[...document.querySelectorAll('.song-sidebar .meta-row')];
+        meta[2].querySelector('strong').textContent=parsed.song.tempoBpm+' BPM';
+        meta[3].querySelector('strong').textContent=parsed.song.timeSignature;
+        $('rangeTo').value=parsed.song.totalMeasures;
+      }
+      state.selectedTrackSlot=Number(state.selectedTrackSlot||1);
+      if(state.selectedTrackSlot===2)renderPlayback();
+      console.info('SymphonyCSV Track 2 connected to shared transport',
+        {notes:events.length,filename:parsed.filename});
+      return true;
+    }
+    if(slot!==1) return false; // Tracks 3–6 are pending.
 
     // This HTML experiment's transport is fixed at 92 BPM, 4/4, TPQ=480.
     // Its CSV importer validates other constant-tempo formats independently,
@@ -1609,6 +1814,7 @@ class LocalSF2 {
     if (state.hasSong) stopTransport({reset:true});
     else { state.mode='stopped'; stopVoices(); }
     state.measures=groups;
+    state.pianoTrackConnected=true;
     state.hasSong=true;
     document.body.classList.remove('scsv-no-song');
     const editNav=document.querySelector('.nav-item[data-view="editor"]');
@@ -1659,6 +1865,7 @@ class LocalSF2 {
   window.addEventListener('symphonycsv:session-changed', event=>{
     const slot=event.detail?.slot;
     if(slot && slot!==1 && state.selectedTrackSlot===slot) showTrackSlot(slot);
+    if(slot===1||slot===2)updateSelectedVoicePresentation();
   });
 
 
@@ -1708,8 +1915,116 @@ class LocalSF2 {
     if(rows[3]) rows[3].querySelector('strong').textContent=song.timeSignature;
   });
 
+
+  // SCVS_STEP39B_STRINGS — separate Track 2 default; never replace state.sf2 (piano).
+  async function autoLoadDefaultStrings(){
+    if(!['localhost','127.0.0.1'].includes(location.hostname))return;
+    if(state.stringsSf2 || state.stringsSf2Busy)return;
+    const filename='SynthStrings2 20200528.sf2';
+    const url='/soundfonts/synth/SynthStrings2%20SF2-20200528/SynthStrings2%2020200528.sf2';
+    state.stringsSf2Busy=true;
+    state.stringsSf2Error=null;
+    const refreshStatus=()=>{
+      const line=document.querySelector('#sixTrackPending .scsv-strings-default-status');
+      if(!line)return;
+      line.textContent=state.stringsSf2
+        ? 'Synth Strings 2 SoundFont ready · available when Track 2 CSV is imported.'
+        : state.stringsSf2Busy ? 'Loading default Synth Strings 2 SoundFont…'
+        : 'Synth Strings 2 not loaded: '+(state.stringsSf2Error||'unknown error');
+    };
+    refreshStatus();
+    try{
+      const response=await fetch(url);
+      if(!response.ok)throw Error('HTTP '+response.status);
+      const buffer=await response.arrayBuffer();
+      if(buffer.byteLength!==9034594)throw Error('Unexpected Synth Strings 2 SoundFont size');
+      const bytes=new Uint8Array(buffer,0,12);
+      const tag=(from,to)=>String.fromCharCode(...bytes.slice(from,to));
+      if(tag(0,4)!=='RIFF'||tag(8,12)!=='sfbk')throw Error('Invalid SF2 RIFF header');
+      state.stringsSf2=new LocalSF2(buffer,filename);
+      state.stringsSf2File=filename;
+      state.stringsSf2IsDefault=true;
+      state.stringsSf2PendingWarm=state.stringsSf2;
+      updateSelectedVoicePresentation();
+      console.info('SymphonyCSV Track 2 Synth Strings 2 default SF2 loaded',{
+        filename,bytes:buffer.byteLength,preset:state.stringsSf2.presetName
+      });
+    }catch(err){
+      state.stringsSf2Error=String(err?.message||err);
+      console.error('SymphonyCSV Track 2 default SF2 failed:',err);
+    }finally{
+      state.stringsSf2Busy=false;
+      refreshStatus();
+      updateSelectedVoicePresentation();
+    }
+  }
+
+
+  // Step 39E — user-selected Track 2 SoundFont is independent of Track 1.
+  async function loadLocalStringsSoundFont(file){
+    if(!file)return;
+    if(state.stringsSf2Busy){
+      stringsFontStatus.textContent='Track 2 SoundFont is already loading.';
+      return;
+    }
+    if(!/\.sf2$/i.test(file.name)){
+      stringsFontStatus.className='sf2-status error';
+      stringsFontStatus.textContent='Please select a SoundFont 2 (.sf2) file.';
+      stringsPicker.value='';
+      return;
+    }
+    if(file.size>256*1024*1024){
+      stringsFontStatus.className='sf2-status error';
+      stringsFontStatus.textContent='This prototype limits SoundFonts to 256 MB.';
+      stringsPicker.value='';
+      return;
+    }
+    // Instrument changes explicitly pause the song; merely selecting tracks does not.
+    if(state.mode==='playing')pauseTransport();
+    state.stringsSf2Busy=true;
+    stringsPicker.disabled=true;
+    stringsFontStatus.className='sf2-status';
+    stringsFontStatus.textContent='Reading '+file.name+' ('+
+      (file.size/1048576).toFixed(1)+' MB)…';
+    await new Promise(resolve=>setTimeout(resolve,30));
+    try{
+      const buffer=await file.arrayBuffer();
+      if(buffer.byteLength<12)throw Error('File is too small to be a SoundFont.');
+      const bytes=new Uint8Array(buffer,0,12);
+      const tag=(a,b)=>String.fromCharCode(...bytes.slice(a,b));
+      if(tag(0,4)!=='RIFF'||tag(8,12)!=='sfbk')
+        throw Error('Not a valid SoundFont 2 RIFF file.');
+      const candidate=new LocalSF2(buffer,file.name);
+      // Commit only after successful parsing. Old Track 2 SF2 is preserved on errors.
+      state.stringsSf2=candidate;
+      state.stringsSf2File=file.name;
+      state.stringsSf2PendingWarm=candidate;
+      state.stringsSf2IsDefault=false;
+      state.stringsSf2Error=null;
+      if(state.selectedTrackSlot===2){updateSelectedVoicePresentation();renderPlayback();}
+      stringsFontStatus.textContent='Ready: '+file.name+' · '+candidate.presetName+
+        ' (bank '+candidate.bank+', preset '+candidate.preset+'). Press Play to prepare samples.';
+      stringsFontStatus.className='sf2-status success';
+      notice('Track 2 SoundFont ready: '+candidate.presetName+'.');
+    }catch(err){
+      console.error('Unable to load Track 2 SoundFont',err);
+      const reason=String(err?.message||err);
+      if(state.selectedTrackSlot===2)updateSelectedVoicePresentation();
+      stringsFontStatus.textContent='Track 2 load failed: '+reason+
+        (state.stringsSf2?' Previous Track 2 SoundFont preserved.':'');
+      stringsFontStatus.className='sf2-status error';
+      notice('Track 2 SoundFont load failed; existing instrument unchanged.');
+    }finally{
+      state.stringsSf2Busy=false;
+      stringsPicker.disabled=false;
+      stringsPicker.value='';
+      updateTransportNow();
+    }
+  }
+
   // ---- DOM wiring --------------------------------------------------------
   $('soundFontPicker').addEventListener('change',(e)=>loadLocalPianoSoundFont(e.target.files?.[0]));
+  stringsPicker.addEventListener('change',(e)=>loadLocalStringsSoundFont(e.target.files?.[0]));
   $$('.nav-item').forEach(el=>el.addEventListener('click',()=>setView(el.dataset.view)));
   $('openEditorFromPlayback').addEventListener('click',()=>{state.editorMeasure=state.displayMeasure;setView('editor');});
   $('playButton').addEventListener('click',()=>{
@@ -1806,6 +2121,7 @@ class LocalSF2 {
   renderPlayback();renderEditor();renderEffectUI();
   setView(location.hash.replace('#','')||'playback');
   autoLoadDefaultPiano();
+  autoLoadDefaultStrings();
   // Background tabs may suppress requestAnimationFrame while the music continues.
   // An independent timer continues to refill the Web Audio scheduler where permitted.
   window.setInterval(()=>{if(state.mode==='playing')scheduleAudio();},100);

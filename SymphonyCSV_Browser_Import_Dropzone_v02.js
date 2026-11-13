@@ -139,7 +139,7 @@
         displayStatus(
           `Validated Track ${slot}: ${file.name} · ${parsed.summary.noteEvents} notes · ` +
           `${parsed.song.totalMeasures} measures · ${used}/6 imported. ` +
-          (appliedToPlayer ? 'Track 1 player now uses imported CSV note data.' :
+          (appliedToPlayer ? 'Track '+slot+' is connected to the shared player.' :
             'CSV validated; this track is not yet connected to audio.'),
           'ok'
         );
