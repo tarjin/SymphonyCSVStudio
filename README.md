@@ -2,29 +2,32 @@
 
 **Make the demo. Hear the song. Share your music.**
 
-SymphonyCSV Studio is a browser-based environment for musicians to arrange and audition compositions and export song demos without needing a full DAW.
+SymphonyCSV Studio helps musicians turn written compositions into song demos in the browser, without requiring a full-fledged DAW.
 
 ## Repository layout
 
-- `site/`: the deployable website and application, including `/app/`, `/help/`, and the official CSV format documentation
-- `studio-src/`: an independently preserved snapshot of the application source and tests at the release checkpoint
-- `scripts/`: release checks and SoundFont asset assembly
-- `.github/workflows/deploy-pages.yml`: GitHub Pages deployment
+- `site/` — the deployable homepage, Studio LABS application, Help, CSV format specifications, and acknowledgments.
+- `scripts/` — publishing checks and SoundFont assembly helpers.
+- `.github/workflows/deploy-pages.yml` — GitHub Pages release workflow.
 
-## SoundFonts
+This repository publishes the **website and browser application**, not the entire local development worktree. The Rust source, project history, test suite, experiments, and other development-only materials remain protected locally until separately approved for open-source publication.
 
-The six bundled SoundFonts are **not stored as normal Git files**. They are uploaded as six assets named `track-01.sf2` through `track-06.sf2` on GitHub Release `soundfonts-labs-rc1`. The Pages workflow checks their byte lengths and installs them at the exact URLs used by Studio before deployment.
+## Six bundled SoundFonts
 
-Read `site/help/soundfonts/` for creator acknowledgments and licenses. Third-party SoundFonts loaded by users remain subject to their own license terms.
+SoundFont binaries are **not committed to ordinary Git files**. The deployment workflow expects six original assets named `track-01.sf2` through `track-06.sf2` on the `soundfonts-labs-rc1` GitHub Release. It checks their byte lengths and installs them at the precise URLs expected by Studio. If anything is missing, the workflow refuses to publish.
 
-## Publishing
+The public credits and license notices belong in `site/help/soundfonts/`.
 
-1. Prepare and test the static `site/` files separately from the protected local RC1 development worktree.
-2. Upload the six release assets under `soundfonts-labs-rc1`.
-3. Confirm the standalone static site works (not only the Vite development server), especially SoundFont loading and effects.
-4. Review and merge this release branch into `main`.
-5. In repository Settings → Pages, select **GitHub Actions**; configure `SymphonyCSVStudio.com` as the custom domain and verify HTTPS/DNS.
+## Publish process
 
-The GitHub Pages workflow intentionally fails if a bundled SoundFont asset is absent or has an unexpected size. It will never publish a partial set of instruments.
+1. Assemble the vetted static `site/` from the local RC1 staging site. Do not include temporary files, full source snapshots, or experiments.
+2. Confirm browser-only dependency loading, including Tone.js and default SoundFonts, works on a normal web host rather than just localhost/Vite.
+3. Upload the six curated SoundFonts as release assets, and verify licensing notices.
+4. Review the release branch and merge it to `main` once the build is complete.
+5. In Settings → Pages, use **GitHub Actions** and configure `SymphonyCSVStudio.com` with verified DNS and HTTPS.
 
-This repository is public to make the website accessible. Unless an explicit license is added, publication does not itself grant a general right to reuse the source code.
+A workflow failure is a **blocker**, never a reason to bypass a release check. No third-party application mentioned in the Help workflows is affiliated with SymphonyCSV Studio.
+
+## Code and reuse
+
+The website is publicly accessible, but no general open-source license has been granted for application source. Please do not assume public GitHub availability means unrestricted reuse.
