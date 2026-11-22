@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SymphonyCSV Studio · MIDI Workspace · LABS V2</title>
+<style>
+[hidden]{display:none!important}
+:root{color-scheme:dark;--bg:#100d19;--panel:#21172f;--border:#4a365f;--violet:#a47ad9;--text:#f1eafb;--muted:#b9a9cd;--good:#84deb0;--warn:#f5d393}
+*{box-sizing:border-box}body{background:radial-gradient(ellipse at 80% -20%,#3d255c,transparent 45%),var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif;margin:0}
+header{border-bottom:1px solid #423154;padding:18px max(20px,calc((100% - 1060px)/2));display:flex;align-items:center;gap:15px;background:#1a1227}header strong{font:600 23px Georgia,serif}header em{font-style:normal;color:var(--violet)}.chip{border:1px solid #76549d;padding:3px 9px;border-radius:99px;color:#d2b6ff;font-size:11px;font-weight:700}main{max-width:1060px;padding:25px 20px 70px;margin:auto}h1,h2{font:600 36px Georgia,serif;line-height:1.2;margin:0}h2{font-size:22px;margin:0 0 12px}p{margin:8px 0 16px;color:var(--muted)}.eyebrow{color:#bd91f2;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.panel{background:linear-gradient(135deg,#251b33,#171220);border:1px solid var(--border);padding:22px;border-radius:16px;margin:18px 0;box-shadow:0 13px 35px #0002}.drop{border:2px dashed #7b56aa;border-radius:13px;min-height:132px;display:grid;place-items:center;text-align:center;padding:22px;cursor:pointer;background:#281c3b;transition:.14s}.drop.active,.drop:hover{background:#422d59;border-color:#c399fa}.drop input{display:none}.drop strong{font-size:19px}.drop small{display:block;color:var(--muted)}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:12px;color:#d9c8ed;font-weight:600}.field input,.field select{background:#110d1b;border:1px solid #71538a;color:var(--text);padding:10px;border-radius:8px;width:100%;min-width:0}.field input:focus-visible,.field select:focus-visible,button:focus-visible{outline:2px solid #c491ff;outline-offset:3px}.desc{font-size:11px;color:var(--muted)}button,.button{padding:12px 17px;border:1px solid #a477d7;border-radius:9px;color:#fff;background:#673c9e;font-weight:750;cursor:pointer;font:inherit;text-decoration:none;display:inline-block}button:disabled{opacity:.4;cursor:not-allowed}
+ a#download.button.secondary:not([hidden]){background:linear-gradient(135deg,#7543ae,#8a55bd);color:white;border:2px solid #d2aeff;font-weight:800;opacity:1;cursor:pointer;box-shadow:0 0 0 2px #7f55a030}
+ a#download.button.secondary:not([hidden]):hover{background:#9c64ce;border-color:#ebd1ff}
+ .drop.loaded{border-color:#58c99e;background:linear-gradient(135deg,#173d34,#28213e);cursor:pointer}
+ .drop.loaded strong{color:#b9ffdd}
+ .drop.loaded small{color:#dcf7eb}
+ .routing-advice{border:1px solid #bb9c58;background:#372b20;border-radius:10px;padding:14px 16px;margin-top:16px}
+ .routing-advice p{color:#f0d6a4;font-size:13px;margin:0 0 12px}.secondary{background:#2c2140;border-color:#5f4c77}.buttons{display:flex;gap:11px;flex-wrap:wrap;align-items:center}.status{padding:12px 15px;background:#22162f;border:1px solid #614d77;border-radius:9px;margin-top:14px}.status.bad{color:#ffd5d5;border-color:#a66}.status.good{color:var(--good);border-color:#4b8669}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.metric{background:#120e1d;border:1px solid #453459;padding:13px;border-radius:10px}.metric span{display:block;color:var(--muted);font-size:11px}.metric strong{font-size:22px;font-variant-numeric:tabular-nums}.warns{display:grid;gap:8px}.warns div{border-left:3px solid #d0ac72;background:#47351c44;color:#f1d9aa;padding:9px 12px;font-size:13px}.muted{color:var(--muted)}table{width:100%;border-collapse:collapse}th,td{padding:9px;text-align:left;border-bottom:1px solid #443257}th{color:#cfb4f2;font-size:12px}#drum-results{max-height:245px;overflow:auto}footer{font-size:12px;color:#a496b6;border-top:1px solid #443257;padding-top:20px;margin-top:35px}@media(max-width:720px){.form-grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}h1{font-size:30px}header{padding:18px}}
+/* Hosted in the Studio: use its own application bar and navigation. */
+html.scsv-embedded header { display:none; }
+html.scsv-embedded main { max-width:1060px; padding:20px 15px 70px; }
+html.scsv-embedded body { background:transparent; }
+</style>
+<script>if(window.self!==window.top)document.documentElement.classList.add('scsv-embedded');</script>
+</head>
+<body>
+<header><strong>Symphony<span style="color:#b083f0">CSV</span> <em>Studio</em></strong><span class="chip">LABS · MIDI Workspace · LABS V2</span></header>
+<main>
+<div class="eyebrow">Local-first · No uploads · Deterministic timing</div>
+<h1>From MIDI to editable music data.</h1>
+<p>Load a MIDI file, inspect the notes and musical boundaries, confirm a full-measure composition length, and prepare a SymphonyCSV conversion. No composition required to inspect or download.</p>
+<section class="panel" aria-labelledby="load-heading"><h2 id="load-heading">1 · Load a MIDI file</h2>
+<label class="drop" id="drop-zone"><span><strong id="drop-title">♫ Drop your .mid or .midi file here</strong><small id="drop-detail">or click to choose a local file · Standard MIDI Format 0/1 · PPQ timing</small></span><input type="file" id="midi-file" accept=".mid,.midi,audio/midi,audio/x-midi"></label>
+<p id="filename" class="desc">Nothing leaves your computer.</p><div id="source-facts" class="metrics" hidden></div></section>
+<section class="panel" aria-labelledby="prepare-heading"><h2 id="prepare-heading">2 · Prepare the conversion</h2>
+<div class="form-grid">
+<div class="field"><label for="source-part">MIDI source part</label><select id="source-part" disabled><option>Load MIDI first</option></select><span class="desc" id="part-hint">Load MIDI to inspect its notes and choose a destination.</span></div>
+<div class="field"><label for="target-track">Output track type / destination</label><select id="target-track" disabled><option value="1">Track 1 · Piano Roll</option><option value="2">Track 2 · Piano Roll</option><option value="5">Track 5 · Drums</option><option value="6">Track 6 · Drums</option></select><span class="desc">Source track and Studio destination are distinct.</span></div>
+<div class="field"><label for="song-title">Composition title</label><input id="song-title" value="MIDI Import" maxlength="120" disabled></div>
+<div class="field"><label for="tempo-bpm">Tempo (BPM)</label><input id="tempo-bpm" type="number" min="1" max="1000" step="0.001" disabled><span class="desc" id="tempo-origin">Awaiting MIDI</span></div>
+<div class="field"><label for="meter">Time signature</label><input id="meter" readonly disabled><span class="desc" id="meter-origin">Awaiting MIDI</span></div>
+<div class="field"><label for="total-measures">Total composition measures <b aria-hidden="true">*</b></label><input id="total-measures" type="number" min="1" max="100000" step="1" disabled><span class="desc">Confirm the explicit final complete measure.</span></div>
+</div><div id="routing-advice" class="routing-advice" hidden><p id="routing-message"></p><div class="buttons"><button type="button" id="route-one" class="secondary">Use Piano Roll Track 1</button><button type="button" id="route-two" class="secondary">Use Piano Roll Track 2</button><button type="button" id="route-confirm">Confirm drum interpretation</button></div></div><p class="desc" id="staff-rule">Piano Roll staff placement is automatic: C4 (MIDI 60) and higher → Upper / Treble; B3 (59) and lower → Lower / Bass. No configuration needed. Original pitches and timing are unchanged.</p>
+<div id="reduction-warning" class="warns" style="margin-top:12px" hidden><div><strong>All notes, one sound:</strong> this merges every MIDI channel into one Piano Roll CSV, including any percussion. You will hear them together through one selected SoundFont; <strong>original instrument and drum sounds are not retained</strong>. Original MIDI instrument, program, and channel assignments are intentionally discarded in the converted CSV. The Studio track SoundFont determines the sound; you can change it later.</div></div><div id="musical-metrics" class="metrics" style="margin-top:17px" hidden></div><div id="warnings" class="warns" aria-live="polite" style="margin-top:15px"></div></section>
+<section class="panel" aria-labelledby="convert-heading"><h2 id="convert-heading">3 · Convert, download, or import</h2>
+<p>Download keeps a standalone SymphonyCSV file. Direct import uses Studio’s existing Rust/WASM validator for Piano Roll Tracks 1–2 and Drum Tracks 5–6. Unsupported percussion notes or absent bundled-kit mappings block conversion; no hits are silently discarded.</p>
+<div class="buttons"><button type="button" id="convert" disabled>Convert to SymphonyCSV</button><a id="download" class="button secondary" download hidden>↓ Download SymphonyCSV (.csv)</a><button type="button" id="import-direct" disabled title="Open through Studio to enable direct import">Import into chosen Studio track</button></div>
+<div id="status" class="status" role="status">Load a MIDI file to begin.</div><div id="drum-results" hidden style="margin-top:16px"><h2>Detected percussion hits</h2><p>Recognized percussion maps to the authoritative 20-column Drums CSV and the selected bundled kit profile. The list shows at most the first 120 hits.</p><table><thead><tr><th>Measure</th><th>Tick</th><th>MIDI note</th><th>GM candidate</th><th>Velocity</th></tr></thead><tbody id="drum-events"></tbody></table></div>
+</section>
+<footer>LABS V2: Direct Piano Roll 1/2 and Drums 5/6 MIDI conversion, CSV download, explicit instrument mapping checks, and the existing Rust/WASM import path. TAB 3/4 remain CSV-only. Files stay in your browser; bundled kit profiles load from this local Studio instance.</footer>
+</main><script type="module" src="./src/workspace-ui.mjs"></script>
+</body></html>

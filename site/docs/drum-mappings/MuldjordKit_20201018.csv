@@ -1,0 +1,20 @@
+MidiNote,Bank,Program,Family,Label,SampleEvidence,Status
+48,0,0,Kick,Kick 48,2-KdrumL_L,structural_only
+49,0,0,Kick,Kick 49,3-KdrumL_L,structural_only
+50,0,0,Snare,Snare 50,5-Snare_L,structural_only
+51,0,0,Snare,Snare 51,5-Snare_L,structural_only
+52,0,0,HiHat,Closed Hi-Hat,1-HihatClosed_L,structural_only
+53,0,0,HiHat,Open Hi-Hat,2-HihatOpen_L,structural_only
+54,0,0,Ride,Left Ride,1-RideL_L,structural_only
+55,0,0,Ride,Left Ride Bell,1-RideLBell_L,structural_only
+56,0,0,Ride,Right Ride,1-RideR_L,structural_only
+57,0,0,Ride,Right Ride Bell,1-RideRBell_L,structural_only
+58,0,0,Crash,Left Crash,1-CrashL_L,structural_only
+59,0,0,Crash,Right Crash,1-CrashR_L,structural_only
+60,0,0,China,China Cymbal,1-China_L,structural_only
+61,0,0,Tom,Tom 1,1-Tom1_L,structural_only
+62,0,0,Tom,Tom 2,1-Tom2_L,structural_only
+63,0,0,Tom,Tom 3,1-Tom3_L,structural_only
+64,0,0,Tom,Tom 4,1-Tom4_L,structural_only
+65,0,0,Snare,Snare Rest 65,1-SnareRest_L,structural_only
+66,0,0,Snare,Snare Rest 66,1-SnareRest_L,structural_only

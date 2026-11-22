@@ -1,0 +1,20 @@
+﻿MidiNote,Bank,Program,Family,Label,SampleEvidence,Status
+48,0,0,Kick,Kick 04,Kick04,structural_only
+49,0,0,Kick,Kick 06,Kick06,structural_only
+50,0,0,Snare,Snare 09,Snare09,structural_only
+51,0,0,Snare,Snare 14,Snare14,structural_only
+52,0,0,HiHat,Closed Hi-Hat 01,ClosedHiHat01-01,structural_only
+53,0,0,HiHat,Closed Hi-Hat 02,ClosedHiHat02-01,structural_only
+54,0,0,HiHat,Open Hi-Hat,OpenHiHat02-01,structural_only
+55,0,0,Cymbal,Cymbal 01,Cymbal01-01|Cymbal01-02|Cymbal01-03,structural_only
+56,0,0,Cymbal,Cymbal 02,Cymbal02,structural_only
+57,0,0,Tom,Low Tom 01,LowTom02-01,structural_only
+58,0,0,Tom,Low Tom 02,LowTom02-02,structural_only
+59,0,0,Tom,Mid Tom 01,MidTom02-01,structural_only
+60,0,0,Tom,Mid Tom 02,MidTom02-02,structural_only
+61,0,0,Tom,High Tom 01,HighTom02-01,structural_only
+62,0,0,Tom,High Tom 02,HighTom02-02,structural_only
+63,0,0,Clap,Clap,Clap01,structural_only
+64,0,0,Shaker,Shaker,Shaker04,structural_only
+65,0,0,Shaker,Long Shaker,ShakerLong01,structural_only
+66,0,0,Claves,Claves,Claves01,structural_only
