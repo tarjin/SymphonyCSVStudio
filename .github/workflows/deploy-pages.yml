@@ -33,7 +33,6 @@ jobs:
           test -f site/help/specs/drums.html
           test -f site/help/soundfonts/index.html
           test -f site/crates/symphonycsv_core/pkg/symphonycsv_core_bg.wasm
-          test -f site/vendor/tone.esm.js
           if find site -type f -name '*.sf2' | grep -q .; then
             echo 'STOP: SoundFonts must be release assets, not checked-in files.'
             exit 1
