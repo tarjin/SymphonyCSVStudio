@@ -1,6 +1,22 @@
-target/
-pkg/
+# Local installs, build caches, and experimental files
 node_modules/
+**/node_modules/
+studio-src/crates/**/target/
+studio-src/crates/**/pkg/
+*.bak
+*.backup-*
+*.pre-*
+*.tmp
+.DS_Store
+Thumbs.db
 .env
 .env.*
-soundfonts/
+!.env.example
+
+# SoundFont binaries are downloaded from the tagged release during deploy
+*.sf2
+
+# Only curated website files belong here
+site/**/*.test.js
+site/**/*.test.mjs
+site/**/.vite/
