@@ -1,0 +1,69 @@
+name: Deploy SymphonyCSV Studio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@v4
+
+      - name: Validate website structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f site/index.html
+          test -f site/app/index.html
+          test -f site/help/index.html
+          test -f site/help/specs/pitched.html
+          test -f site/help/specs/guitar-tab.html
+          test -f site/help/specs/drums.html
+          test -f site/help/soundfonts/index.html
+          test -f site/crates/symphonycsv_core/pkg/symphonycsv_core_bg.wasm
+          if find site -type f -name '*.sf2' | grep -q .; then
+            echo 'STOP: SoundFonts must be release assets, not checked-in files.'
+            exit 1
+          fi
+          echo 'PASS: deployment structure verified'
+
+      - name: Download six curated SoundFont assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/curated-sf2"
+          gh release download soundfonts-labs-rc1 --repo "$GITHUB_REPOSITORY" --dir "$RUNNER_TEMP/curated-sf2" --pattern '*.sf2'
+          python3 scripts/assemble-soundfonts.py --assets "$RUNNER_TEMP/curated-sf2" --site site
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

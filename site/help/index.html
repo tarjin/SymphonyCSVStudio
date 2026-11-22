@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Learn to turn musical ideas into song demos with SymphonyCSV Studio. Explore track types, step-by-step workflows, CSV templates and music composition Help.">
+<title>Help | SymphonyCSV Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#0d0916;--panel:#21172f;--panel2:#2a1b3c;--border:#563b6e;--text:#f6eefe;--muted:#d4c1e2;--purple:#c59aff;--button:#7941ad}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--text);background:radial-gradient(ellipse at 92% 8%,#301442 0,transparent 42%),var(--bg);font-family:Arial,Helvetica,sans-serif;line-height:1.6}
+a{color:#deb8ff}
+a:hover{color:#f2ddff}
+a:focus-visible{outline:3px solid #deb8ff;outline-offset:4px}
+header{border-bottom:1px solid var(--border);background:#180f24;}
+.header-inner{max-width:1160px;padding:21px 28px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{font-family:Georgia,serif;font-weight:bold;font-size:27px;letter-spacing:-.4px;text-decoration:none;color:var(--text)}
+.brand span{color:var(--purple)}
+.nav{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.nav a{color:#e9d5fc;text-decoration:none;font-weight:700;font-size:15px}
+.nav a:hover{text-decoration:underline}
+main{max-width:1160px;padding:0 28px 75px;margin:auto}
+.eyebrow{color:var(--purple);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+h1,h2,h3{font-family:Georgia,serif;line-height:1.19}
+h1{font-size:clamp(43px,5.6vw,67px);letter-spacing:-1px;margin:18px 0 22px}
+h2{font-size:clamp(29px,3.4vw,41px);margin:10px 0 18px}
+h3{font-size:24px;margin:10px 0 12px}
+p{margin:0 0 16px}
+.lead{font-size:clamp(19px,2vw,23px);color:var(--muted);max-width:760px}
+.hero{padding:80px 0 55px;border-bottom:1px solid #4c315f}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.button{display:inline-flex;justify-content:center;align-items:center;text-decoration:none;font-weight:800;border-radius:10px;padding:12px 20px;color:#fff;background:var(--button);border:1px solid #b17de2;min-height:48px}
+.button:hover{background:#9253c8;color:#fff}
+.button.secondary{background:#251835;color:#ead7fa;border-color:#79549a}
+.section{padding:58px 0 0}
+.intro{font-size:18px;color:var(--muted);max-width:890px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:25px}
+.tile,.card,.wide-panel{background:linear-gradient(145deg,#241932,#1b1327);border:1px solid var(--border);border-radius:16px;padding:23px}
+.tile .number{font-weight:800;font-size:13px;color:var(--purple);letter-spacing:1px}
+.tile h3{font-size:21px}
+.tile p,.card p,.wide-panel p{color:var(--muted)}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:25px}
+.card .mini{color:var(--purple);font-weight:800;letter-spacing:1.3px;font-size:12px;text-transform:uppercase}
+.card .link{font-weight:800;display:inline-block;margin-top:8px}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+.wide-panel{margin-top:20px}
+.wide-panel h3{margin-top:0}
+.notice{background:#291e39;border-left:4px solid var(--purple);border-radius:10px;padding:19px 22px;margin-top:22px;color:#e7d5f6}
+.notice strong{color:#fff}
+.steps{margin:15px 0 0;padding:0;list-style:none;display:grid;gap:12px}
+.steps li{position:relative;padding-left:29px;color:var(--muted)}
+.steps li::before{content:'✓';position:absolute;left:0;top:0;color:var(--purple);font-weight:900}
+.paths{color:#eedaff;font-size:14px;font-weight:700;border-top:1px solid #4e3465;padding-top:17px;margin-top:19px}
+.small{font-size:14px;color:var(--muted)}
+.tagline{color:#edd7ff;font-weight:700;font-size:19px}
+.browse{display:flex;flex-wrap:wrap;gap:13px;margin-top:20px}
+.browse a{font-weight:750}
+.qa{margin:0;padding:0;list-style:none}
+.qa li{padding:0 0 15px;margin:0 0 17px;border-bottom:1px solid #49345b}
+.qa li:last-child{border:0;margin:0;padding:0}
+.qa p{margin:5px 0 0}
+footer{border-top:1px solid var(--border);background:#180f24;padding:25px 28px;color:#cbb8da;font-size:14px}
+.footer-inner{max-width:1104px;margin:auto;display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap}
+.footer-inner a{margin-left:12px}
+@media(max-width:960px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:690px){main{padding:0 18px 55px}.header-inner{padding:18px}.hero{padding:48px 0 38px}.section{padding-top:43px}.tiles,.grid-3,.columns{grid-template-columns:1fr}.nav{gap:13px}.brand{font-size:23px}.tile,.card,.wide-panel{padding:21px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header>
+ <div class="header-inner">
+  <a class="brand" href="/">Symphony<span>CSV</span> Studio</a>
+  <nav class="nav" aria-label="Main navigation">
+   <a href="/">Home</a>
+   <a href="/app/">Open App</a>
+   <a href="#soundfonts">SoundFonts</a>
+   <a href="/help/specs/">CSV Formats</a>
+   <a href="/help/soundfonts/">SoundFont Licenses</a>
+  </nav>
+ </div>
+</header>
+<main>
+ <section class="hero" aria-labelledby="welcome">
+  <div class="eyebrow">Help for songwriters and musicians</div>
+  <h1 id="welcome">Let's make some music.</h1>
+  <p class="lead">Have a melody, guitar part, or drum idea? SymphonyCSV Studio helps you turn musical parts into a song demo you can hear, shape, and share—without needing a full DAW.</p>
+  <p class="lead">Start with a composition, bring your tracks together, and hear your song take shape.</p>
+  <div class="hero-cta">
+   <a class="button" href="/app/">Open App</a>
+   <a class="button secondary" href="#start">How to get started</a>
+   <a class="button secondary" href="/help/specs/downloads/SymphonyCSV_Official_Blank_Templates_RC1.zip" download>Download blank CSV templates</a>
+  </div>
+ </section>
+
+ <section class="section" id="start" aria-labelledby="start-heading">
+  <div class="eyebrow">Your first demo</div>
+  <h2 id="start-heading">Four steps from idea to music.</h2>
+  <p class="intro">You don't need to learn every feature at once. Start with one musical part and build from there.</p>
+  <div class="tiles">
+   <div class="tile"><span class="number">01 · COMPOSE</span><h3>Write a part</h3><p>Describe the notes and rhythms in a SymphonyCSV file. Write it yourself, work with an AI assistant, or convert compatible MIDI.</p></div>
+   <div class="tile"><span class="number">02 · IMPORT</span><h3>Bring it into Studio</h3><p>Choose the matching musical track, import its CSV, and <a href="#soundfonts">choose a SoundFont</a> to hear the instrument.</p></div>
+   <div class="tile"><span class="number">03 · LISTEN</span><h3>Build the sound</h3><p>Play your tracks together. Balance volume and panning, and explore chorus, delay, reverb and master effects.</p></div>
+   <div class="tile"><span class="number">04 · SHARE</span><h3>Make your demo</h3><p>Export a WAV or MP3 mix to share. Save a Project ZIP so you can return to your music later.</p></div>
+  </div>
+  <div class="notice"><strong>What is a SymphonyCSV file?</strong> It's a simple, readable way to describe what an instrument should play: notes, timing, and performance details in a CSV file. Studio reads the instructions and plays the music. The CSV is where you write or edit the composition; Studio is where you audition and mix it.</div>
+ </section>
+
+ <section class="section" id="soundfonts" aria-labelledby="soundfonts-heading">
+  <div class="eyebrow">Choosing an instrument sound</div>
+  <h2 id="soundfonts-heading">What's a SoundFont? And how is it different from a VST?</h2>
+  <p class="intro">You might know the sound of a piano, a guitar, or a drum kit without knowing how a computer makes it. SoundFonts are one way to give your musical notes a voice.</p>
+  <div class="columns">
+   <div class="card">
+    <div class="mini">The sounds · .sf2 file</div>
+    <h3>SoundFont</h3>
+    <p>A SoundFont is a library of instrument sounds. It usually contains recorded samples, plus settings that tell a compatible player which sound to use when you play a note.</p>
+    <p><strong>In SymphonyCSV Studio:</strong> Choose a SoundFont for your musical track. Studio's built-in playback engine uses it to turn your notes into sound. You don't need a DAW or VST plug-in.</p>
+    <p class="small">For example: choose an upright-piano SoundFont to hear your pitched part as a piano.</p>
+   </div>
+   <div class="card">
+    <div class="mini">The software · instrument or effect plug-in</div>
+    <h3>VST</h3>
+    <p>VST stands for Virtual Studio Technology. A VST is a type of plug-in used in compatible music software, often a DAW. A <strong>VST instrument</strong> produces sound; a <strong>VST effect</strong> processes sound, such as adding reverb or delay.</p>
+    <p><strong>In a DAW like REAPER:</strong> Add a VST instrument to a track, choose its sound, and let it play your MIDI notes. Some VST instruments can load SoundFonts, but a SoundFont is not itself a VST plug-in.</p>
+   </div>
+  </div>
+  <div class="wide-panel">
+   <h3>What happens when you take your demo into a DAW?</h3>
+   <p>Suppose you compose a piano part in Studio and audition it with an upright-piano SoundFont. If you <strong>export MIDI</strong> and open it in REAPER or another DAW, your notes and timing can travel with you—but that SoundFont sound does not automatically become the DAW's instrument. Choose a VST instrument, or load the SoundFont in a compatible sampler, to hear the MIDI there.</p>
+   <p>If you <strong>export WAV or MP3</strong> instead, you're exporting recorded audio of the sound Studio rendered, including the instrument and mix settings used for that export.</p>
+  </div>
+  <div class="wide-panel" id="soundfont-credits">
+   <h3>Which SoundFonts come with Studio?</h3>
+   <p>Studio includes six instrument libraries for the six musical tracks. Their creators and licenses are credited separately from SoundFonts you choose to import yourself.</p>
+   <p><a class="button secondary" href="/help/soundfonts/">View bundled SoundFont credits &amp; licenses</a></p>
+  </div>
+  <div class="notice"><strong>Can I use my own SoundFonts?</strong> Studio supports loading compatible <code>.sf2</code> SoundFont files. SoundFonts have their own licenses; before sharing a Project ZIP that includes a third-party SoundFont, check whether its creator allows redistribution. <strong>Studio does not host VST plug-ins.</strong></div>
+ </section>
+
+ <section class="section" id="formats" aria-labelledby="formats-heading">
+  <div class="eyebrow">Choose your musical part</div>
+  <h2 id="formats-heading">Three music formats. Six musical tracks.</h2>
+  <p class="intro">Each musical track uses a specific SymphonyCSV format. You can read every column in the guides—or start from a blank template.</p>
+  <div class="grid-3">
+   <article class="card"><div class="mini">Tracks 1–2</div><h3>Piano Roll / Pitched</h3><p>For piano, strings, bass sounds, synths, melodies and other pitched instruments. Even if you choose a bass SoundFont, this remains the Pitched format.</p><a class="link" href="/help/specs/pitched.html">Explore Pitched CSV</a></article>
+   <article class="card"><div class="mini">Tracks 3–4</div><h3>Guitar TAB</h3><p>For six-string guitar parts, including frets, strings, tuning and performance details. Both tracks use the Guitar TAB format.</p><a class="link" href="/help/specs/guitar-tab.html">Explore Guitar TAB CSV</a></article>
+   <article class="card"><div class="mini">Tracks 5–6</div><h3>Drums</h3><p>Track 5 is Acoustic Drums; Track 6 is Electronic Drums. Both share the Drums CSV format, with different kits and sounds.</p><a class="link" href="/help/specs/drums.html">Explore Drums CSV</a></article>
+  </div>
+  <div class="wide-panel" id="tracks"><h3>And two recorded audio tracks</h3><p>Tracks <strong>7–8</strong> are for WAV recordings—for example, a vocal, a guitar take or another sound you want in the demo. They are audio tracks, not a fourth CSV composition format.</p></div>
+  <div class="wide-panel">
+   <h3>Get the official formats</h3>
+   <p>Download one ZIP containing three blank CSVs, each with the complete header row and no music data. Fill in the necessary musical information before importing them into Studio.</p>
+   <div class="hero-cta">
+    <a class="button" href="/help/specs/downloads/SymphonyCSV_Official_Blank_Templates_RC1.zip" download>Download three blank CSVs</a>
+    <a class="button secondary" href="/help/specs/">See all column explanations</a>
+   </div>
+  </div>
+ </section>
+
+ <section class="section" aria-labelledby="workflows-heading">
+  <div class="eyebrow">What would you like to do next?</div>
+  <h2 id="workflows-heading">Take your song where you want.</h2>
+  <div class="grid-3">
+   <article class="card"><div class="mini">Songwriting</div><h3>Hear a complete demo</h3><p>Import musical parts, add recordings on Tracks 7–8, shape the mix, and export a WAV or MP3 you can play for others.</p><div class="paths">Compose → Arrange → Mix → Export</div></article>
+   <article class="card"><div class="mini">Notation</div><h3>See your sheet music</h3><p>Export a musical part as MIDI, open it in MuseScore Studio, then review and adjust the notation before printing or exporting a score.</p><div class="paths">Compose → MIDI → MuseScore → Score</div></article>
+   <article class="card"><div class="mini">Production</div><h3>Continue in a DAW</h3><p>Export MIDI or audio, then bring it into REAPER or another DAW for recording, detailed production and final mixing.</p><div class="paths">Demo → Export → DAW → Production</div></article>
+  </div>
+  <p class="small" style="margin-top:18px">MuseScore Studio and REAPER are independent third-party applications. SymphonyCSV Studio is not affiliated with, sponsored by, or endorsed by their developers. These are suggested workflows, not official integrations. MIDI notation may need some cleanup.</p>
+ </section>
+
+ <section class="section" id="save" aria-labelledby="save-heading">
+  <div class="eyebrow">Don't lose your song</div>
+  <h2 id="save-heading">Keep a copy you control.</h2>
+  <div class="columns">
+   <div class="card"><h3>Save a Project ZIP</h3><p>Download a portable Music Project ZIP when you want a durable copy of the composition and settings. If your song uses separately imported WAV recordings, keep their companion Audio ZIP with the music project.</p><p class="small">This is the safest way to keep a copy outside your browser.</p></div>
+   <div class="card"><h3>Save to Browser</h3><p>Use <strong>More → Save to Browser</strong> for a convenient local session snapshot. <strong>Recover Session</strong> restores it in the same browser profile; <strong>Clear Saved Session</strong> removes that saved copy.</p><p class="small">Browser data can be cleared, so it shouldn't be your only backup.</p></div>
+  </div>
+ </section>
+
+ <section class="section" id="fonts" aria-labelledby="tips-heading">
+  <div class="eyebrow">Helpful answers</div>
+  <h2 id="tips-heading">A few things worth knowing.</h2>
+  <div class="columns">
+   <div class="wide-panel"><ul class="qa">
+    <li><strong>Do I need an AI assistant?</strong><p>No. You can write and edit SymphonyCSV files yourself. AI help is optional.</p></li>
+    <li><strong>Can AI help me compose?</strong><p>Yes. Give it the <a href="/help/specs/">official CSV specification</a> and a blank template, ask it to write a part in that exact format, then import the result into Studio to check it.</p></li>
+    <li><strong>Does Studio have a graphical note editor?</strong><p>Studio's composition workflow is CSV-first. You author or import the musical data, and Studio handles validation, playback, mixing and export.</p></li>
+   </ul></div>
+   <div class="wide-panel" id="effects"><ul class="qa">
+    <li><strong>What if my CSV won't import?</strong><p>Check that you chose the correct track type, kept the exact column names, and supplied the required musical data. Studio's validation feedback can help identify the problem.</p></li>
+    <li><strong>How do I choose an instrument sound?</strong><p>Studio plays musical tracks using SoundFonts. See <a href="#soundfonts">SoundFonts and VSTs explained</a> to learn how they work and what happens when you export MIDI to a DAW.</p></li>
+    <li><strong>Where can I find every CSV field?</strong><p>Open the <a href="/help/specs/">CSV format reference</a> for detailed column-by-column descriptions and examples, including <a href="/help/specs/ai/README.md">guidance for AI assistants</a>.</p></li>
+   </ul></div>
+  </div>
+ </section>
+ <div class="notice"><strong>Ready to hear what you've made?</strong> Open Studio, import your first composition, and press Play. <a href="/app/">Open App</a></div>
+</main>
+<footer><div class="footer-inner"><span>SymphonyCSV Studio · Make the demo. Hear the song. Share your music.</span><span><a href="/">Home</a><a href="/app/">Open App</a><a href="/help/specs/">CSV Formats</a><a href="/help/soundfonts/">SoundFont Credits</a></span></div></footer>
+</body>
+</html>

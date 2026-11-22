@@ -1,0 +1,14 @@
+SurfaceId,Articulation,VariantId,MidiNote,Bank,Program,IsDefault
+kick_1,,,48,0,0,true
+kick_1,,kick_right,49,0,0,false
+snare_1,,,50,0,0,true
+snare_1,,snare_alt,51,0,0,false
+hihat_1,closed,,52,0,0,true
+hihat_1,open,,53,0,0,true
+ride_1,,,54,0,0,true
+ride_1,,bell,55,0,0,false
+crash_1,,,58,0,0,true
+crash_1,,crash_right,59,0,0,false
+tom_1,,,61,0,0,true
+tom_2,,,62,0,0,true
+tom_3,,,63,0,0,true

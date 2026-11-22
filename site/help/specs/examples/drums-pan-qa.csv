@@ -1,0 +1,6 @@
+composition_title,composition_total_measures,composition_end_tick,tempo_bpm,time_signature,ticks_per_quarter,event_id,event_type,measure,absolute_tick,onset_tick_in_measure,timing_offset_ms,duration_ticks,surface_id,articulation,variant_id,velocity,note_off_velocity,note_off_method,choke_group,Pan_Position
+SymphonyCSV Stereo Pan QA,2,3840,92,4/4,480,D1,hit,1,0,0,,120,kick_1,,,95,,,,-100
+SymphonyCSV Stereo Pan QA,2,3840,92,4/4,480,D2,hit,1,0,0,,120,snare_1,,,95,,,,100
+SymphonyCSV Stereo Pan QA,2,3840,92,4/4,480,D3,hit,1,960,960,,120,hihat_1,closed,,80,,,,0
+SymphonyCSV Stereo Pan QA,2,3840,92,4/4,480,D4,hit,1,1440,1440,,120,crash_1,,,80,,,,
+SymphonyCSV Stereo Pan QA,2,3840,92,4/4,480,R2,rest,2,1920,0,,1920,,,,,,,,
