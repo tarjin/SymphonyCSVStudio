@@ -141,12 +141,13 @@ export default {
       const region = geo(cf.region, 100);
       const city = geo(cf.city, 100);
       const phase = env.PRODUCT_PHASE === "BETA" ? "BETA" : "LABS";
-      await env.DB.prepare(
+      const writeResult = await env.DB.prepare(
         "INSERT INTO feedback_submissions (submission_id, browser_id, score, explanation, submitted_at, product_phase, country_code, region, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
       ).bind(
         payload.submission_id, payload.browser_id, payload.score, checked.explanation,
         submittedAt, phase, country, region, city
       ).run();
+      if (!writeResult || writeResult.success !== true) throw new Error("D1 write not confirmed.");
       return reply({ ok: true }, 201, origin);
     } catch (_error) {
       // Never log survey text, browser identifiers, raw IP addresses or request bodies.
