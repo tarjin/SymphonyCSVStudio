@@ -67,7 +67,7 @@ export function activeAnnouncements(messages, now=new Date(), dismissedPins=new 
       // Notices retain their safety priority; active sponsors retain their original
       // placement; a reader may dismiss an editorial pin without hiding its message.
       const rank=item=>item.kind==='Important Notice'?0:item.kind==='Sponsored'?1:
-        item.pinned===true && !dismissedPins.has(item.id)?2:3;
+        item.pinned===true?(dismissedPins.has(item.id)?4:2):3;
       return rank(a)-rank(b)||b.published_at.localeCompare(a.published_at)||a.id.localeCompare(b.id);
     });
 }
