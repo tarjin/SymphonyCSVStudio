@@ -5,6 +5,7 @@
  */
 
 const READ_KEY = 'symphonycsv.studio.announcements.seen.v1';
+const DISMISSED_PINS_KEY = 'symphonycsv.studio.announcements.dismissed-pins.v1';
 const MAX_MESSAGES = 30;
 const KINDS = new Set(['LABS', 'Tip', 'Coming Soon', 'What’s New', 'Important Notice', 'Sponsored']);
 const MAX_SPONSOR_DAYS = 7;
@@ -40,9 +41,11 @@ function parseSponsorTimestamp(value) {
 }
 function normalizeSponsorship(message) {
   if (message.kind!=='Sponsored') {
-    if (['sponsor_name','sponsor_url','starts_at','ends_at','pinned','collapsed_by_default']
+    if (['sponsor_name','sponsor_url','starts_at','ends_at','collapsed_by_default']
         .some(key=>Object.hasOwn(message,key)))
       throw Error('Sponsorship properties are only valid for Sponsored entries');
+    if (Object.hasOwn(message,'pinned') && message.pinned!==true)
+      throw Error('Editorial pinned property must be true when present');
     return null;
   }
   if (message.pinned!==true || message.collapsed_by_default!==true ||
@@ -55,13 +58,16 @@ function normalizeSponsorship(message) {
   return {sponsor_name:message.sponsor_name.trim(),sponsor_url:message.sponsor_url,
     starts_at:message.starts_at,ends_at:message.ends_at,pinned:true,collapsed_by_default:true};
 }
-export function activeAnnouncements(messages, now=new Date()) {
+export function activeAnnouncements(messages, now=new Date(), dismissedPins=new Set()) {
   const instant=now instanceof Date?now.getTime():new Date(now).getTime();
   if (!Number.isFinite(instant)) throw Error('Invalid current time');
   return messages.filter(item => item.kind!=='Sponsored' ||
     (Date.parse(item.starts_at)<=instant && instant<Date.parse(item.ends_at)))
     .sort((a,b)=>{
-      const rank=item=>item.kind==='Important Notice'?0:item.kind==='Sponsored'?1:2;
+      // Notices retain their safety priority; active sponsors retain their original
+      // placement; a reader may dismiss an editorial pin without hiding its message.
+      const rank=item=>item.kind==='Important Notice'?0:item.kind==='Sponsored'?1:
+        item.pinned===true?(dismissedPins.has(item.id)?4:2):3;
       return rank(a)-rank(b)||b.published_at.localeCompare(a.published_at)||a.id.localeCompare(b.id);
     });
 }
@@ -88,6 +94,7 @@ export function normalizeAnnouncementsFeed(raw) {
   }
   const ids = new Set();
   const sponsorshipWindows=[];
+  let editorialPins=0;
   const messages = raw.messages.map(m => {
     if (!m || typeof m !== 'object' ||
         typeof m.id !== 'string' || !/^[a-z0-9][a-z0-9._-]{0,90}$/.test(m.id) || ids.has(m.id) ||
@@ -106,10 +113,13 @@ export function normalizeAnnouncementsFeed(raw) {
     const cleanBlocks = blocks.map(normalizeBlock);
     const sponsorship=normalizeSponsorship(m);
     if (sponsorship) sponsorshipWindows.push([Date.parse(sponsorship.starts_at),Date.parse(sponsorship.ends_at)]);
+    if (m.pinned===true && m.kind!=='Sponsored') editorialPins++;
     ids.add(m.id);
     return {...{id:m.id,kind:m.kind,published_at:m.published_at,title:m.title.trim(),blocks:cleanBlocks},
+      ...(m.pinned===true && m.kind!=='Sponsored'?{pinned:true}:{}),
       ...(sponsorship||{})};
   });
+  if (editorialPins>1) throw Error('Only one editorial announcement may be pinned');
   sponsorshipWindows.sort((a,b)=>a[0]-b[0]);
   for (let i=1;i<sponsorshipWindows.length;i++) {
     if (sponsorshipWindows[i][0]<sponsorshipWindows[i-1][1])
@@ -152,6 +162,13 @@ function getSeenIds() {
     const parsed = JSON.parse(localStorage.getItem(READ_KEY) || '[]');
     if (!Array.isArray(parsed)) return [];
     return parsed.filter(id => typeof id === 'string' && id.length < 100).slice(-150);
+  } catch { return []; }
+}
+function getDismissedPinIds() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(DISMISSED_PINS_KEY) || '[]');
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(id=>typeof id==='string' && id.length<100).slice(-150);
   } catch { return []; }
 }
 function rememberSeen(messages) {
@@ -241,7 +258,13 @@ export function mountAnnouncements({document:doc=document,fetchImpl=fetch,clock=
   const expanded=new Set();
   let hasOpened=false;
   let visibilityTimer=null;
-  function visible() {return activeAnnouncements(feed.messages,clock());}
+  const dismissedPins=new Set(getDismissedPinIds());
+  function visible() {return activeAnnouncements(feed.messages,clock(),dismissedPins);}
+  function dismissEditorialPin(id) {
+    dismissedPins.add(id);
+    try {localStorage.setItem(DISMISSED_PINS_KEY,JSON.stringify([...dismissedPins].slice(-150)));} catch {}
+    render();updateButton();
+  }
   function schedulePlacementUpdate() {
     const win=doc.defaultView;
     if (visibilityTimer!==null) win?.clearTimeout?.(visibilityTimer);
@@ -270,8 +293,10 @@ export function mountAnnouncements({document:doc=document,fetchImpl=fetch,clock=
     const seen=new Set(getSeenIds());
     for (const item of visible()) {
       const entry=doc.createElement('article');
+      const isEditorialPin=item.kind!=='Sponsored' && item.pinned===true && !dismissedPins.has(item.id);
       if (item.kind==='Sponsored') entry.className='scsv-announcement-entry scsv-announcement-sponsored';
-      if (item.kind!=='Sponsored') entry.className='scsv-announcement-entry';
+      if (item.kind!=='Sponsored') entry.className=isEditorialPin
+        ?'scsv-announcement-entry scsv-announcement-pinned':'scsv-announcement-entry';
       const head=doc.createElement('button');
       head.type='button';head.className='scsv-announcement-toggle';
       const bodyId=`scsv-announcement-body-${item.id}`;
@@ -285,7 +310,7 @@ export function mountAnnouncements({document:doc=document,fetchImpl=fetch,clock=
       const heading=doc.createElement('span');heading.className='scsv-announcement-heading';
       addText(doc,heading,'span','scsv-announcement-meta',item.kind==='Sponsored'
         ? `SPONSORED · ${item.sponsor_name} · ${displayDate(item.published_at)}`
-        : `${item.kind} · ${displayDate(item.published_at)}`);
+        : `${isEditorialPin?'PINNED · ':''}${item.kind} · ${displayDate(item.published_at)}`);
       addText(doc,heading,'span','scsv-announcement-title',item.title.replace(/Version 1\b/,'Version\u00a01'));
       head.append(heading);
       const unreadBadge=addText(doc,head,'span','scsv-announcement-new','NEW');
@@ -303,6 +328,11 @@ export function mountAnnouncements({document:doc=document,fetchImpl=fetch,clock=
         body.append(row);
       }
       const controls=doc.createElement('div');controls.className='scsv-announcement-actions';
+      if (isEditorialPin) {
+        const dismiss=addText(doc,controls,'button','scsv-announcement-dismiss-pin','Dismiss pin');
+        dismiss.type='button';
+        dismiss.addEventListener('click',()=>dismissEditorialPin(item.id));
+      }
       const copy=addText(doc,controls,'button','','Copy Announcement');
       copy.type='button';
       const feedback=addText(doc,controls,'span','scsv-announcement-copy-feedback','');
@@ -356,7 +386,9 @@ export function mountAnnouncements({document:doc=document,fetchImpl=fetch,clock=
     if (!hasOpened) {
       hasOpened=true;
       // A paid placement can be pinned first, but must NEVER auto-expand.
-      const firstEditorial=visible().find(item=>item.kind!=='Sponsored');
+      // Do not automatically expand a feedback invitation when Announcements opens.
+      const firstEditorial=visible().find(item=>item.kind!=='Sponsored' &&
+        !(item.pinned===true && !dismissedPins.has(item.id)));
       if (firstEditorial) expanded.add(firstEditorial.id);
     }
     markRead(visible().filter(item=>item.kind!=='Sponsored'&&expanded.has(item.id)));

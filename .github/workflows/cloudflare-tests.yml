@@ -8,6 +8,9 @@ on:
       - "site/feedback/**"
       - "tests/*worker*.test.mjs"
       - "tests/feedback.test.mjs"
+      - "tests/feedback_dashboard.test.mjs"
+      - "tests/announcements_nps_pin.test.mjs"
+      - "site/SymphonyCSV_Announcements*"
       - ".github/workflows/cloudflare-tests.yml"
   workflow_dispatch:
 
@@ -32,4 +35,15 @@ jobs:
             node --test tests/feedback.test.mjs
           else
             echo "NPS PR is staged separately."
+          fi
+      - name: Test staged NPS announcement pinning
+        run: |
+          if test -f tests/announcements_nps_pin.test.mjs; then
+            node --test tests/announcements_nps_pin.test.mjs
+          fi
+      - name: Test Cloudflare dashboard-ready NPS Worker
+        run: |
+          if test -f tests/feedback_dashboard.test.mjs; then
+            node --test tests/feedback_dashboard.test.mjs
+            node --check cloudflare/feedback-worker/dashboard-worker.js
           fi
