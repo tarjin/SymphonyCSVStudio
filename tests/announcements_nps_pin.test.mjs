@@ -81,7 +81,7 @@ test("original announcement source stays below 30-message feed limit", () => {
 
 test("built-in fallback includes exactly the deployed feed, including the pinned feedback link", async () => {
   const moduleText = await readFile(new URL("../site/SymphonyCSV_Announcements_v01.mjs", import.meta.url), "utf8");
-  const match = moduleText.match(/const OFFLINE_WELCOME = (\\{[^\\n]*\\});/);
+  const match = moduleText.match(/const OFFLINE_WELCOME = (\{[^\n]*\});/);
   assert.ok(match, "An embedded fallback feed should be present");
   const offline = JSON.parse(match[1]);
   assert.deepEqual(offline, raw);
@@ -93,5 +93,5 @@ test("built-in fallback includes exactly the deployed feed, including the pinned
 
 test("Studio requests the release-pinned Announcements module, bypassing stale browser copies", async () => {
   const html = await readFile(new URL("../site/app/index.html", import.meta.url), "utf8");
-  assert.match(html, /SymphonyCSV_Announcements_v01\\.mjs\\?v=labs-nps-20261123/);
+  assert.match(html, /SymphonyCSV_Announcements_v01\.mjs\?v=labs-nps-20261123/);
 });
