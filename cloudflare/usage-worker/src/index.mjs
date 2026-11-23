@@ -39,7 +39,7 @@ async function readSmallText(request) {
   const buffer = new Uint8Array(bytes);
   let offset = 0;
   for (const part of parts) { buffer.set(part, offset); offset += part.byteLength; }
-  return new TextDecoder("utf-8", { fatal: true }).decode(buffer);
+  return new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(buffer);
 }
 
 export default {
