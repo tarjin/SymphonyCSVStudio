@@ -148,3 +148,18 @@ test("POST rejects non-JSON content type", async () => {
   const response = await worker.fetch(request(validPayload(), {contentType:"text/plain"}), env());
   assert.equal(response.status, 415);
 });
+
+
+test("a failed D1 write must never return success", async () => {
+  const db = fakeDatabase();
+  const originalPrepare = db.prepare.bind(db);
+  db.prepare = sql => {
+    if (sql.startsWith("INSERT INTO feedback_submissions")) {
+      return { bind() { return { async run() { return { success: false }; } }; } };
+    }
+    return originalPrepare(sql);
+  };
+  const response = await worker.fetch(request(validPayload()), env(db));
+  assert.equal(response.status, 503);
+  assert.equal(db.rows.length, 0);
+});
