@@ -1,0 +1,30 @@
+name: Announcement feed checks
+
+on:
+  pull_request:
+    paths:
+      - "site/SymphonyCSV_Announcements.json"
+      - "site/SymphonyCSV_Announcements_v01.mjs"
+      - "site/app/index.html"
+      - "site/help/index.html"
+      - "tests/announcements_nps_pin.test.mjs"
+      - ".github/workflows/announcements-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-announcements:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check Announcements module syntax
+        run: node --check site/SymphonyCSV_Announcements_v01.mjs
+      - name: Test pinned NPS announcement and existing messages
+        run: node --test tests/announcements_nps_pin.test.mjs
