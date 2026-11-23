@@ -29,6 +29,29 @@ Run these steps from cloudflare/feedback-worker/:
 
 No Cloudflare management connection is available in this ChatGPT session. GitHub merging alone cannot provision a D1 database, configure Turnstile, or deploy a Worker.
 
+## Cloudflare dashboard (manual editor deployment)
+
+If the Worker and D1 database were created in the Cloudflare dashboard (instead of Wrangler),
+use the standalone **dashboard-worker.js** file in this directory. It contains both
+`site/feedback/validation.mjs` and `src/index.mjs` combined into one JavaScript module,
+because Cloudflare's in-browser single-file `worker.js` editor cannot resolve the repository-relative import.
+
+1. In Workers & Pages → `symphonycsv-feedback-api` → **Edit code**, select the active/latest editable version.
+2. Replace the entire Hello World `worker.js` with the complete contents of
+   `cloudflare/feedback-worker/dashboard-worker.js` from this branch.
+3. Confirm the code editor shows no problems, then **Deploy**.
+4. Test `https://symphonycsv-feedback-api.tarjin.workers.dev/health`; it should show
+   `{"ok":true,"service":"symphonycsv-feedback","databaseConfigured":true}`.
+5. Keep the D1 binding named `DB`, `ALLOWED_ORIGINS`, `PRODUCT_PHASE=LABS`,
+   `TURNSTILE_REQUIRED=true`, and encrypted `TURNSTILE_SECRET` configured under Settings.
+   **Never paste** the Turnstile secret into `worker.js` or GitHub.
+6. Continue to the end-to-end verification gate before setting the public site's feedback config
+   and publishing the NPS invitation.
+
+The dashboard-ready source is cross-checked against the canonical modular source in
+`tests/feedback_dashboard.test.mjs`. If the canonical sources change, regenerate the snapshot
+before deploying again; do not maintain two divergent security implementations.
+
 ## Verification / release gate
 
 - Run node --test tests/feedback.test.mjs from the repository root. The tests exercise the real validation module and Worker handler against a fake D1 database.
