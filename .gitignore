@@ -16,3 +16,9 @@ Thumbs.db
 site/**/*.test.js
 site/**/*.test.mjs
 site/**/.vite/
+
+# Private feedback Worker configuration and local Cloudflare state
+cloudflare/feedback-worker/wrangler.toml
+cloudflare/feedback-worker/.wrangler/
+**/.dev.vars
+**/.dev.vars.*
