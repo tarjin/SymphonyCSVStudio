@@ -79,7 +79,7 @@ async function limitedJson(request) {
   const combined = new Uint8Array(length);
   let offset = 0;
   for (const chunk of chunks) { combined.set(chunk, offset); offset += chunk.byteLength; }
-  const body = new TextDecoder("utf-8", { fatal: true }).decode(combined);
+  const body = new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(combined);
   return JSON.parse(body);
 }
 
