@@ -54,6 +54,8 @@ p{margin:0 0 16px}
 .steps li::before{content:'✓';position:absolute;left:0;top:0;color:var(--purple);font-weight:900}
 .paths{color:#eedaff;font-size:14px;font-weight:700;border-top:1px solid #4e3465;padding-top:17px;margin-top:19px}
 .small{font-size:14px;color:var(--muted)}
+.sample-list{columns:2;column-gap:32px;margin:0 0 20px;padding-left:23px;color:var(--muted)}
+.sample-list li{break-inside:avoid;padding:2px 0}
 .tagline{color:#edd7ff;font-weight:700;font-size:19px}
 .browse{display:flex;flex-wrap:wrap;gap:13px;margin-top:20px}
 .browse a{font-weight:750}
@@ -65,7 +67,7 @@ footer{border-top:1px solid var(--border);background:#180f24;padding:25px 28px;c
 .footer-inner{max-width:1104px;margin:auto;display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap}
 .footer-inner a{margin-left:12px}
 @media(max-width:960px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:1fr 1fr}}
-@media(max-width:690px){main{padding:0 18px 55px}.header-inner{padding:18px}.hero{padding:48px 0 38px}.section{padding-top:43px}.tiles,.grid-3,.columns{grid-template-columns:1fr}.nav{gap:13px}.brand{font-size:23px}.tile,.card,.wide-panel{padding:21px}}
+@media(max-width:690px){main{padding:0 18px 55px}.header-inner{padding:18px}.hero{padding:48px 0 38px}.section{padding-top:43px}.tiles,.grid-3,.columns{grid-template-columns:1fr}.nav{gap:13px}.brand{font-size:23px}.tile,.card,.wide-panel{padding:21px}.sample-list{columns:1}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
@@ -164,17 +166,27 @@ footer{border-top:1px solid var(--border);background:#180f24;padding:25px 28px;c
  <section class="section" id="samples" aria-labelledby="samples-heading">
   <div class="eyebrow">Music to explore</div>
   <h2 id="samples-heading">Sample Projects</h2>
-  <p class="intro">Explore real compositions and discover how they can grow into SymphonyCSV Studio projects. We'll add more music and downloadable arrangements here as LABS develops.</p>
+  <p class="intro">Looking for music to try? Download these original MIDI compositions, explore how they work, and use them as starting points for your own experiments in SymphonyCSV Studio.</p>
   <article class="wide-panel">
-   <div class="eyebrow">Sample 01 · Original MIDI available</div>
-   <h3>Icy Garden</h3>
-   <p>Composed by <strong>Roppy Chop Studios</strong>. We're starting with the creator's original MIDI, so you can hear the source composition and explore it in a MIDI-compatible application. We'll add our SymphonyCSV arrangement and additional tracks later this week.</p>
-   <p class="small"><strong>License:</strong> <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0 (public domain dedication)</a>. We credit Roppy Chop Studios with thanks for sharing the music.</p>
+   <div class="eyebrow">Starter MIDI collection · 7 compositions</div>
+   <h3>Original MIDI Album</h3>
+   <p>Seven MIDI compositions by <strong>Roppy Chop Studios</strong>, including the bonus piano piece <em>No One</em>. Choose a song, try it in Studio's MIDI Import workspace, and experiment with instruments and your own musical ideas.</p>
+   <p><strong>Included compositions:</strong></p>
+   <ul class="sample-list">
+    <li>Broken Arm</li>
+    <li>Casual Afternoon</li>
+    <li>Icy Garden</li>
+    <li>Journey Forgotten</li>
+    <li>No One <span class="small">(bonus piano composition)</span></li>
+    <li>Standardized Anxiety</li>
+    <li>Without Time</li>
+   </ul>
+   <p class="small"><strong>License:</strong> <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0 (public domain dedication)</a>. Credit to Roppy Chop Studios is appreciated but not required by the license.</p>
    <div class="hero-cta">
-    <a class="button" href="https://opengameart.org/sites/default/files/roppy-music-midi.zip">Download original MIDI archive (ZIP)</a>
+    <a class="button" href="https://opengameart.org/sites/default/files/roppy-music-midi.zip">Download 7 original MIDIs (ZIP)</a>
     <a class="button secondary" href="https://opengameart.org/content/original-midi-album" target="_blank" rel="noopener noreferrer">View original release and credits</a>
    </div>
-   <p class="small" style="margin-top:15px">The original artist's ZIP contains multiple MIDI compositions. Extract <code>Icy Garden.mid</code> from the archive. This is the unmodified source music, not a SymphonyCSV arrangement.</p>
+   <p class="small" style="margin-top:15px">Extract the ZIP and choose a <code>.mid</code> file to explore. These are the creator's original MIDI compositions, not pre-arranged SymphonyCSV Project ZIPs. MIDI import supports Pitched Tracks 1–2 and Drum Tracks 5–6; Guitar TAB Tracks 3–4 are not supported by MIDI import.</p>
   </article>
  </section>
 
