@@ -1,0 +1,35 @@
+name: Cloudflare service source tests
+
+on:
+  pull_request:
+    paths:
+      - "cloudflare/**"
+      - "site/**analytics**"
+      - "site/feedback/**"
+      - "tests/*worker*.test.mjs"
+      - "tests/feedback.test.mjs"
+      - ".github/workflows/cloudflare-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  node-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test aggregate usage Worker
+        run: node --test tests/usage-worker.test.mjs
+      - name: Test NPS Worker if included
+        run: |
+          if test -f tests/feedback.test.mjs; then
+            node --test tests/feedback.test.mjs
+          else
+            echo "NPS PR is staged separately."
+          fi
