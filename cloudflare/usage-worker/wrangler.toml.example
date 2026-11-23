@@ -1,0 +1,15 @@
+# Copy to wrangler.toml and replace the actual D1 database_id locally.
+# Do not commit account secrets or production IDs.
+name = "symphonycsv-usage-api"
+main = "src/index.mjs"
+compatibility_date = "2026-11-23"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGINS = "https://symphonycsvstudio.com,https://www.symphonycsvstudio.com"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "symphonycsv-usage"
+database_id = "REPLACE_WITH_ACTUAL_CLOUDFLARE_D1_DATABASE_ID"
+migrations_dir = "migrations"

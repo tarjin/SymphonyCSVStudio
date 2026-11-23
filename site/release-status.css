@@ -1,0 +1,51 @@
+/* One shared header wordmark for every public SymphonyCSV Studio page.
+   The release label is inside the title column, so it begins exactly
+   beneath the S in SymphonyCSV without offset hacks. */
+.scsv-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #f4eaff;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.scsv-wordmark:hover { color: #f4eaff; text-decoration: none; }
+.scsv-wordmark:focus-visible { outline: 3px solid #deb8ff; outline-offset: 4px; }
+.scsv-wordmark-clef {
+  display: inline-block;
+  flex: 0 0 25px;
+  color: #f4eaff;
+  font: 400 42px/1 Georgia, serif;
+  text-align: center;
+}
+.scsv-wordmark-copy {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.scsv-wordmark-title {
+  display: block;
+  color: #f4eaff;
+  font: 700 29px/1.1 Georgia, serif;
+  letter-spacing: -.5px;
+  white-space: nowrap;
+}
+.scsv-wordmark-title .scsv-wordmark-csv { color: #bc83f2; }
+.scsv-release-label {
+  display: block;
+  padding: 0;
+  margin: 6px 0 0;
+  min-height: 14px;
+  color: #c59aff;
+  font: 800 10px/14px Arial, Helvetica, sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@media (max-width:690px) {
+  .scsv-wordmark { gap: 8px; }
+  .scsv-wordmark-clef { flex-basis: 22px; font-size: 35px; }
+  .scsv-wordmark-title { font-size: 24px; }
+  .scsv-release-label { margin-top: 4px; font-size: 9px; letter-spacing: 1.6px; }
+}

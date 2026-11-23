@@ -17,6 +17,10 @@ site/**/*.test.js
 site/**/*.test.mjs
 site/**/.vite/
 
+# Private Cloudflare usage Worker settings and Wrangler development state
+cloudflare/usage-worker/wrangler.toml
+cloudflare/usage-worker/.wrangler/
+
 # Private feedback Worker configuration and local Cloudflare state
 cloudflare/feedback-worker/wrangler.toml
 cloudflare/feedback-worker/.wrangler/
