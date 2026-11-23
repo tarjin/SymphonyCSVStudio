@@ -8,6 +8,7 @@
   const token = config.siteToken;
   if (typeof token !== "string" || !/^[A-Za-z0-9_-]{12,80}$/.test(token)) return;
   const script = document.createElement("script");
+  script.type = "module";
   script.defer = true;
   script.src = "https://static.cloudflareinsights.com/beacon.min.js";
   script.setAttribute("data-cf-beacon", JSON.stringify({ token }));
