@@ -1,0 +1,24 @@
+/* SymphonyCSV Studio site-wide release-stage label.
+   Keep the visual treatment consistent across homepage, Studio and Help pages. */
+.scsv-brand-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+}
+.scsv-release-label {
+  display: block;
+  min-height: 14px;
+  color: #c59aff;
+  font: 800 10px/14px Arial, Helvetica, sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.scsv-brand-stack[data-mark="clef"] .scsv-release-label {padding-left:34px}
+.scsv-brand-stack[data-mark="note"] .scsv-release-label {padding-left:22px}
+@media (max-width:690px) {
+  .scsv-release-label {font-size:9px; letter-spacing:1.6px}
+  .scsv-brand-stack[data-mark="clef"] .scsv-release-label {padding-left:28px}
+}

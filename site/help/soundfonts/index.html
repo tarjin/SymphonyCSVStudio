@@ -12,9 +12,11 @@
 header{border-bottom:1px solid var(--border);background:#180f24;padding:20px max(18px,calc((100% - 1104px)/2))}nav{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}.brand{font-family:Georgia,serif;font-size:26px;text-decoration:none;color:var(--text);font-weight:bold}.brand span{color:var(--purple)}.navlinks{display:flex;gap:20px;flex-wrap:wrap}.navlinks a{text-decoration:none;font-weight:700}
 main{max-width:1160px;padding:60px 28px 82px;margin:auto}.eyebrow,.mini{color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;font-size:12px}h1,h2{font-family:Georgia,serif;line-height:1.2}h1{font-size:clamp(40px,5vw,62px);margin:13px 0 23px}h2{font-size:25px;margin:13px 0}.lead{font-size:20px;max-width:880px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px;margin-top:34px}.card{background:linear-gradient(145deg,#241932,#1b1327);border:1px solid var(--border);border-radius:16px;padding:25px}.card p{color:var(--muted)}.card ul{padding-left:21px;overflow-wrap:anywhere}.card li{margin-bottom:8px}.notice{border-left:4px solid var(--purple);background:#281b38;border-radius:10px;padding:22px;margin-top:30px;color:var(--muted)}.notice strong{color:var(--text)}footer{border-top:1px solid var(--border);background:#180f24;padding:23px 28px;color:var(--muted)}footer>div{max-width:1104px;margin:auto}@media(max-width:720px){.grid{grid-template-columns:1fr}main{padding:43px 18px}.card{padding:21px}header{padding:18px}}
 </style>
+<link rel="stylesheet" href="/release-status.css">
+<script defer src="/release-status.js"></script>
 </head>
 <body>
-<header><nav><a class="brand" href="/">Symphony<span>CSV</span> Studio</a><div class="navlinks"><a href="/help/">Help</a><a href="/help/#soundfonts">What is a SoundFont?</a><a href="/app/">Open App</a></div></nav></header>
+<header><nav><span class="scsv-brand-stack"><a class="brand" href="/">Symphony<span>CSV</span> Studio</a><span class="scsv-release-label" data-scv-release></span></span><div class="navlinks"><a href="/help/">Help</a><a href="/help/#soundfonts">What is a SoundFont?</a><a href="/app/">Open App</a></div></nav></header>
 <main>
 <div class="eyebrow">The sounds that come with Studio</div>
 <h1>Bundled SoundFonts: Credits &amp; Licenses</h1>
