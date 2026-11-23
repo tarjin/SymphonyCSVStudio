@@ -3,6 +3,28 @@
   "updated_at": "2026-11-23",
   "messages": [
     {
+      "id": "labs-nps-feedback-2026-11-23",
+      "kind": "LABS",
+      "published_at": "2026-11-23",
+      "title": "LABS Feedback — Tell Us What You Think",
+      "pinned": true,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Help shape the future of **SymphonyCSV Studio**! Answer two short questions about your experience and help us make the Studio better for musicians."
+        },
+        {
+          "type": "paragraph",
+          "text": "**No account required.** Your feedback helps guide our improvements as we work toward BETA."
+        },
+        {
+          "type": "link",
+          "label": "Give Feedback",
+          "href": "./feedback/"
+        }
+      ]
+    },
+    {
       "id": "labs-v1-welcome-2026-11-23",
       "kind": "LABS",
       "published_at": "2026-11-23",
