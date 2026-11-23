@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="color-scheme" content="dark">
+ <meta name="description" content="Share your SymphonyCSV Studio feedback in two quick questions. No account required.">
+ <title>Feedback | SymphonyCSV Studio</title>
+ <style>
+  :root{color-scheme:dark;--bg:#0d0916;--panel:#21172f;--border:#563b6e;--text:#f6eefe;--muted:#d4c1e2;--purple:#c59aff;--button:#7941ad;--error:#ffb5bb}
+  *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 8%,#301442 0,transparent 45%),var(--bg);color:var(--text);font:17px/1.65 Arial,Helvetica,sans-serif}
+  a{color:#deb8ff}a:focus-visible,button:focus-visible,textarea:focus-visible,input:focus-visible+span,summary:focus-visible{outline:3px solid #deb8ff;outline-offset:4px}
+  header{background:#180f24;border-bottom:1px solid var(--border)}.header-inner{max-width:1000px;margin:auto;padding:21px 26px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .brand{font:bold 26px Georgia,serif;letter-spacing:-.4px;color:var(--text);text-decoration:none}.brand span{color:var(--purple)}
+  .nav{display:flex;gap:20px}.nav a{font-weight:bold;text-decoration:none;font-size:15px}
+  main{max-width:900px;padding:65px 26px 84px;margin:auto}.eyebrow{font-size:12px;color:var(--purple);font-weight:800;letter-spacing:2px;text-transform:uppercase}
+  h1,h2{font-family:Georgia,serif;line-height:1.2}h1{font-size:clamp(38px,6vw,62px);margin:12px 0 15px}h2{font-size:26px}
+  .lead{color:var(--muted);font-size:20px;margin:0 0 35px}.panel{border:1px solid var(--border);border-radius:18px;background:linear-gradient(145deg,#251934,#1b1327);padding:30px;margin-top:24px}
+  fieldset{border:0;padding:0;margin:0 0 37px;min-width:0}legend{font-weight:800;font-size:20px;line-height:1.45;margin-bottom:17px}
+  .required{font-size:14px;color:var(--muted);font-weight:normal}.ratings{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:7px}
+  .rating{position:relative;min-width:0;cursor:pointer}.rating input{position:absolute;opacity:0;width:1px;height:1px}
+  .rating span{display:flex;justify-content:center;align-items:center;min-height:52px;border:1px solid #805f9c;border-radius:10px;background:#2b1c3a;color:var(--text);font-size:18px;font-weight:800}
+  .rating:hover span{background:#4b2a66}.rating input:checked+span{background:#8c50c1;border-color:#ddadff;color:#fff;box-shadow:inset 0 0 0 2px #d7a5ff}
+  .scale{display:flex;justify-content:space-between;gap:10px;margin-top:10px;color:var(--muted);font-size:14px}
+  textarea{display:block;width:100%;padding:17px;min-height:170px;border:1px solid #8766a3;border-radius:10px;background:#140e1f;color:var(--text);font:inherit;resize:vertical}textarea::placeholder{color:#bfa8d2}
+  .counter{font-size:14px;color:var(--muted);text-align:right;margin-top:8px}.error{color:var(--error);font-size:14px;font-weight:700;min-height:1.6em;margin:8px 0}
+  .action{background:var(--button);color:#fff;border:1px solid #b17de2;border-radius:11px;padding:14px 24px;min-height:52px;font-size:16px;font-weight:800;cursor:pointer}.action:hover:not(:disabled){background:#9253c8}
+  .action:disabled{opacity:.55;cursor:not-allowed}.service-message{color:var(--muted);font-size:14px;min-height:1.6em;margin-top:12px}
+  .privacy{margin-top:23px;padding:19px 22px;border-left:4px solid var(--purple);border-radius:10px;background:#291e39;color:#e5d2f3;font-size:14px}
+  .privacy p{margin:0 0 12px}.privacy p:last-child{margin-bottom:0}details{margin-top:22px;font-size:14px;color:var(--muted)}summary{color:var(--text);font-weight:700;cursor:pointer}
+  .identifier{overflow-wrap:anywhere}.text-button{background:transparent;color:#e6c5ff;text-decoration:underline;border:0;cursor:pointer;font:inherit;padding:7px 0}
+  .success{padding:28px;border:1px solid #926fba;border-radius:14px;background:#2b1d3b}.success:focus{outline:3px solid #deb8ff;outline-offset:4px}.hidden{display:none!important}
+  .turnstile-container{margin:18px 0;min-height:1px}footer{border-top:1px solid var(--border);background:#180f24;color:var(--muted);font-size:14px;padding:24px 26px;text-align:center}
+  @media(max-width:650px){main{padding:48px 18px 65px}.header-inner{padding:18px}.panel{padding:21px}.ratings{grid-template-columns:repeat(6,minmax(0,1fr))}.rating span{min-height:49px}.nav{gap:12px}}
+  @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+ </style>
+ <script src="./config.js" defer></script>
+ <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+<header><div class="header-inner"><a class="brand" href="/">Symphony<span>CSV</span> Studio</a><nav class="nav" aria-label="Main navigation"><a href="/help/">Help</a><a href="/app/">Open Studio</a></nav></div></header>
+<main>
+ <div class="eyebrow">SymphonyCSV Studio · LABS feedback</div>
+ <h1>Your feedback matters.</h1>
+ <p class="lead">Two questions. No account needed. Help us make better music software.</p>
+ <div class="panel">
+  <form id="feedback-form" method="post" action="#" novalidate>
+   <fieldset id="score-fieldset" aria-describedby="score-scale score-error">
+    <legend>1. How likely are you to recommend SymphonyCSV Studio to another musician? <span class="required">(Required)</span></legend>
+    <div class="ratings" role="group" aria-label="Recommendation rating, zero through ten">
+      <label class="rating"><input type="radio" name="score" value="0" required><span>0</span></label>
+      <label class="rating"><input type="radio" name="score" value="1" ><span>1</span></label>
+      <label class="rating"><input type="radio" name="score" value="2" ><span>2</span></label>
+      <label class="rating"><input type="radio" name="score" value="3" ><span>3</span></label>
+      <label class="rating"><input type="radio" name="score" value="4" ><span>4</span></label>
+      <label class="rating"><input type="radio" name="score" value="5" ><span>5</span></label>
+      <label class="rating"><input type="radio" name="score" value="6" ><span>6</span></label>
+      <label class="rating"><input type="radio" name="score" value="7" ><span>7</span></label>
+      <label class="rating"><input type="radio" name="score" value="8" ><span>8</span></label>
+      <label class="rating"><input type="radio" name="score" value="9" ><span>9</span></label>
+      <label class="rating"><input type="radio" name="score" value="10" ><span>10</span></label>
+    </div>
+    <div class="scale" id="score-scale"><span>0 — Not at all likely</span><span>10 — Extremely likely</span></div>
+    <p class="error" id="score-error" aria-live="polite"></p>
+   </fieldset>
+   <fieldset aria-describedby="explanation-counter explanation-error">
+    <legend>2. Why did you give that score? <span class="required">(Required, 15–2,000 characters)</span></legend>
+    <textarea id="explanation" name="explanation" rows="6" required aria-describedby="explanation-counter explanation-error" placeholder="Tell us what influenced your rating…"></textarea>
+    <div class="counter" id="explanation-counter" aria-live="polite">0 / 2,000 characters</div>
+    <p class="error" id="explanation-error" aria-live="polite"></p>
+   </fieldset>
+   <div class="turnstile-container" id="turnstile-container" aria-label="Spam prevention verification"></div>
+   <button type="submit" class="action" id="submit-button" disabled>Submit feedback</button>
+   <div id="service-message" class="service-message" role="status" aria-live="polite">Checking availability…</div>
+  </form>
+  <div id="success" class="success hidden" role="status" tabindex="-1">
+   <h2>Thank you!</h2><p>Your feedback helps us make SymphonyCSV Studio better.</p>
+   <a href="/app/">Return to Studio</a>
+  </div>
+ </div>
+ <div class="privacy">
+  <p><strong>Privacy:</strong> This page saves a random browser identifier on this device so we can group repeat feedback. When you submit, we send that identifier, your score, and your explanation to our Cloudflare feedback service, which also records the submission time and approximate country, region, and city when available.</p>
+  <p>We do not ask for your name, email, or music files, and we do not save your raw IP address in the feedback database. Clearing this site's stored data resets the identifier, but does not erase feedback already submitted.</p>
+  <details><summary>View or reset this browser's feedback identifier</summary>
+   <p>Your browser identifier: <code class="identifier" id="browser-id-display">Not available</code></p>
+   <button class="text-button" id="reset-id" type="button">Reset my feedback identifier</button>
+   <p>Resetting this identifier does not delete prior feedback on the server or any saved music projects.</p>
+  </details>
+ </div>
+</main>
+<footer>SymphonyCSV Studio · Make the demo. Hear the song. Share your music.</footer>
+</body>
+</html>
