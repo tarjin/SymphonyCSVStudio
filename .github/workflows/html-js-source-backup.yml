@@ -1,0 +1,62 @@
+name: Archive HTML and JavaScript source
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/html-js-source-backup.yml"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/html-js-source-backup.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  archive-html-js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact repository commit
+        uses: actions/checkout@v4
+      - name: Collect all tracked HTML and JavaScript files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, pathlib, shutil, hashlib, subprocess, json
+          src_paths=[os.fsdecode(x) for x in subprocess.check_output(['git','ls-files','-z']).split(b'\0') if x]
+          extensions={'.html','.htm','.js','.mjs','.cjs','.jsx'}
+          chosen=[pathlib.Path(p) for p in src_paths if pathlib.Path(p).suffix.lower() in extensions]
+          if not chosen:
+              raise SystemExit('No HTML/JavaScript files found.')
+          dest=pathlib.Path('html-js-snapshot')
+          checksums=[]
+          for rel in chosen:
+              if rel.is_absolute() or '..' in rel.parts or not rel.is_file():
+                  raise SystemExit(f'Invalid tracked code path: {rel}')
+              target=dest/rel
+              target.parent.mkdir(parents=True,exist_ok=True)
+              shutil.copyfile(rel,target)
+              sha=hashlib.sha256(target.read_bytes()).hexdigest()
+              checksums.append(f'{sha}  {rel.as_posix()}')
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          meta={
+              'source_repository':os.environ['GITHUB_REPOSITORY'],
+              'source_commit_sha':sha,
+              'description':'Exact tracked HTML and JavaScript source files; excludes non-code assets.',
+              'extensions':sorted(extensions),
+              'source_file_count':len(chosen),
+              'paths_preserved':True
+          }
+          (dest/'BACKUP_METADATA.json').write_text(json.dumps(meta,indent=2)+'\n',encoding='utf-8')
+          (dest/'FILE_SHA256.txt').write_text('\n'.join(checksums)+'\n',encoding='utf-8')
+          print(f'Archived {len(chosen)} tracked HTML/JavaScript files at {sha}')
+          PY
+      - name: Upload versioned ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: symphonycsv-public-html-js
+          path: html-js-snapshot/
+          retention-days: 7
+          if-no-files-found: error
