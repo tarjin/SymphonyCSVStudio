@@ -54,6 +54,15 @@ p{margin:0 0 16px}
 .steps li::before{content:'✓';position:absolute;left:0;top:0;color:var(--purple);font-weight:900}
 .paths{color:#eedaff;font-size:14px;font-weight:700;border-top:1px solid #4e3465;padding-top:17px;margin-top:19px}
 .small{font-size:14px;color:var(--muted)}
+.expression-table-scroll{max-width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:12px;margin:19px 0}
+.expression-table{width:100%;border-collapse:collapse;min-width:570px}
+.expression-table th,.expression-table td{padding:13px 17px;text-align:left;vertical-align:top;border-bottom:1px solid #4c315f}
+.expression-table thead th{background:#332144;color:#fff;font-size:14px}
+.expression-table tbody th{font-weight:800;width:35%;color:#f2e1ff}
+.expression-table tbody td{color:var(--muted)}
+.expression-table tr:last-child th,.expression-table tr:last-child td{border-bottom:0}
+.expression-table-scroll:focus-visible{outline:3px solid #deb8ff;outline-offset:4px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .sample-list{columns:2;column-gap:32px;margin:0 0 20px;padding-left:23px;color:var(--muted)}
 .sample-list li{break-inside:avoid;padding:2px 0}
 .tagline{color:#edd7ff;font-weight:700;font-size:19px}
@@ -85,6 +94,7 @@ footer{border-top:1px solid var(--border);background:#180f24;padding:25px 28px;c
    <a href="#samples">Sample Projects</a>
    <a href="#soundfonts">SoundFonts</a>
    <a href="/help/specs/">CSV Formats</a>
+   <a href="#expression">Performance</a>
    <a href="/help/soundfonts/">SoundFont Licenses</a>
    <a href="/feedback/">Feedback</a>
   </nav>
@@ -99,6 +109,7 @@ footer{border-top:1px solid var(--border);background:#180f24;padding:25px 28px;c
   <div class="hero-cta">
    <a class="button" href="/app/">Open App</a>
    <a class="button secondary" href="#start">How to get started</a>
+   <a class="button secondary" href="#expression">Explore performance controls</a>
    <a class="button secondary" href="/help/specs/downloads/SymphonyCSV_Official_Blank_Templates_RC1.zip" download>Download blank CSV templates</a>
   </div>
  </section>
@@ -114,6 +125,51 @@ footer{border-top:1px solid var(--border);background:#180f24;padding:25px 28px;c
    <div class="tile"><span class="number">04 · SHARE</span><h3>Make your demo</h3><p>Export a WAV or MP3 mix to share. Save a Project ZIP so you can return to your music later.</p></div>
   </div>
   <div class="notice"><strong>What is a SymphonyCSV file?</strong> It's a simple, readable way to describe what an instrument should play: notes, timing, and performance details in a CSV file. Studio reads the instructions and plays the music. The CSV is where you write or edit the composition; Studio is where you audition and mix it.</div>
+ </section>
+
+ <section class="section" id="expression" aria-labelledby="expression-heading">
+  <div class="eyebrow">Your music, your performance</div>
+  <h2 id="expression-heading">Compose the performance, not just the notes.</h2>
+  <p class="intro">SymphonyCSV Studio goes beyond entering pitches and rhythms. Author the timing, dynamics and stereo placement of individual notes, guitar strings and drum hits in readable CSV files. Write them yourself or compose with an AI assistant, then hear your arrangement before opening a traditional DAW.</p>
+  <div class="grid-3">
+   <article class="card">
+    <div class="mini">Tracks 1–2 · Piano Roll / Pitched</div>
+    <h3>Make every note expressive.</h3>
+    <p>Give each note its own pitch, onset, duration, velocity and stereo position. Create detailed piano parts, melodies, chords, basslines and synthesizer arrangements—not just blocks of notes on a grid.</p>
+    <a class="link" href="/help/specs/pitched.html">Explore pitched note controls</a>
+   </article>
+   <article class="card">
+    <div class="mini">Tracks 3–4 · Guitar TAB</div>
+    <h3>Shape the way strings are played.</h3>
+    <p>Specify strings and frets, whole-semitone tuning offsets, strum direction and spread, individual string velocities, string emphasis and independent stereo positions. The resulting performance has its own attack timing and dynamics.</p>
+    <a class="link" href="/help/specs/guitar-tab.html">Explore guitar performance controls</a>
+   </article>
+   <article class="card">
+    <div class="mini">Tracks 5–6 · Drums</div>
+    <h3>Program hits, not just patterns.</h3>
+    <p>Build acoustic and electronic drum parts with individual hit velocities, durations, optional microtiming offsets and stereo positions. Accents and timing variations are part of your authored rhythm.</p>
+    <a class="link" href="/help/specs/drums.html">Explore drum event controls</a>
+   </article>
+  </div>
+  <div class="wide-panel" id="expression-midi">
+   <h3>What travels into a MIDI export?</h3>
+   <p>All six musical tracks can export individual MIDI files. Studio writes the validated performance events—not a flattened audio recording—so you can continue producing the part in a DAW or inspect its notes in notation software.</p>
+   <div class="expression-table-scroll" role="region" tabindex="0" aria-label="MIDI export feature table">
+    <table class="expression-table">
+     <caption class="sr-only">How SymphonyCSV musical performance information is represented in exported MIDI</caption>
+     <thead><tr><th scope="col">Musical detail</th><th scope="col">How MIDI represents it</th></tr></thead>
+     <tbody>
+      <tr><th scope="row">Pitch and instrument hit</th><td>MIDI note number. Drums use the selected Studio kit's mapped note keys, which are not necessarily General MIDI drum keys.</td></tr>
+      <tr><th scope="row">Onset and duration</th><td>MIDI tick positions and note-off events. Strummed strings retain separate note attacks; drum microtiming is rounded to the nearest MIDI tick.</td></tr>
+      <tr><th scope="row">Individual velocity</th><td>Each performed note or drum hit carries its own validated MIDI note-on velocity (1–127), including the resulting TAB string emphasis.</td></tr>
+      <tr><th scope="row">Stereo position</th><td>Authored <code>Pan_Position</code> or per-string pan is converted to 7-bit MIDI CC10. Overlapping notes needing different positions are separated onto additional MIDI channels.</td></tr>
+     </tbody>
+    </table>
+   </div>
+   <p class="small"><strong>About MIDI panning:</strong> CC10 controls an entire MIDI channel, not an individual sounding note. Studio allocates separate channels where simultaneous notes need different positions. Unpanned exports retain their original MIDI behavior; when a file mixes explicitly panned and blank-pan events, blank/native SoundFont placement is approximated as MIDI center.</p>
+   <p class="small"><strong>For drum MIDI:</strong> Standard General MIDI guarantees percussion on channel 10 only. Independently panned overlapping drum hits may use other channels. In your DAW, route those channels to a multichannel drum sampler or configure the same kit on each channel to preserve both the intended sounds and spatial positions. MIDI software may interpret controllers differently.</p>
+   <p class="small"><strong>What MIDI does not include:</strong> Studio's SoundFont samples, chorus/delay/reverb, master processing and rendered audio are not embedded. Standard MIDI also cannot reconstruct TAB string/fret choices and other guitar-specific authoring instructions from the notes alone. <strong>Your CSV remains the source of truth.</strong> Export WAV or MP3 when you want the sound Studio actually rendered.</p>
+  </div>
  </section>
 
  <section class="section" id="soundfonts" aria-labelledby="soundfonts-heading">
