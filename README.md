@@ -20,7 +20,7 @@ The public credits and license notices belong in `site/help/soundfonts/`.
 
 ## Publish process
 
-1. Assemble the vetted static `site/` from the local RC1 staging site. Do not include temporary files, full source snapshots, or experiments.
+1. Assemble the vetted static `site/` from the local validated LABS staging site. Do not include temporary files, full source snapshots, or experiments.
 2. Confirm browser-only dependency loading, including Tone.js and default SoundFonts, works on a normal web host rather than just localhost/Vite.
 3. Upload the six curated SoundFonts as release assets, and verify licensing notices.
 4. Review the release branch and merge it to `main` once the build is complete.

@@ -1,6 +1,6 @@
-# SymphonyCSV Studio — LABS RC1 AI entry point
+# SymphonyCSV Studio — LABS AI entry point
 
-This documentation was generated after verifying exact headers against Checkpoint 072 (a45dad7), and successfully running the RC1 Rust/WASM panning test.
+This documentation was generated after verifying exact headers against Checkpoint 072 (a45dad7), and successfully running the LABS Rust/WASM panning test.
 
 - Piano Roll / Pitched, Tracks 1–2: [pitched.md](pitched.md), 86 current fields (85 legacy).
 - Guitar TAB, Tracks 3–4: [guitar-tab.md](guitar-tab.md), 135 current fields (129 legacy). Both are guitar tracks.
@@ -18,7 +18,7 @@ The SymphonyCSV musical CSV formats are openly documented and freely available f
 4. Respect human musical decisions. Do not invent notes, key, tempo, meter, instruments, licenses, or provenance.
 5. When adding authored panning, use whole integers -100 to 100; leave empty for SoundFont-native placement.
 6. Compute note times and whole-bar composition endings with code, not with language-model estimates.
-7. Show changes and run the RC1 validator; a plausible CSV is not necessarily an accepted CSV.
+7. Show changes and run the LABS validator; a plausible CSV is not necessarily an accepted CSV.
 8. Treat descriptions for uncommon fields as documented guidance rather than a guarantee of accepted enumerations.
 
 The JSON field dictionaries are in ../schemas/ and accepted QA examples in ../examples/.

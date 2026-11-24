@@ -1,6 +1,6 @@
-# Piano Roll / Pitched CSV — SymphonyCSV Studio RC1
+# Piano Roll / Pitched CSV — SymphonyCSV Studio LABS
 
-Tracks 1–2; exact RC1 header count: 86. The older 85-column format remains accepted.
+Tracks 1–2; exact LABS header count: 86. The older 85-column format remains accepted.
 
 ## Authoring rules
 
@@ -18,7 +18,7 @@ When using Studio's MIDI Import workspace, MIDI channel CC10 (0 left, 64 centre,
 
 This is a per-event snapshot, not a continuous MIDI controller automation lane. Mid-note pan sweeps are not reproduced and generate an import warning. Equal-tick ordering is deterministic by source track and event sequence. Other continuous controllers and original MIDI programs do not become Studio note events. The separate `cc10_pan` controller field, if present in the Pitched schema, is not populated redundantly by the importer.
 
-## Exact RC1 CSV header
+## Exact LABS CSV header
 
 ```csv
 staff,measure,count_aloud,running_time,pitch_label,duration_beats,duration_ms,velocity,tempo_bpm,time_signature,key_signature,instrument,event_type,event_id,onset_beat_in_measure,onset_ms,end_ms,midi_pitch,velocity_description,written_pitch,pitch_spelling_source,clef,clef_sign,clef_line,voice,notated_type,notated_duration_beats,notated_dots,tie_start,tie_stop,articulation,beam,midi_file_format,ticks_per_quarter,midi_track,midi_track_name,midi_channel,midi_program,program_change_emit,program_source,midi_bank_msb,midi_bank_lsb,note_off_method,note_off_velocity,absolute_tick,onset_tick_in_measure,duration_ticks,end_tick,tempo_us_per_quarter,tempo_beat_unit,pitch_octave_convention,tick_rounding_policy,same_tick_event_order,time_signature_num,time_signature_den,key_signature_fifths,key_signature_mode,controller_number,controller_value,cc1_modulation,cc2_breath,cc7_channel_volume,cc10_pan,cc11_expression,cc64_sustain,cc91_reverb_send,cc93_chorus_send,pitch_bend,channel_aftertouch,poly_aftertouch,sysex_payload,controller_event_policy,composition_title,composer,composition_total_measures,composition_end_tick,composition_duration,lyric,marker,source_note_data,source_clef,source_key_signature,source_instrument,source_license,source_url,Pan_Position
@@ -796,7 +796,7 @@ Type: Integer. Responsibility: Composer / performer. Requirement: Optional stere
 
 Meaning: Places this musical note or drum hit in the stereo field; each event can be positioned independently.
 
-Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.
+Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.
 
 Blank meaning: No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.
 
@@ -805,6 +805,6 @@ Example: −40, 0, 70, or blank
 
 ## Source and compatibility
 
-Verified against RC1 fixture: tests/fixtures/SymphonyCSV_Pitched_Pan_QA_2Measures_86col.csv. Legacy order verified against Track_01_A_Criminal_Mind_Piano.csv.
+Verified against LABS fixture: tests/fixtures/SymphonyCSV_Pitched_Pan_QA_2Measures_86col.csv. Legacy order verified against Track_01_A_Criminal_Mind_Piano.csv.
 
-Descriptions inherited from earlier dictionary should be treated as guidance wherever not specifically proven by RC1 integration tests.
+Descriptions inherited from earlier dictionary should be treated as guidance wherever not specifically proven by LABS integration tests.
