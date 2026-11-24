@@ -1,4 +1,6 @@
-// SymphonyCSV LABS Drum MIDI converter. Authoritative 20-column Rust/WASM schema.
+import { midiCc10ToPanPosition } from './midi-core.mjs';
+
+// SymphonyCSV LABS Drum MIDI converter. Authoritative 21-column RC1 schema.
 // GM-to-musical-surface mapping is intentionally conservative: unsupported note
 // numbers are errors, never discarded or silently mapped to the wrong sound.
 export const DRUM_COLUMNS = Object.freeze([
@@ -6,7 +8,7 @@ export const DRUM_COLUMNS = Object.freeze([
   'tempo_bpm','time_signature','ticks_per_quarter','event_id','event_type',
   'measure','absolute_tick','onset_tick_in_measure','timing_offset_ms',
   'duration_ticks','surface_id','articulation','variant_id','velocity',
-  'note_off_velocity','note_off_method','choke_group'
+  'note_off_velocity','note_off_method','choke_group','Pan_Position'
 ]);
 
 // [surface ID, articulation]. Exact target-kit mapping is checked at runtime
@@ -88,7 +90,8 @@ export function convertDrumsToCsv(prepared, profile) {
     const record={...meta,event_id:`T${target}H${String(++next).padStart(6,'0')}`,
       event_type:'hit',measure,absolute_tick:n.startTick,
       onset_tick_in_measure:n.startTick%midi.ticksPerMeasure,
-      duration_ticks:duration,...part,velocity:n.velocity};
+      duration_ticks:duration,...part,velocity:n.velocity,
+      Pan_Position:n.panCc10===null?'':midiCc10ToPanPosition(n.panCc10)};
     rows.push(record);byMeasure.set(measure,true);
   }
   for(let measure=1;measure<=totalMeasures;measure++){
