@@ -3,6 +3,13 @@
 import { PITCHED_COLUMNS, REFERENCE_FIELDS } from './pitched-schema.mjs';
 
 const need = (ok, reason) => { if (!ok) throw new Error(reason); };
+// MIDI CC10 has 64 as centre and asymmetric 0..64 / 64..127 intervals.
+// SymphonyCSV pan is a whole integer in [-100, 100]; blank means no CC10.
+export const midiCc10ToPanPosition = value => {
+  need(Number.isInteger(value) && value >= 0 && value <= 127, 'Invalid MIDI CC10 pan value.');
+  return value <= 64 ? Math.round((value - 64) * 100 / 64)
+    : Math.round((value - 64) * 100 / 63);
+};
 const u16 = (data, p) => data[p] * 256 + data[p+1];
 const u32 = (data, p) => ((data[p] * 0x1000000) + (data[p+1] << 16) + (data[p+2] << 8) + data[p+3]) >>> 0;
 const ascii = (data, p, n) => Array.from(data.subarray(p,p+n), x=>String.fromCharCode(x)).join('');
@@ -29,13 +36,13 @@ export function readMidi(bytes) {
   need(trackCount>=1 && trackCount<=256,'Invalid MIDI track count.');
   need(format!==0 || trackCount===1,'Format 0 must contain exactly one track.');
   need(!(division&0x8000) && division>0,'SMPTE time division is not yet supported.');
-  const ppq=division,tracks=[],notes=[],tempos=[],meters=[],keys=[],warnings=[],pairErrors=[];
+  const ppq=division,tracks=[],notes=[],tempos=[],meters=[],keys=[],warnings=[],pairErrors=[],panEvents=[];
   let cursor=8+headerSize;
   for(let track=0;track<trackCount;track++){
     need(cursor+8<=data.length && ascii(data,cursor,4)==='MTrk',`MIDI track ${track} header missing.`);
     const size=u32(data,cursor+4),end=cursor+8+size;
     need(end<=data.length,`MIDI track ${track} extends past end of file.`);
-    let pos=cursor+8,tick=0,running=0,trackName='',endTrackTick=null;
+    let pos=cursor+8,tick=0,running=0,trackName='',endTrackTick=null,eventOrder=0;
     const pending=new Map(), programs=Array(16).fill(0), channels=new Set(), trackNotes=[];
     const readV=()=>{let n=0;for(let i=0;i<4;i++){
       need(pos<end,'Truncated MIDI variable-length quantity.');const c=data[pos++];n=n*128+(c&127);
@@ -44,6 +51,7 @@ export function readMidi(bytes) {
     const consume=n=>{need(n>=0 && pos+n<=end,'Truncated MIDI event.');const part=data.subarray(pos,pos+n);pos+=n;return part;};
     while(pos<end){
       tick+=readV();need(Number.isSafeInteger(tick),'MIDI tick exceeds safe integer range.');
+      const order=eventOrder++;
       need(pos<end,'Missing MIDI status/event.');
       let status=data[pos],firstData=null;
       if(status&0x80){pos++;}else{need(running>=0x80 && running<0xF0,'Invalid MIDI running status.');status=running;firstData=data[pos++];}
@@ -68,7 +76,7 @@ export function readMidi(bytes) {
       if(type===0xC0)programs[channel]=a;
       if(type===0x90 && b>0){
         const key=channel+':'+a,queue=pending.get(key)||[];
-        queue.push({track,channel,pitch:a,velocity:b,startTick:tick,program:programs[channel]});pending.set(key,queue);
+        queue.push({track,channel,pitch:a,velocity:b,startTick:tick,startOrder:order,program:programs[channel]});pending.set(key,queue);
       }else if(type===0x80 || (type===0x90 && b===0)){
         const key=channel+':'+a,queue=pending.get(key);
         if(!queue?.length){const e=`Track ${track}, channel ${channel+1}, tick ${tick}: unmatched note-off ${a}.`;warnings.push(e);pairErrors.push(e);continue;}
@@ -78,8 +86,12 @@ export function readMidi(bytes) {
         if(tick<=begin.startTick){const e=`Track ${track}, tick ${tick}: zero-length note ${a} excluded.`;warnings.push(e);pairErrors.push(e);continue;}
         trackNotes.push({...begin,endTick:tick,durationTicks:tick-begin.startTick,noteOffMethod:type===0x80?'note_off':'note_on_velocity_zero',noteOffVelocity:b});
       }else if(type===0xB0 || type===0xE0 || type===0xA0 || type===0xD0){
-        // Preserve no unsupported CC/pitch bend in a misleading note-only CSV.
-        if(type===0xB0 || type===0xE0) warnings.push(`Track ${track}: controller or pitch-bend data needs separate import support.`);
+        // Channel CC10 is sampled at each note-on, not copied as continuous automation.
+        // CC121 (Reset All Controllers) restores the MIDI centre position.
+        if(type===0xB0 && (a===10 || a===121))
+          panEvents.push({track,tick,order,channel,value:a===121?64:b});
+        else if(type===0xB0 || type===0xE0)
+          warnings.push(`Track ${track}: unsupported MIDI controller or pitch-bend is not converted.`);
       }
     }
     for(const queue of pending.values())for(const n of queue){const e=`Track ${track}, channel ${n.channel+1}: unterminated note ${n.pitch} at tick ${n.startTick}.`;warnings.push(e);pairErrors.push(e);}
@@ -89,6 +101,21 @@ export function readMidi(bytes) {
     cursor=end;
   }
   need(cursor===data.length,'Extra bytes after MIDI tracks.');
+  // MIDI channel controllers are shared across tracks. Resolve their state in
+  // chronological order, not in the order the file's MTrk chunks were parsed.
+  // When simultaneous events occur on different tracks, use source track order
+  // as a deterministic tie-breaker; within each track, preserve event order.
+  const timeline=[...panEvents.map(e=>({...e,kind:'pan'})),
+    ...notes.map(note=>({kind:'note',tick:note.startTick,track:note.track,
+      order:note.startOrder,channel:note.channel,note}))]
+    .sort((a,b)=>a.tick-b.tick||a.track-b.track||a.order-b.order);
+  const channelPan=Array(16).fill(null);
+  for(const event of timeline){
+    if(event.kind==='pan')channelPan[event.channel]=event.value;
+    else event.note.panCc10=channelPan[event.channel];
+  }
+  if(panEvents.some(e=>notes.some(n=>n.channel===e.channel && n.startTick<e.tick && e.tick<n.endTick)))
+    warnings.push('MIDI pan changes during sustained notes cannot be reproduced: CC10 is sampled at each note onset.');
   const unique=(items,cb)=>items.reduce((a,x)=>a.some(y=>cb(x)===cb(y))?a:[...a,x],[]);
   const uniqueTempos=unique(tempos,t=>Math.round(t.microsecondsPerQuarter));
   const uniqueMeters=unique(meters,t=>t.numerator+'/'+t.denominator);
@@ -172,6 +199,7 @@ export function convertPitchedToCsv(prepared){
       duration_beats:number(n.durationTicks/midi.ppq),duration_ms:endMs-startMs,velocity:n.velocity,tempo_bpm:number(tempoBpm),time_signature:midi.timeSignature,
       instrument:prepared.target===1?'Piano':'Strings',event_type:'note',event_id:`N${String(index+1).padStart(5,'0')}`,onset_beat_in_measure:number(1+offset/midi.ppq),onset_ms:startMs,end_ms:endMs,midi_pitch:n.pitch,
       pitch_spelling_source:'MIDI pitch (enharmonic spelling unavailable)',
+      Pan_Position:n.panCc10===null ? '' : midiCc10ToPanPosition(n.panCc10),
       // A Piano Roll reduction is a NEW single-voice performance, not an orchestration-preserving MIDI import.
       // Studio owns SoundFont choice. Do not carry source channel / instrument program through to playback or export.
       midi_file_format:midi.format,ticks_per_quarter:midi.ppq,midi_track:0,
@@ -181,7 +209,7 @@ export function convertPitchedToCsv(prepared){
       absolute_tick:n.startTick,onset_tick_in_measure:offset,duration_ticks:n.durationTicks,end_tick:n.endTick,
       tempo_us_per_quarter:Math.round(60000000/tempoBpm),tempo_beat_unit:'quarter',pitch_octave_convention:'C4=60',
       tick_rounding_policy:'retain source MIDI ticks; milliseconds rounded to nearest',same_tick_event_order:'note_off_before_note_on',
-      time_signature_num:midi.numerator,time_signature_den:midi.denominator,controller_event_policy:'blank = emit no event; unsupported MIDI controllers not included',
+      time_signature_num:midi.numerator,time_signature_den:midi.denominator,controller_event_policy:'MIDI CC10/CC121 sampled at note onset into Pan_Position; other controllers not imported',
       composition_title:title,composition_total_measures:totalMeasures,composition_end_tick:endTick,composition_duration:fmt(durationSeconds),
       source_note_data:part.key==='__ALL_NOTES__'
         ? 'All MIDI note events merged into one Piano Roll part, with original instrument/channel/program assignments discarded. Includes MIDI percussion as pitched notes. Original tempo/meter can be reviewed or overridden. Unsupported controllers are not converted.'
@@ -196,5 +224,5 @@ export function convertPitchedToCsv(prepared){
 export function drumEventPreview(prepared){
   need(prepared.kind==='drum','Select a drum track destination.');
   return prepared.source.map(n=>({tick:n.startTick,endTick:n.endTick,measure:Math.floor(n.startTick/prepared.midi.ticksPerMeasure)+1,
-    midiPitch:n.pitch,gmSurface:gmDrumName[n.pitch]||'Unmapped percussion note',velocity:n.velocity,channel:n.channel+1}));
+    midiPitch:n.pitch,gmSurface:gmDrumName[n.pitch]||'Unmapped percussion note',velocity:n.velocity,channel:n.channel+1,panPosition:n.panCc10===null?'':midiCc10ToPanPosition(n.panCc10)}));
 }
