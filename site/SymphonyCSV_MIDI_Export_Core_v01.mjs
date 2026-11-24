@@ -54,7 +54,7 @@ function project(slot, track, settings) {
   let records, timingErrorMs = 0;
   if (slot <= 2) {
     if (!Array.isArray(track.notes)) throw Error('Pitched track lacks validated WASM notes.');
-    records = track.notes.map(n => ({midi:n.midi, velocity:n.velocity, onsetTick:n.onsetTick, durationTicks:n.durationTicks}));
+    records = track.notes.map(n => ({midi:n.midi, velocity:n.velocity, onsetTick:n.onsetTick, durationTicks:n.durationTicks, panPosition:n.panPosition ?? null}));
   } else if (slot <= 4) {
     if (!Array.isArray(track.schedule?.events)) throw Error('TAB track lacks WASM note schedule.');
     if (track.schedule.ticksPerQuarter !== settings.ticksPerQuarter ||
@@ -81,7 +81,7 @@ function project(slot, track, settings) {
       const onsetTick = Math.round(e.at / msPerTick);
       const error = Math.abs(onsetTick * msPerTick - e.at);
       timingErrorMs = Math.max(timingErrorMs, error);
-      return {midi:e.midi, velocity:e.velocity, onsetTick, durationTicks:e.duration_ticks};
+      return {midi:e.midi, velocity:e.velocity, onsetTick, durationTicks:e.duration_ticks, panPosition:e.panPosition ?? null};
     });
   }
   return {records, timingErrorMs};
@@ -96,7 +96,7 @@ export function prepareSymphonyCSVTrackExport(session, slot) {
   const channel = slot >= 5 ? 9 : 0;  // channel 10 is percussion in General MIDI convention
   const title = `Track ${String(slot).padStart(2,'0')} - ${type}`;
   const keys = slot <= 4 ? readKeySignature(track) : {};
-  const panEncoded = slot >= 3 && slot <= 4 && records.some(n => n.panPosition != null);
+  const panEncoded = records.some(n => n.panPosition != null);
   const bytes = encodeSymphonyCSVTrackMidi({
     ...settings, notes:records, channel, trackName:title, ...keys
   });
@@ -134,7 +134,7 @@ export function makeMidiSidecar(exported, hash, timestamp) {
     `Source CSV: ${exported.sourceFilename}`,
     `Exported events: ${exported.noteCount}`,
     exported.panEncoded
-      ? `Base MIDI channel (1-based): ${exported.channel+1}; overlapping TAB pans may use additional melodic channels.`
+      ? `Base MIDI channel (1-based): ${exported.channel+1}; pan-isolated notes may use additional channels.`
       : `MIDI channel (1-based): ${exported.channel+1}`,
     `Tempo: ${s.tempoUsPerQuarter} microseconds per quarter note`,
     `Time signature: ${s.timeSignature}`,
@@ -153,13 +153,25 @@ export function makeMidiSidecar(exported, hash, timestamp) {
     `Max timing-offset quantization error: ${exported.timingErrorMs.toFixed(3)} ms`,
     ''
   );
-  if (exported.panEncoded) lines.push(
-    'TAB stereo: per-event/per-string pan positions are encoded as MIDI CC10.',
-    'Overlapping notes with different pans use separate melodic MIDI channels.',
-    'MIDI CC10 has 7-bit pan resolution; blank SoundFont pan defaults to center.',
-    'In a DAW, preserve MIDI channels and assign the intended instrument to all used channels.',
-    ''
-  );
+  if (exported.panEncoded) {
+    lines.push(
+      exported.slot <= 2
+        ? 'Pitched stereo: per-note CSV pan positions are encoded as MIDI CC10.'
+        : exported.slot <= 4
+          ? 'TAB stereo: per-event/per-string pan positions are encoded as MIDI CC10.'
+          : 'Drums stereo: per-hit CSV pan positions are encoded as MIDI CC10.',
+      'Overlapping notes with different pans use separate MIDI channels.',
+      'MIDI CC10 has 7-bit pan resolution; blank SoundFont pan defaults to center.',
+      'In a DAW, preserve MIDI channels and assign the intended instrument to all used channels.'
+    );
+    if (exported.slot >= 5) lines.push(
+      'Drum channel 10 is preferred; simultaneous independent hits may use channels 1-9 and 11-16.',
+      'General MIDI only guarantees percussion sounds on channel 10.',
+      'To preserve the drum sounds AND per-hit panning, route all used channels',
+      'to a multichannel drum sampler or configure the same kit on each channel.'
+    );
+    lines.push('');
+  }
   lines.push(
     'REVIEW',
     'Import the MIDI into MuseScore or a DAW to inspect its measures and notes.',
