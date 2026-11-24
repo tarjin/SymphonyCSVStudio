@@ -1,0 +1,37 @@
+name: TAB MIDI export and Project ZIP checks
+
+on:
+  pull_request:
+    paths:
+      - "site/SymphonyCSV_MIDI_Export_Core_v01.mjs"
+      - "site/SymphonyCSV_MIDI_SMF_v02.mjs"
+      - "site/SymphonyCSV_Project_*.mjs"
+      - "site/SymphonyCSV_Studio_MIDI_Import_Bridge_v01.js"
+      - "site/help/index.html"
+      - "site/help/specs/guitar-tab.html"
+      - "tests/tab_midi_project_export.test.mjs"
+      - ".github/workflows/tab-midi-export-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-tab-midi-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check MIDI and Project module syntax
+        run: |
+          node --check site/SymphonyCSV_MIDI_Export_Core_v01.mjs
+          node --check site/SymphonyCSV_MIDI_SMF_v02.mjs
+          node --check site/SymphonyCSV_Project_Save_UI_v01.mjs
+          node --check site/SymphonyCSV_Project_ZIP_Writer_v01.mjs
+          node --check site/SymphonyCSV_Project_ZIP_Reader_v01.mjs
+      - name: Verify TAB MIDI and CSV-authoritative Project ZIP behaviour
+        run: node --test tests/tab_midi_project_export.test.mjs
