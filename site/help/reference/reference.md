@@ -210,7 +210,7 @@ SymphonyCSV uses distinct structured text formats rather than a single universal
 | Guitar TAB | 135 columns              | 129           | A string-oriented performance event; multiple strings may participate. |
 | Drums      | 21 columns               | 20            | One strike per row; simultaneous strikes use multiple rows.            |
 
-The newer widths add event-level spatial information. Earlier widths were accepted in RC1; use the current templates for new material and recheck legacy compatibility for a particular build. The column order, spelling, accepted values, types and defaults are part of the specification. Never append a field just because an AI invented a plausible name.
+The newer widths add event-level spatial information. Earlier widths were accepted in LABS; use the current templates for new material and recheck legacy compatibility for a particular build. The column order, spelling, accepted values, types and defaults are part of the specification. Never append a field just because an AI invented a plausible name.
 
 ### Canonical column references
 
@@ -226,7 +226,7 @@ All string, stroke and expression fields.
 
 All percussion strike fields and mappings.
 
-### [Official blank templates](https://symphonycsvstudio.com/help/specs/downloads/SymphonyCSV_Official_Blank_Templates_RC1.zip)
+### [Official blank templates](https://symphonycsvstudio.com/help/specs/downloads/SymphonyCSV_Official_Blank_Templates_LABS.zip)
 
 Header-only ZIP: add valid music data before import.
 
