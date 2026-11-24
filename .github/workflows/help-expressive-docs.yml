@@ -1,0 +1,29 @@
+name: Expressive performance Help documentation checks
+
+on:
+  pull_request:
+    paths:
+      - "site/help/**"
+      - "tests/help_expressive_performance_docs.test.mjs"
+      - ".github/workflows/help-expressive-docs.yml"
+  push:
+    branches: [main]
+    paths:
+      - "site/help/**"
+      - "tests/help_expressive_performance_docs.test.mjs"
+      - ".github/workflows/help-expressive-docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  help-expression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate expressive performance help content
+        run: node --test tests/help_expressive_performance_docs.test.mjs
