@@ -2,13 +2,13 @@
   "title": "Guitar TAB CSV",
   "format": "guitar-tab",
   "applicable_tracks": "Tracks 3–4",
-  "release": "LABS RC1 / Checkpoint 072",
+  "release": "LABS / Checkpoint 072",
   "checkpoint": "a45dad7",
   "header_count": 135,
   "legacy_header_count": 129,
   "header_order_verified": true,
   "header_source": "tests/fixtures/SymphonyCSV_TAB_SixString_Pan_QA_135col.csv",
-  "documented_semantics": "Field meanings based on 2026-11-19 developer dictionary, with RC1 panning fields verified by current integration tests. Runtime validator determines actual acceptance.",
+  "documented_semantics": "Field meanings based on 2026-11-19 developer dictionary, with LABS panning fields verified by current integration tests. Runtime validator determines actual acceptance.",
   "headers": [
     "staff",
     "measure",
@@ -1573,7 +1573,7 @@
       "requirement": "Optional stereo placement",
       "section": "Stereo placement",
       "description": "Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.",
-      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.",
+      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.",
       "blank_means": "No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.",
       "example": "−100 for a left-panned string, 100 for a right-panned string, or blank",
       "position": 130
@@ -1585,7 +1585,7 @@
       "requirement": "Optional stereo placement",
       "section": "Stereo placement",
       "description": "Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.",
-      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.",
+      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.",
       "blank_means": "No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.",
       "example": "−100 for a left-panned string, 100 for a right-panned string, or blank",
       "position": 131
@@ -1597,7 +1597,7 @@
       "requirement": "Optional stereo placement",
       "section": "Stereo placement",
       "description": "Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.",
-      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.",
+      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.",
       "blank_means": "No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.",
       "example": "−100 for a left-panned string, 100 for a right-panned string, or blank",
       "position": 132
@@ -1609,7 +1609,7 @@
       "requirement": "Optional stereo placement",
       "section": "Stereo placement",
       "description": "Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.",
-      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.",
+      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.",
       "blank_means": "No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.",
       "example": "−100 for a left-panned string, 100 for a right-panned string, or blank",
       "position": 133
@@ -1621,7 +1621,7 @@
       "requirement": "Optional stereo placement",
       "section": "Stereo placement",
       "description": "Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.",
-      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.",
+      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.",
       "blank_means": "No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.",
       "example": "−100 for a left-panned string, 100 for a right-panned string, or blank",
       "position": 134
@@ -1633,7 +1633,7 @@
       "requirement": "Optional stereo placement",
       "section": "Stereo placement",
       "description": "Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.",
-      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.",
+      "accepted_values_and_units": "Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.",
       "blank_means": "No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.",
       "example": "−100 for a left-panned string, 100 for a right-panned string, or blank",
       "position": 135

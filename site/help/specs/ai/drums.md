@@ -1,6 +1,6 @@
-# Drums CSV — SymphonyCSV Studio RC1
+# Drums CSV — SymphonyCSV Studio LABS
 
-Tracks 5–6; exact RC1 header count: 21. The older 20-column format remains accepted.
+Tracks 5–6; exact LABS header count: 21. The older 20-column format remains accepted.
 
 ## Authoring rules
 
@@ -18,7 +18,7 @@ When using Studio's MIDI Import workspace, MIDI channel CC10 (0 left, 64 centre,
 
 This is a per-event snapshot, not a continuous MIDI controller automation lane. Mid-note pan sweeps are not reproduced and generate an import warning. Equal-tick ordering is deterministic by source track and event sequence. Other continuous controllers and original MIDI programs do not become Studio note events. The separate `cc10_pan` controller field, if present in the Pitched schema, is not populated redundantly by the importer.
 
-## Exact RC1 CSV header
+## Exact LABS CSV header
 
 ```csv
 composition_title,composition_total_measures,composition_end_tick,tempo_bpm,time_signature,ticks_per_quarter,event_id,event_type,measure,absolute_tick,onset_tick_in_measure,timing_offset_ms,duration_ticks,surface_id,articulation,variant_id,velocity,note_off_velocity,note_off_method,choke_group,Pan_Position
@@ -211,7 +211,7 @@ Type: Integer. Responsibility: Composer / performer. Requirement: Optional stere
 
 Meaning: Places this musical note or drum hit in the stereo field; each event can be positioned independently.
 
-Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.
+Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.
 
 Blank meaning: No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.
 
@@ -220,6 +220,6 @@ Example: −40, 0, 70, or blank
 
 ## Source and compatibility
 
-Verified against RC1 fixture: tests/fixtures/SymphonyCSV_Drums_Pan_QA_21col.csv. Legacy order verified against Track_05_A_Criminal_Mind_Acoustic_Drums_143_Arranged.csv.
+Verified against LABS fixture: tests/fixtures/SymphonyCSV_Drums_Pan_QA_21col.csv. Legacy order verified against Track_05_A_Criminal_Mind_Acoustic_Drums_143_Arranged.csv.
 
-Descriptions inherited from earlier dictionary should be treated as guidance wherever not specifically proven by RC1 integration tests.
+Descriptions inherited from earlier dictionary should be treated as guidance wherever not specifically proven by LABS integration tests.

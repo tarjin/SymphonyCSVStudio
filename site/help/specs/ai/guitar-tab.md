@@ -1,6 +1,6 @@
-# Guitar TAB CSV — SymphonyCSV Studio RC1
+# Guitar TAB CSV — SymphonyCSV Studio LABS
 
-Tracks 3–4; exact RC1 header count: 135. The older 129-column format remains accepted.
+Tracks 3–4; exact LABS header count: 135. The older 129-column format remains accepted.
 
 ## Authoring rules
 
@@ -12,7 +12,7 @@ Tracks 3–4; exact RC1 header count: 135. The older 129-column format remains a
 - The composition ends at its declared final full-measure barline.
 - Treat the Rust/WASM parser as authoritative; consult validation errors for advanced fields.
 
-## Exact RC1 CSV header
+## Exact LABS CSV header
 
 ```csv
 staff,measure,count_aloud,running_time,duration_beats,duration_ms,velocity,tempo_bpm,time_signature,key_signature,instrument,event_type,event_id,onset_beat_in_measure,onset_ms,end_ms,velocity_description,clef,clef_sign,clef_line,voice,notated_type,notated_duration_beats,notated_dots,tie_start,tie_stop,articulation,beam,midi_file_format,ticks_per_quarter,midi_track,midi_track_name,midi_channel,midi_program,program_change_emit,program_source,midi_bank_msb,midi_bank_lsb,note_off_method,note_off_velocity,absolute_tick,onset_tick_in_measure,duration_ticks,end_tick,tempo_us_per_quarter,tempo_beat_unit,pitch_octave_convention,tick_rounding_policy,same_tick_event_order,time_signature_num,time_signature_den,key_signature_fifths,key_signature_mode,controller_number,controller_value,cc1_modulation,cc2_breath,cc7_channel_volume,cc10_pan,cc11_expression,cc64_sustain,cc91_reverb_send,cc93_chorus_send,pitch_bend,channel_aftertouch,poly_aftertouch,sysex_payload,controller_event_policy,composition_title,composer,composition_total_measures,composition_end_tick,composition_duration,lyric,marker,source_note_data,source_clef,source_key_signature,source_instrument,source_license,source_url,HighE_Fret,B_Fret,G_Fret,D_Fret,A_Fret,LowE_Fret,HighE_TuneOffset_st,B_TuneOffset_st,G_TuneOffset_st,D_TuneOffset_st,A_TuneOffset_st,LowE_TuneOffset_st,HighE_Articulation,B_Articulation,G_Articulation,D_Articulation,A_Articulation,LowE_Articulation,HighE_TargetFret,B_TargetFret,G_TargetFret,D_TargetFret,A_TargetFret,LowE_TargetFret,LowE_Velocity,A_Velocity,D_Velocity,G_Velocity,B_Velocity,HighE_Velocity,String_Emphasis,LowE_Duration_Beats,A_Duration_Beats,D_Duration_Beats,G_Duration_Beats,B_Duration_Beats,HighE_Duration_Beats,Stroke_Direction,Stroke_Strings,Strum_Spread_ms,Picking_Method,Palm_Mute,Let_Ring,Capo_Fret,measure_start_tick,measure_start_ms,measure_end_tick,measure_end_ms,String_1_Pan_Position,String_2_Pan_Position,String_3_Pan_Position,String_4_Pan_Position,String_5_Pan_Position,String_6_Pan_Position
@@ -1186,7 +1186,7 @@ Type: Integer. Responsibility: Composer / performer. Requirement: Optional stere
 
 Meaning: Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.
 
-Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.
+Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.
 
 Blank meaning: No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.
 
@@ -1197,7 +1197,7 @@ Type: Integer. Responsibility: Composer / performer. Requirement: Optional stere
 
 Meaning: Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.
 
-Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.
+Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.
 
 Blank meaning: No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.
 
@@ -1208,7 +1208,7 @@ Type: Integer. Responsibility: Composer / performer. Requirement: Optional stere
 
 Meaning: Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.
 
-Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.
+Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.
 
 Blank meaning: No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.
 
@@ -1219,7 +1219,7 @@ Type: Integer. Responsibility: Composer / performer. Requirement: Optional stere
 
 Meaning: Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.
 
-Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.
+Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.
 
 Blank meaning: No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.
 
@@ -1230,7 +1230,7 @@ Type: Integer. Responsibility: Composer / performer. Requirement: Optional stere
 
 Meaning: Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.
 
-Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.
+Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.
 
 Blank meaning: No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.
 
@@ -1241,7 +1241,7 @@ Type: Integer. Responsibility: Composer / performer. Requirement: Optional stere
 
 Meaning: Places the named guitar string’s sounding event in the stereo field independently of the other strings in the same row.
 
-Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by RC1 pan validation.
+Accepted values / units: Whole integer −100 (hard left) through 0 (centre) to +100 (hard right); fractional positions and values outside the range are rejected by LABS pan validation.
 
 Blank meaning: No authored pan override; preserve the loaded SoundFont’s native stereo placement. A blank is NOT the same as 0.
 
@@ -1250,6 +1250,6 @@ Example: −100 for a left-panned string, 100 for a right-panned string, or blan
 
 ## Source and compatibility
 
-Verified against RC1 fixture: tests/fixtures/SymphonyCSV_TAB_SixString_Pan_QA_135col.csv. Legacy order verified against Track_03_A_Criminal_Mind_Gm_Guitar_TAB_143_Two_Chords_129col.csv.
+Verified against LABS fixture: tests/fixtures/SymphonyCSV_TAB_SixString_Pan_QA_135col.csv. Legacy order verified against Track_03_A_Criminal_Mind_Gm_Guitar_TAB_143_Two_Chords_129col.csv.
 
-Descriptions inherited from earlier dictionary should be treated as guidance wherever not specifically proven by RC1 integration tests.
+Descriptions inherited from earlier dictionary should be treated as guidance wherever not specifically proven by LABS integration tests.
