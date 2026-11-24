@@ -19,24 +19,59 @@ function initializeSymphonyCSVMidiBridge(){
   }
   const style=document.createElement('style');
   style.textContent=`
-    #scsv-midi-open{display:inline-block;padding:8px 13px;border-radius:8px;
-      background:#593482;color:#fff;border:1px solid #9871c8;cursor:pointer;
-      font:600 12px system-ui;}
-    #scsv-midi-open:hover,#scsv-midi-open:focus-visible{
+    #scsv-midi-open-wrap{display:flex;flex-direction:column;gap:7px;width:100%;}
+    #scsv-midi-open{display:inline-block;width:100%;box-sizing:border-box;
+      padding:8px 13px;border-radius:8px;background:#593482;color:#fff;
+      border:1px solid #9871c8;cursor:pointer;font:600 12px system-ui;}
+    #scsv-midi-open:not(:disabled):hover,
+    #scsv-midi-open:not(:disabled):focus-visible{
       background:#70449d;outline:2px solid #c29cf0;}
+    #scsv-midi-open:disabled{background:#322b3c;border-color:#594c68;
+      color:#b7a8c6;opacity:.72;cursor:not-allowed;pointer-events:none;}
+    #scsv-midi-open-wrap[data-tab-disabled="true"]{cursor:help;}
+    #scsv-midi-open-wrap:focus-visible{outline:2px solid #c29cf0;outline-offset:3px;}
+    #scsv-midi-import-note{margin:0;color:#c6b2d9;font:500 12px/1.5 system-ui;}
+    #scsv-midi-import-note[hidden]{display:none;}
   `;
   document.head.append(style);
   const button=document.createElement('button');
   button.id='scsv-midi-open';button.type='button';button.textContent='♫ Import MIDI';
-  button.title='Import MIDI into Piano Roll Track 1/2 or Drum Track 5/6';
-  header.append(button);
+  const wrapper=document.createElement('div');
+  wrapper.id='scsv-midi-open-wrap';
+  wrapper.setAttribute('role','group');
+  const note=document.createElement('p');
+  note.id='scsv-midi-import-note';note.setAttribute('role','note');
+  note.textContent='TAB Tracks 3–4 import CSV only: standard MIDI cannot reliably '+
+    'reconstruct string/fret positions, chord structure or strumming. MIDI export is supported.';
+  note.hidden=true;
+  wrapper.append(button,note);
+  header.append(wrapper);
   let pendingFile=null,requestedTrack=1,busy=false,frameReady=false;
   const origin=window.location.origin;
   const selectedTrack=()=>{
     const tab=document.querySelector('#sixTrackNav .track-tab.selected[data-track]');
     const n=Number(tab?.dataset.track);
-    return [1,2,5,6].includes(n)?n:1;
+    return [1,2,3,4,5,6].includes(n)?n:1;
   };
+  function updateImportAvailability(){
+    const tabSelected=[3,4].includes(selectedTrack());
+    button.disabled=tabSelected;
+    button.title=tabSelected ? note.textContent :
+      'Import MIDI into Piano Roll Track 1/2 or Drum Track 5/6';
+    wrapper.title=tabSelected ? note.textContent : '';
+    wrapper.dataset.tabDisabled=String(tabSelected);
+    wrapper.tabIndex=tabSelected ? 0 : -1;
+    note.hidden=!tabSelected;
+    if(tabSelected){
+      wrapper.setAttribute('aria-label','MIDI import unavailable on selected TAB track');
+      wrapper.setAttribute('aria-describedby',note.id);
+      button.setAttribute('aria-describedby',note.id);
+    }else{
+      wrapper.removeAttribute('aria-label');
+      wrapper.removeAttribute('aria-describedby');
+      button.removeAttribute('aria-describedby');
+    }
+  }
   function showError(message){
     if(sessionStatus){sessionStatus.textContent=message;sessionStatus.dataset.result='error';}
   }
@@ -68,7 +103,13 @@ function initializeSymphonyCSVMidiBridge(){
     activate();
   }
   window.SymphonyCSVOpenMidiWorkspace=launch;
-  button.addEventListener('click',()=>launch(selectedTrack()));
+  button.addEventListener('click',()=>{
+    if(!button.disabled)launch(selectedTrack());
+  });
+  document.querySelectorAll('#sixTrackNav .track-tab[data-track]').forEach(tab=>{
+    tab.addEventListener('click',()=>queueMicrotask(updateImportAvailability));
+  });
+  window.addEventListener('symphonycsv:session-changed',updateImportAvailability);
   frame.addEventListener('load',()=>{
     frameReady=true;
     notifyChild(pendingFile);pendingFile=null;
@@ -117,6 +158,7 @@ function initializeSymphonyCSVMidiBridge(){
     sidebar.disabled=false;
     sidebar.title='MIDI import and conversion — retained when switching workspaces';
   }
+  updateImportAvailability();
   if(location.hash==='#import-midi')activate();
 }
 if(document.readyState==='loading'){
