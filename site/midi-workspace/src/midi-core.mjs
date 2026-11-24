@@ -110,11 +110,23 @@ export function readMidi(bytes) {
       order:note.startOrder,channel:note.channel,note}))]
     .sort((a,b)=>a.tick-b.tick||a.track-b.track||a.order-b.order);
   const channelPan=Array(16).fill(null);
+  const priorNoteEnd=Array(16).fill(-Infinity), thisTickNoteEnd=Array(16).fill(-Infinity);
+  let previousTick=-1, panChangedDuringNote=false;
   for(const event of timeline){
-    if(event.kind==='pan')channelPan[event.channel]=event.value;
-    else event.note.panCc10=channelPan[event.channel];
+    if(event.tick!==previousTick){
+      for(let c=0;c<16;c++)priorNoteEnd[c]=Math.max(priorNoteEnd[c],thisTickNoteEnd[c]);
+      thisTickNoteEnd.fill(-Infinity);
+      previousTick=event.tick;
+    }
+    if(event.kind==='pan'){
+      if(priorNoteEnd[event.channel]>event.tick)panChangedDuringNote=true;
+      channelPan[event.channel]=event.value;
+    }else{
+      event.note.panCc10=channelPan[event.channel];
+      thisTickNoteEnd[event.channel]=Math.max(thisTickNoteEnd[event.channel],event.note.endTick);
+    }
   }
-  if(panEvents.some(e=>notes.some(n=>n.channel===e.channel && n.startTick<e.tick && e.tick<n.endTick)))
+  if(panChangedDuringNote)
     warnings.push('MIDI pan changes during sustained notes cannot be reproduced: CC10 is sampled at each note onset.');
   const unique=(items,cb)=>items.reduce((a,x)=>a.some(y=>cb(x)===cb(y))?a:[...a,x],[]);
   const uniqueTempos=unique(tempos,t=>Math.round(t.microsecondsPerQuarter));
@@ -199,7 +211,7 @@ export function convertPitchedToCsv(prepared){
       duration_beats:number(n.durationTicks/midi.ppq),duration_ms:endMs-startMs,velocity:n.velocity,tempo_bpm:number(tempoBpm),time_signature:midi.timeSignature,
       instrument:prepared.target===1?'Piano':'Strings',event_type:'note',event_id:`N${String(index+1).padStart(5,'0')}`,onset_beat_in_measure:number(1+offset/midi.ppq),onset_ms:startMs,end_ms:endMs,midi_pitch:n.pitch,
       pitch_spelling_source:'MIDI pitch (enharmonic spelling unavailable)',
-      Pan_Position:n.panCc10===null ? '' : midiCc10ToPanPosition(n.panCc10),
+      Pan_Position:n.panCc10 == null ? '' : midiCc10ToPanPosition(n.panCc10),
       // A Piano Roll reduction is a NEW single-voice performance, not an orchestration-preserving MIDI import.
       // Studio owns SoundFont choice. Do not carry source channel / instrument program through to playback or export.
       midi_file_format:midi.format,ticks_per_quarter:midi.ppq,midi_track:0,
@@ -224,5 +236,5 @@ export function convertPitchedToCsv(prepared){
 export function drumEventPreview(prepared){
   need(prepared.kind==='drum','Select a drum track destination.');
   return prepared.source.map(n=>({tick:n.startTick,endTick:n.endTick,measure:Math.floor(n.startTick/prepared.midi.ticksPerMeasure)+1,
-    midiPitch:n.pitch,gmSurface:gmDrumName[n.pitch]||'Unmapped percussion note',velocity:n.velocity,channel:n.channel+1,panPosition:n.panCc10===null?'':midiCc10ToPanPosition(n.panCc10)}));
+    midiPitch:n.pitch,gmSurface:gmDrumName[n.pitch]||'Unmapped percussion note',velocity:n.velocity,channel:n.channel+1,panPosition:n.panCc10 == null?'':midiCc10ToPanPosition(n.panCc10)}));
 }
