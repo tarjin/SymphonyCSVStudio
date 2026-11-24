@@ -6,6 +6,10 @@ This documentation was generated after verifying exact headers against Checkpoin
 - Guitar TAB, Tracks 3–4: [guitar-tab.md](guitar-tab.md), 135 current fields (129 legacy). Both are guitar tracks.
 - Drums, Track 5 Acoustic and Track 6 Electronic: [drums.md](drums.md), 21 current fields (20 legacy).
 
+## Open musical formats
+
+The SymphonyCSV musical CSV formats are openly documented and freely available for anyone to use and implement. Musicians, software developers, researchers and AI systems may create, read, edit and exchange compatible musical files without paying format licensing fees. SymphonyCSV Studio is free to use, while its application source code remains proprietary. See the [format-use policy](https://symphonycsvstudio.com/help/specs/format-use-policy.html), effective 24 November 2026.
+
 ## AI behavior contract
 
 1. Start from the official blank header, not an improvised schema.
