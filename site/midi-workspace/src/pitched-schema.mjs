@@ -1,4 +1,4 @@
-// Exact 85-column header extracted from supplied SymphonyCSV pitched reference CSV.
+// 86-column RC1 pitched schema: legacy 85 columns plus appended per-note Pan_Position.
 export const PITCHED_COLUMNS = [
   "staff",
   "measure",
@@ -84,7 +84,8 @@ export const PITCHED_COLUMNS = [
   "source_key_signature",
   "source_instrument",
   "source_license",
-  "source_url"
+  "source_url",
+  "Pan_Position"
 ];
 export const REFERENCE_FIELDS = {
   "pitch_spelling_source": "MIDI pitch (sharp labels; original enharmonic spelling unavailable)",
