@@ -4,7 +4,7 @@ SymphonyCSV Studio / LABS edition
 
 The DAW before the DAW. An as-built specification for musicians, technical readers and AI collaborators.
 
-Version 0.3 · Review draft
+Version 0.3 · Review draft + format-use policy clarification
 
 24 November 2026
 
@@ -658,7 +658,7 @@ The feedback design calls for privacy-conscious measurement and no raw IP storag
 
 ### Source versus specification
 
-Studio’s software source is not supplied by this reference. CSV format documentation and high-level algorithms are intended for public understanding and interoperability. A proposed public format-stability policy preserves existing column names and meanings with additive evolution; it is not presented here as a finalized legal license or governance commitment.
+Studio’s application source code remains proprietary. The published SymphonyCSV Piano Roll / Pitched, Guitar TAB and Drums CSV formats are openly documented and freely available for anyone to use and independently implement, including for commercial purposes, without format licensing fees or royalties. The format-use permission is distinct from the software source license and from third-party asset rights. A proposed format-stability approach preserves existing column names and meanings with additive evolution; that approach is not a finalized governance or compatibility guarantee. See the [Open Musical Formats & Format-Use Policy](https://symphonycsvstudio.com/help/specs/format-use-policy.html), effective 24 November 2026.
 
 Original compositions and externally supplied assets remain subject to applicable rights and license terms. Studio’s bundled third-party SoundFonts retain their own licenses. Before sharing a ZIP containing an external SoundFont, confirm that its license permits redistribution. Loading a file locally does not establish redistribution permission. The public credits page should cover actually distributed bundled assets, not every asset used in development.
 
