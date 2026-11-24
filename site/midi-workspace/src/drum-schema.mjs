@@ -91,7 +91,7 @@ export function convertDrumsToCsv(prepared, profile) {
       event_type:'hit',measure,absolute_tick:n.startTick,
       onset_tick_in_measure:n.startTick%midi.ticksPerMeasure,
       duration_ticks:duration,...part,velocity:n.velocity,
-      Pan_Position:n.panCc10===null?'':midiCc10ToPanPosition(n.panCc10)};
+      Pan_Position:n.panCc10 == null?'':midiCc10ToPanPosition(n.panCc10)};
     rows.push(record);byMeasure.set(measure,true);
   }
   for(let measure=1;measure<=totalMeasures;measure++){
