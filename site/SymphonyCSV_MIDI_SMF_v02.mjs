@@ -15,16 +15,15 @@ function vlq(value) {
   return out;
 }
 function meta(type, payload) { return [0xff, type, ...vlq(payload.length), ...payload]; }
-// MIDI CC10 is channel-wide, not per-note. When an explicitly positioned TAB
-// note overlaps another pan position, use another melodic channel so changing
-// CC10 cannot move a note that is still sounding. Unpanned exports retain their
-// original single-channel bytes and event ordering.
+// MIDI CC10 is channel-wide, not per-note. Overlapping independently panned
+// pitched/TAB/drum notes use separate channels to avoid moving sounding notes.
+// GM percussion is only guaranteed on channel 10: other channels require a
+// multichannel drum sampler/DAW routing. Unpanned exports remain byte-identical.
 function routeNotePans(notes, channel) {
   const wantsPan = notes.some(n => n.panPosition !== null && n.panPosition !== undefined);
   if (!wantsPan) return null;
-  if (channel === 9) throw Error('Per-note MIDI pan requires a melodic MIDI channel.');
   const channels = [channel, ...Array.from({length:16}, (_,i)=>i)
-    .filter(c => c !== channel && c !== 9)];
+    .filter(c => c !== channel && (channel === 9 || c !== 9))];
   const state = new Map(); // channel => last MIDI CC10 pan and active note pitches/end ticks
   const assigned = Array(notes.length);
   const panEvents = [];
@@ -56,7 +55,7 @@ function routeNotePans(notes, channel) {
     const unused = channels.find(c => !state.has(c));
     const chosen = matchingActive ?? idleMatching ?? idleUsed ?? unused;
     if (chosen === undefined)
-      throw Error(`TAB MIDI pan exceeds 15 simultaneously independent melodic channels at tick ${onset}.`);
+      throw Error(`MIDI pan exceeds ${channels.length} simultaneously independent channels at tick ${onset}.`);
     const old=state.get(chosen);
     const info=old ?? {pan:64,active:[]};
     // Emit an explicit 0/center CC10 on a newly used channel too.
