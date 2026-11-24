@@ -15,6 +15,61 @@ function vlq(value) {
   return out;
 }
 function meta(type, payload) { return [0xff, type, ...vlq(payload.length), ...payload]; }
+// MIDI CC10 is channel-wide, not per-note. When an explicitly positioned TAB
+// note overlaps another pan position, use another melodic channel so changing
+// CC10 cannot move a note that is still sounding. Unpanned exports retain their
+// original single-channel bytes and event ordering.
+function routeNotePans(notes, channel) {
+  const wantsPan = notes.some(n => n.panPosition !== null && n.panPosition !== undefined);
+  if (!wantsPan) return null;
+  if (channel === 9) throw Error('Per-note MIDI pan requires a melodic MIDI channel.');
+  const channels = [channel, ...Array.from({length:16}, (_,i)=>i)
+    .filter(c => c !== channel && c !== 9)];
+  const state = new Map(); // channel => last MIDI CC10 pan and active note pitches/end ticks
+  const assigned = Array(notes.length);
+  const panEvents = [];
+  const sorted = notes.map((note,index) => ({note,index}))
+    .sort((a,b) => a.note.onsetTick - b.note.onsetTick || a.index - b.index);
+  for (const {note,index} of sorted) {
+    const raw = note.panPosition;
+    if (raw !== null && raw !== undefined)
+      requireInt(raw, -100, 100, `note ${index} panPosition`);
+    // Center is the portable MIDI approximation for blank/native SoundFont pan.
+    const pan = raw == null ? 64 : Math.round((raw + 100) * 127 / 200);
+    const onset = note.onsetTick;
+    for (const info of state.values())
+      info.active = info.active.filter(n => n.release > onset);
+    // Reuse a sounding channel only if the pan matches; a duplicate pitch on
+    // that same channel could otherwise be cut short by an earlier note-off.
+    const matchingActive = channels.find(c => {
+      const x=state.get(c);
+      return x && x.pan===pan && x.active.length &&
+        !x.active.some(n=>n.pitch===note.midi);
+    });
+    const idleMatching = channels.find(c => {
+      const x=state.get(c);
+      return x && !x.active.length && x.pan===pan;
+    });
+    // Prefer an already used, now-idle channel before consuming another one.
+    // This keeps sequential strums on as few channels as possible.
+    const idleUsed = channels.find(c => state.get(c) && !state.get(c).active.length);
+    const unused = channels.find(c => !state.has(c));
+    const chosen = matchingActive ?? idleMatching ?? idleUsed ?? unused;
+    if (chosen === undefined)
+      throw Error(`TAB MIDI pan exceeds 15 simultaneously independent melodic channels at tick ${onset}.`);
+    const old=state.get(chosen);
+    const info=old ?? {pan:64,active:[]};
+    // Emit an explicit 0/center CC10 on a newly used channel too.
+    if (info.pan !== pan || (!old && raw != null)) {
+      panEvents.push({tick:onset, order:5, index, data:[0xb0|chosen, 10, pan]});
+      info.pan=pan;
+    }
+    info.active.push({pitch:note.midi,release:onset+note.durationTicks});
+    state.set(chosen,info);
+    assigned[index]=chosen;
+  }
+  return {assigned,panEvents};
+}
 
 export function encodeSymphonyCSVTrackMidi({
   ticksPerQuarter, tempoUsPerQuarter, timeSignature, endTick,
@@ -46,16 +101,22 @@ export function encodeSymphonyCSVTrackMidi({
     requireInt(keySignatureMode, 0, 1, 'key signature mode');
     events.push({tick:0, order:3, index:3, data:meta(0x59, [keySignatureFifths & 255, keySignatureMode])});
   }
+  // Validate all notes before allocating their overlapping pan voices.
   for (const [index, note] of notes.entries()) {
-    const midi = requireInt(note.midi, 0, 127, `note ${index} MIDI pitch`);
-    const velocity = requireInt(note.velocity, 1, 127, `note ${index} velocity`);
+    requireInt(note.midi, 0, 127, `note ${index} MIDI pitch`);
+    requireInt(note.velocity, 1, 127, `note ${index} velocity`);
     const onset = requireInt(note.onsetTick, 0, endTick - 1, `note ${index} onsetTick`);
     const duration = requireInt(note.durationTicks, 1, endTick, `note ${index} durationTicks`);
     if (onset + duration > endTick)
       throw Error(`note ${index} extends beyond the musical endpoint.`);
+  }
+  const panRouting = routeNotePans(notes, channel);
+  if (panRouting) events.push(...panRouting.panEvents);
+  for (const [index, note] of notes.entries()) {
+    const noteChannel = panRouting ? panRouting.assigned[index] : channel;
     events.push(
-      {tick:onset, order:5, index, data:[0x90 | channel, midi, velocity]},
-      {tick:onset + duration, order:4, index, data:[0x80 | channel, midi, 0]}
+      {tick:note.onsetTick, order:panRouting ? 6 : 5, index, data:[0x90 | noteChannel, note.midi, note.velocity]},
+      {tick:note.onsetTick + note.durationTicks, order:4, index, data:[0x80 | noteChannel, note.midi, 0]}
     );
   }
   events.push({tick:endTick, order:6, index:0, data:meta(0x2f, [])});

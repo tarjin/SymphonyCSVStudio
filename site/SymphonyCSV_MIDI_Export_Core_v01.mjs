@@ -62,7 +62,8 @@ function project(slot, track, settings) {
       throw Error('TAB schedule differs from authoritative CSV timing.');
     records = track.schedule.events.map(e => ({
       midi:e.midi, velocity:e.velocity,
-      onsetTick:e.attackTick, durationTicks:e.durationTicks
+      onsetTick:e.attackTick, durationTicks:e.durationTicks,
+      panPosition:e.panPosition ?? null
     }));
     for (const [i,e] of track.schedule.events.entries())
       if (e.noteOffTick !== e.attackTick + e.durationTicks)
@@ -95,6 +96,7 @@ export function prepareSymphonyCSVTrackExport(session, slot) {
   const channel = slot >= 5 ? 9 : 0;  // channel 10 is percussion in General MIDI convention
   const title = `Track ${String(slot).padStart(2,'0')} - ${type}`;
   const keys = slot <= 4 ? readKeySignature(track) : {};
+  const panEncoded = slot >= 3 && slot <= 4 && records.some(n => n.panPosition != null);
   const bytes = encodeSymphonyCSVTrackMidi({
     ...settings, notes:records, channel, trackName:title, ...keys
   });
@@ -102,7 +104,7 @@ export function prepareSymphonyCSVTrackExport(session, slot) {
     slot, title, bytes, channel, settings, noteCount:records.length,
     sourceFilename: session.filenames?.[slot-1] || track.filename || '(unknown)',
     kind:type, drumKit:slot >= 5 ? (track.kitName || '(unknown kit)') : null,
-    timingErrorMs
+    timingErrorMs, panEncoded
   });
 }
 // Receipt labels reflect the Studio track and its selected drum-kit description.
@@ -131,7 +133,9 @@ export function makeMidiSidecar(exported, hash, timestamp) {
     `Track type: ${receiptTrackType(exported)}`,
     `Source CSV: ${exported.sourceFilename}`,
     `Exported events: ${exported.noteCount}`,
-    `MIDI channel (1-based): ${exported.channel+1}`,
+    exported.panEncoded
+      ? `Base MIDI channel (1-based): ${exported.channel+1}; overlapping TAB pans may use additional melodic channels.`
+      : `MIDI channel (1-based): ${exported.channel+1}`,
     `Tempo: ${s.tempoUsPerQuarter} microseconds per quarter note`,
     `Time signature: ${s.timeSignature}`,
     `Ticks per quarter: ${s.ticksPerQuarter}`,
@@ -147,6 +151,13 @@ export function makeMidiSidecar(exported, hash, timestamp) {
     'Drum pitches: native bundled-SoundFont mapping (not standard GM drum keys).',
     'MIDI channel 10 is used. MuseScore may show or sound different percussion.',
     `Max timing-offset quantization error: ${exported.timingErrorMs.toFixed(3)} ms`,
+    ''
+  );
+  if (exported.panEncoded) lines.push(
+    'TAB stereo: per-event/per-string pan positions are encoded as MIDI CC10.',
+    'Overlapping notes with different pans use separate melodic MIDI channels.',
+    'MIDI CC10 has 7-bit pan resolution; blank SoundFont pan defaults to center.',
+    'In a DAW, preserve MIDI channels and assign the intended instrument to all used channels.',
     ''
   );
   lines.push(
