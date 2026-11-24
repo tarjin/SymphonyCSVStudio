@@ -60,7 +60,7 @@ test('six string panning, capacity limit, invalid pan and endpoint',()=>{
   assert.equal(new Set(ev.filter(e=>e.kind===0x90).map(e=>e.ch)).size,6);
   assert.equal(ev.filter(e=>e.kind===0xb0).length,6);
   const sixteen=Array.from({length:16},(_,i)=>note(40+i,0,480,-100+12*i));
-  assert.throws(()=>encode(sixteen),/exceeds 15 simultaneously independent melodic channels/);
+  assert.throws(()=>encode(sixteen),/exceeds 15 simultaneously independent channels/);
   for(const bad of [101,-101,'10'])assert.throws(()=>encode([note(60,0,120,bad)]),/panPosition/);
   assert.equal(events(encode([note(60,0,120,0)])).at(-1).tick,3840);
 });
