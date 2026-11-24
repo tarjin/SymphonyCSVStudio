@@ -151,6 +151,13 @@ footer{border-top:1px solid var(--border);background:#180f24;padding:25px 28px;c
     <a class="link" href="/help/specs/drums.html">Explore drum event controls</a>
    </article>
   </div>
+  <div class="wide-panel" id="midi-pan-import">
+   <h3>MIDI import: do piano and drum tracks keep stereo panning?</h3>
+   <p><strong>Yes. For Piano Roll Tracks 1–2 and Drum Tracks 5–6,</strong> the MIDI Import workspace reads channel pan (MIDI CC10) from Standard MIDI Files and captures its current value when each note or hit begins. The resulting musical CSV uses the authoritative <code>Pan_Position</code> column: −100 is hard left, 0 is centre, and +100 is hard right.</p>
+   <p>MIDI CC10 values run from 0 (left) through 64 (centre) to 127 (right). Conversion honours this exact centre and rounds to a whole-number SymphonyCSV position. CC10 on different MIDI channels stays separate; controller events in multiple MIDI tracks are processed chronologically by tick, then source-track/event order. MIDI CC121 (Reset All Controllers) resets pan to centre. When no pan instruction has been provided, the CSV position remains <strong>blank</strong>, preserving the selected SoundFont's native placement instead of forcing centre.</p>
+   <p class="small"><strong>Limitations:</strong> MIDI CC10 is a channel setting. When it changes during a sustained note, a single per-event CSV position cannot reproduce a live pan sweep: only the pan at the note's onset is captured, and the importer shows a warning. Other MIDI controller automation, MIDI programs and original instruments are not reconstructed in the note-only Studio import. At equal ticks, ordering across separate MIDI tracks is resolved deterministically by source-track order; there may be ambiguity in the original performance. TAB Tracks 3–4 remain CSV-only for MIDI import.</p>
+   <p class="small">The imported musical data is editable in SymphonyCSV CSV; MIDI export uses CC10 again, with additional channels allocated when simultaneous panned notes require independent positions. Independently panned drums may require multichannel drum-sampler routing in external DAWs. See the <a href="/help/specs/pitched.html">86-column Piano Roll format</a> and <a href="/help/specs/drums.html">21-column Drums format</a> for field definitions.</p>
+  </div>
   <div class="wide-panel" id="expression-midi">
    <h3>What travels into a MIDI export?</h3>
    <p>All six musical tracks can export individual MIDI files. Studio writes the validated performance events—not a flattened audio recording—so you can continue producing the part in a DAW or inspect its notes in notation software.</p>
