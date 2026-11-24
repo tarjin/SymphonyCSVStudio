@@ -12,6 +12,12 @@ Tracks 5–6; exact RC1 header count: 21. The older 20-column format remains acc
 - The composition ends at its declared final full-measure barline.
 - Treat the Rust/WASM parser as authoritative; consult validation errors for advanced fields.
 
+## MIDI import and Pan_Position
+
+When using Studio's MIDI Import workspace, MIDI channel CC10 (0 left, 64 centre, 127 right) is read at each drum hit onset and converted to the whole-number `Pan_Position` range −100..+100. The active CC10 is tracked per source MIDI channel, including controller messages on separate MIDI tracks. CC121 resets MIDI pan to centre (CSV 0). If no CC10/reset was encountered on that channel, leave `Pan_Position` blank; do not replace blank with zero.
+
+This is a per-event snapshot, not a continuous MIDI controller automation lane. Mid-note pan sweeps are not reproduced and generate an import warning. Equal-tick ordering is deterministic by source track and event sequence. Other continuous controllers and original MIDI programs do not become Studio note events. The separate `cc10_pan` controller field, if present in the Pitched schema, is not populated redundantly by the importer.
+
 ## Exact RC1 CSV header
 
 ```csv
