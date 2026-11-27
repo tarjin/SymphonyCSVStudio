@@ -1437,7 +1437,7 @@ body.scsv-projects-mode .scsv-more-divider { display:none !important; }
         <section class="scsv-master-export" aria-labelledby="scsv-master-heading">
           <div><p class="eyebrow">MASTER AUDIO · SEPARATE DOWNLOADS</p>
             <h2 id="scsv-master-heading">Export the finished performance</h2>
-            <p>Stereo Mix All of Tracks 1–8: musical SoundFonts and recorded WAVs, individual volume/mute/pan, parallel Chorus/Delay/Reverb, master Compressor, five-band Graphic EQ, Limiter, and Natural Decay Padding. Rendering stays on this computer.</p>
+            <p>Stereo Mix All of Tracks 1–8: musical SoundFonts and recorded WAVs, individual volume/mute/pan, parallel Chorus/Delay/Reverb, master Compressor, five-band Graphic EQ, Master Output Gain, Limiter, and Natural Decay Padding. Rendering stays on this computer.</p>
             <p class="scsv-master-footnote">WAV: 16-bit PCM, 44.1 kHz. MP3: 320 kbps stereo at 44.1 kHz; the MP3 encoder requires a one-time library download. Audio is never uploaded.</p>
           </div>
           <div class="scsv-master-controls">
@@ -1698,7 +1698,7 @@ body.scsv-projects-mode .scsv-more-divider { display:none !important; }
           </div>
           <div class="editor-side">
             <div class="info-panel"><p class="eyebrow">KNOWN-GOOD BASELINE</p><h3>Stronger master dynamics, still adjustable</h3><p>Standard processing now uses a firmer 6 dB knee and +6 dB input drive with matched output trim. The visible defaults remain −20 dB, 3:1, 8 ms attack and 180 ms release.</p><p class="technical-note">Bypass follows the original dry path, leaving track levels unchanged. The output limiter is not a brick-wall guarantee; lower listening volume before testing strong settings.</p></div>
-            <div class="info-panel"><p class="eyebrow">ALWAYS-ON OUTPUT STAGE</p><h3>Limiter remains separate</h3><p>The existing final output limiter remains enabled and unchanged, after the Master EQ. It is not a brick-wall peak guarantee.</p><p class="technical-note">Save to Browser, Recover Session and Project ZIP carry compressor settings. Older saves use the known-good defaults.</p></div>
+            <div class="info-panel"><p class="eyebrow">ALWAYS-ON OUTPUT STAGE</p><h3>Limiter remains separate</h3><p>The existing final output limiter remains enabled and unchanged, after the Master EQ and Master Output Gain. It is not a brick-wall peak guarantee.</p><p class="technical-note">Save to Browser, Recover Session and Project ZIP carry compressor settings. Older saves use the known-good defaults.</p></div>
           </div>
         </div>
       </section>
@@ -1732,7 +1732,7 @@ body.scsv-projects-mode .scsv-more-divider { display:none !important; }
 <script src="/SymphonyCSV_CSV_Import_Prototype_v01.js"></script>
 <script src="/SymphonyCSV_Studio_Timing_v01.js"></script>
 <script src="/SymphonyCSV_Performance_v01.js"></script>
-<script src="/SymphonyCSV_Browser_Import_Dropzone_v02.js"></script>
+<script src="/SymphonyCSV_Browser_Import_Dropzone_v02.js?v=mastergain03"></script>
 <script>
 /* SymphonyCSV Studio: bounded SF2 (SoundFont v2) browser playback experiment.
    Entirely client-side; no external library, network, or permanent file storage.

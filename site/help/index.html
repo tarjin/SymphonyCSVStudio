@@ -123,17 +123,17 @@ footer{border-top:1px solid var(--border);background:#180f24;padding:25px 28px;c
    <p><strong>24 chapters · 15 functional diagrams · 30 reference tables</strong></p>
    <div class="hero-cta">
     <a class="button" href="/help/reference/">Read the functional reference</a>
-    <a class="button secondary" href="/help/reference/reference.pdf" download>Download PDF manual</a>
+    <a class="button secondary" href="/help/reference/reference.pdf" download>Download previous PDF edition</a>
     <a class="button secondary" href="/help/reference/reference.md" download>Download AI reference (Markdown)</a>
    </div>
-   <p class="small">The PDF and online reference describe the live Studio LABS release, with the 24 November format-use policy clarification. Read the <a href="/help/specs/format-use-policy.html">royalty-free format-use policy</a> for the current permissions.</p>
+   <p class="small">The online and Markdown editions include the 27 November Master Output Gain update. The downloadable PDF is the previous 24 November edition; use your browser’s Print → Save as PDF on the online reference for a current printable copy. Read the <a href="/help/specs/format-use-policy.html">royalty-free format-use policy</a> for the current permissions.</p>
    <div style="margin-top:24px;padding-top:20px;border-top:1px solid #765295">
     <h3>Listen to the Product &amp; Functional Reference</h3>
     <p>Discover SymphonyCSV Studio through an AI-generated audio conversation exploring our product vision, musical capabilities, architecture and design philosophy. Created using Google NotebookLM and grounded in our published reference, this 42-minute overview offers an alternative way to explore SymphonyCSV Studio.</p>
     <p>For definitive technical details, the written Product &amp; Functional Reference remains the authoritative source.</p>
     <a class="button secondary" href="https://youtu.be/zAPEY-t-vbc" target="_blank" rel="noopener noreferrer">Watch the audio overview on YouTube (42 minutes)</a>
    </div>
-   <p style="margin-top:20px;margin-bottom:0">LABS Edition · Version 0.3 · Living public review draft. The diagrams are illustrative; some release-specific details remain subject to verification. The Markdown and PDF editions can be supplied to your preferred AI assistant.</p>
+   <p style="margin-top:20px;margin-bottom:0">LABS Edition · Version 0.4 (online and Markdown) · Living public review draft. The diagrams are illustrative; some release-specific details remain subject to verification. The Markdown and PDF editions can be supplied to your preferred AI assistant.</p>
   </div>
  </section>
 
@@ -173,6 +173,13 @@ footer{border-top:1px solid var(--border);background:#180f24;padding:25px 28px;c
     <p>Build acoustic and electronic drum parts with individual hit velocities, durations, optional microtiming offsets and stereo positions. Accents and timing variations are part of your authored rhythm.</p>
     <a class="link" href="/help/specs/drums.html">Explore drum event controls</a>
    </article>
+  </div>
+  <div class="wide-panel" id="master-output-gain">
+   <h3>Make the whole mix louder or quieter</h3>
+   <p>Master Output Gain is a global performance control in Performance Settings (−12 to +12 dB, 0.5 dB steps, default 0 dB). It adjusts the combined stereo mix of Tracks 1–8 and shared wet returns after the Graphic EQ and before the fixed output limiter. It is independent of track gain, Master Drum Volume, compressor and EQ bypasses, and event velocity. Live audition and Mix All WAV/MP3 use the same gain stage. It does not modify musical CSV or MIDI data.</p>
+   <p>Start with your headphone or speaker volume low; raise gain gradually. Preserve the mix with Save Project ZIP or Save to Browser. The Performance Settings Save/Load project settings buttons also retain this setting. Older files default to 0 dB.</p>
+   <p>If live playback distorts while the rendered WAV or MP3 sounds clean, reduce output gain and headphone volume, then audition the same passage with fewer tracks or effects, or on another computer/browser. Real-time audio deadlines, overlapping sampled voices and audio/device configuration can contribute; the cause is not established by listening alone. Offline rendering is not subject to the same real-time deadlines. Keep the musical CSV unchanged until a musical problem is isolated. The existing limiter reduces peaks but is not a brick-wall or true-peak guarantee.</p>
+   <p><a href="/help/reference/#mixer">Read the master processing reference</a>.</p>
   </div>
   <div class="wide-panel" id="midi-pan-import">
    <h3>MIDI import: do piano and drum tracks keep stereo panning?</h3>

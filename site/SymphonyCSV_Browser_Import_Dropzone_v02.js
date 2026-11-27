@@ -79,7 +79,7 @@
     routing.setAttribute('aria-label','Shared effects signal flow and bypass controls');
     routing.innerHTML=`
       <summary class="scsv-fx-strip-heading"><span>FX SIGNAL FLOW</span>
-        <small>3 shared parallel slots · Compressor → Graphic EQ → Limiter</small>
+        <small>3 shared parallel slots · Compressor → Graphic EQ → Output Gain → Limiter</small>
         <span class="scsv-fx-expander" aria-hidden="true">Hide ▴</span></summary>
       <div class="scsv-fx-routing-body">
       <div class="scsv-fx-flow-scroll"><div class="scsv-fx-flow-inner">
@@ -122,12 +122,14 @@
             <span class="scsv-fx-slot">MASTER · AFTER COMPRESSOR</span><span class="scsv-fx-lamp" aria-hidden="true"></span>
             <strong>≡ GRAPHIC EQ</strong><span class="scsv-fx-switch">● BYPASSED</span></button>
           <span class="scsv-routing-arrow" aria-hidden="true">→</span>
+          <span class="scsv-fx-output">OUTPUT GAIN <small>−12 TO +12 dB</small></span>
+          <span class="scsv-routing-arrow" aria-hidden="true">→</span>
           <span class="scsv-fx-output">OUTPUT <small>LIMITER</small></span></div>
       </div></div>
       <p class="scsv-fx-route-help">Chorus, Delay and Reverb switch the selected track's send between
         0% and its saved level. Their shared processors stay globally enabled or bypassed in their
         respective workspaces. Master Compressor and Graphic EQ have independent bypasses;
-        the fixed output limiter remains downstream. Tracks 7–8 share the same effects processors and master processing chain.</p>
+        Master Output Gain follows the EQ, then the fixed output limiter. Tracks 7–8 share the same effects processors and master processing chain.</p>
       </div>`;
     sharedHeader.insertBefore(routing,leftHeader);
 

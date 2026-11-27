@@ -4,9 +4,9 @@ SymphonyCSV Studio / LABS edition
 
 The DAW before the DAW. An as-built specification for musicians, technical readers and AI collaborators.
 
-Version 0.3 · Review draft + format-use policy clarification
+Version 0.4 · Master Output Gain + persistence update
 
-24 November 2026
+27 November 2026
 
 Public LABS launch: 23 November 2026
 
@@ -346,7 +346,7 @@ Each listed simultaneous hit becomes a distinct row in a real file. Use the offi
 
 ## Chapter 10 — Expression, spatial placement and precedence
 
-Expressiveness operates at more than one layer. A velocity changes the force of a musical event; track gain changes the track’s overall output. A CSV pan describes a specific event or string; track pan shapes the channel in the mixer. The master EQ shapes the final audio, not the underlying notes.
+Expressiveness operates at more than one layer. A velocity changes the force of a musical event; track gain changes the track’s overall output. A CSV pan describes a specific event or string; track pan shapes the channel in the mixer. The master EQ and Master Output Gain shape the final audio, not the underlying notes.
 
 | Layer       | Control                                  | Scope                                         |
 |-------------|------------------------------------------|-----------------------------------------------|
@@ -469,6 +469,7 @@ The Playback Viewer is the primary audition environment. Select a track to inspe
 | WAV view               | Waveform/placement information against the composition.                                         |
 | Natural Decay Padding  | One global additional audio-tail setting, expressed in ms.                                      |
 | Master Drum Volume     | Performance gain for Tracks 5–6, independent of individual track sliders; live UI shows 0–400%. |
+| Master Output Gain | Global stereo gain, −12 to +12 dB; default 0 dB; live playback and master WAV/MP3. |
 
 ### Read-only musical authority
 
@@ -486,7 +487,7 @@ Studio separates individual track controls, shared wet effects and global master
 
 > **Figure 11. Audio signal flow**
 >
-> Tracks 1–8 · individual volume / mute / pan ↓ independent routing Dry Chorus Delay Reverb ↓ sum dry + wet Master Compressor ↓ Five-band Graphic EQ ↓ Output Limiter → live audio / offline stereo rendering
+> Tracks 1–8 · individual volume / mute / pan ↓ independent routing Dry Chorus Delay Reverb ↓ sum dry + wet Master Compressor ↓ Five-band Graphic EQ ↓ Master Output Gain (−12 to +12 dB) ↓ Output Limiter → live audio / offline stereo rendering
 >
 > Functional routing. Each wet processor receives its own track sends rather than the output of another effect. MIDI serialization is separate.
 
@@ -497,6 +498,7 @@ Studio separates individual track controls, shared wet effects and global master
 | Reverb     | One shared ambience processor   | Enabled; eight sends.                                           |
 | Compressor | Combined master                 | Enabled; threshold, ratio, attack, release.                     |
 | Graphic EQ | After compressor                | Enabled; 80 Hz, 250 Hz, 1 kHz, 4 kHz, 12 kHz; ±12 dB per band.  |
+| Master Output Gain | After EQ, before limiter | −12 to +12 dB; step 0.5 dB; 0 dB is unity. |
 | Limiter    | Final output stage              | Fixed downstream limiter; not a guarantee against all clipping. |
 
 ### Default values visible in the live application
@@ -509,10 +511,15 @@ Studio separates individual track controls, shared wet effects and global master
 | Compressor            | −20 dB threshold, 3:1 ratio, 8 ms attack, 180 ms release |
 | Graphic EQ            | Flat 0 dB across all five bands; initially bypassed      |
 | Natural Decay Padding | 2,000 ms                                                 |
+| Master Output Gain | 0 dB (unity) |
 
-These are the observed empty-session UI defaults, not promises that a loaded project will use them. Restore saved settings when reproducing a mix. Contextual send mute acts on the selected track’s effective send, preserving its previous stored level for restoration; a global processor bypass affects the entire processor. A zero stored send cannot restore a nonzero level without a new value. Editing a send can restore active routing. The master compressor and EQ are global, not track-specific.
+These are the observed empty-session UI defaults, not promises that a loaded project will use them. Restore saved settings when reproducing a mix. Contextual send mute acts on the selected track’s effective send, preserving its previous stored level for restoration; a global processor bypass affects the entire processor. A zero stored send cannot restore a nonzero level without a new value. Editing a send can restore active routing. The master compressor, EQ and Master Output Gain are global, not track-specific.
 
-Use low listening levels when testing aggressive effects, increased drum gain or positive EQ boosts. The limiter is an output safeguard, not an assurance of peak-safe mastering. Live audition and master audio export use the same functional processing graph.
+### Master Output Gain
+
+Master Output Gain is a global performance control in Performance Settings (−12 to +12 dB, 0.5 dB steps, default 0 dB). It adjusts the combined stereo mix of Tracks 1–8 and shared wet returns after the Graphic EQ and before the fixed output limiter. It is independent of track gain, Master Drum Volume, compressor and EQ bypasses, and event velocity. Live audition and Mix All WAV/MP3 use the same gain stage. It does not modify musical CSV or MIDI data.
+
+Use low listening levels when testing aggressive effects, increased drum gain, positive EQ boosts or Master Output Gain. The limiter is an output safeguard, not an assurance of peak-safe mastering. Live audition and master audio export use the same functional processing graph.
 
 <a id="projects"></a>
 
@@ -538,11 +545,13 @@ Project saving addresses a different problem from exporting a song: preserve edi
 
 The documented project model includes track occupancy, selected SoundFonts and presets, gain, pan, mute, shared effect settings and sends, master processing, global decay, and recorded audio onset information where applicable. The archive must not substitute MIDI for musical CSV truth. Older supported projects may rely on defaults for fields introduced later.
 
+Project ZIPs preserve the numeric playback.global_effects.masterOutputGainDb field; browser snapshots preserve effects.masterOutputGainDb; standalone Performance Settings JSON uses master_output_gain_db. Missing gain fields in older supported saves default to 0 dB. Values must be finite numbers between −12 and +12. Standalone settings files are distinct from the ZIP manifest.
+
 ### Safe restore contract
 
 Validate archive structure and contained musical assets before replacing the current composition. A malformed or incompatible project should not leave a partially restored musical state; the established design is transactional validation and rollback. Do not assume an optional paired audio load is part of the same transaction as the initial Music ZIP: test its actual behaviour separately.
 
-**Release verification required:** The live page contains a Save Project control labelled “coming soon,” while also describing Music Only and paired Audio ZIP saving. This could reflect conditional or inactive markup. The earlier project save/restore design was implemented and tested, but the precise enabled-state, split archive naming, pair identifiers and current manifest layout have not been independently exercised here. Do not promise successful portable saving in a specific browser without checking the actual control.
+**Release verification:** On 27 November 2026, live Master Output Gain audition, WAV export, Music Project ZIP saving and reopening were confirmed in user testing of the public LABS app. The paired Audio ZIP and browser recovery gain-specific round trips still require separate verification; do not generalize one successful test to every browser or project configuration.
 
 <a id="sessions"></a>
 
@@ -567,7 +576,7 @@ The eight-track recovery design supports original WAV assets and external SoundF
 
 ### Recovery test
 
-Save a composition with a known external preset, one recorded clip and nondefault mix parameters. Reload the app, recover, and compare track occupancy, clip onset, preset, pan, sends and audible output. Then clear the saved copy and confirm that the current composition remains open.
+Save a composition with a known external preset, one recorded clip and nondefault mix parameters. Reload the app, recover, and compare track occupancy, clip onset, preset, pan, sends, Master Output Gain and audible output. Then clear the saved copy and confirm that the current composition remains open.
 
 <a id="exports"></a>
 
@@ -581,7 +590,7 @@ Save a composition with a known external preset, one recorded clip and nondefaul
 | Music Project ZIP  | Portable editable music and supported associated settings/assets        | A finished audio master; audio assets may use a paired ZIP.                                         |
 | Audio ZIP (paired) | Recorded audio companion for the documented project workflow            | Independent composition authority.                                                                  |
 
-Mix All requires a valid musical composition. It includes Tracks 1–8 as loaded, track balance, parallel effects, master compressor, graphic EQ, limiter and natural decay. The MP3 encoder may require a one-time library download; encoding is local and the audio is not uploaded by the documented rendering workflow.
+Mix All requires a valid musical composition. It includes Tracks 1–8 as loaded, track balance, parallel effects, master compressor, graphic EQ, Master Output Gain, limiter and natural decay. The MP3 encoder may require a one-time library download; encoding is local and the audio is not uploaded by the documented rendering workflow.
 
 ### Which export should I use?
 
@@ -617,7 +626,7 @@ The following schematic maps the primary workspaces and controls observed in the
 | Projects                        | Open/save supported portable projects; master audio export.     |
 | Import MIDI                     | Convert a supported MIDI input into a target CSV.               |
 | Shared Effects                  | Adjust global processors and individual sends.                  |
-| Performance / master workspaces | Adjust global decay, drum gain, compressor and EQ.              |
+| Performance / master workspaces | Adjust global decay, drum gain, Master Output Gain, compressor and EQ.              |
 | Announcements                   | Read release news; refresh, expand and collapse entries.        |
 | More                            | Clear saved session; Credits; voluntary Donate.                 |
 
@@ -683,7 +692,7 @@ AI assistants should act as composition partners and support guides, not as auth
 | AI-03   | Preserve existing metadata when generating an additional part. Do not infer a new time base from event count alone.                            |
 | AI-04   | Validate exact column count, order, required values, event ranges and compatible shared metadata.                                              |
 | AI-05   | Do not use undocumented fields, assume unsupported features or conflate musical CSV with MIDI and audio.                                       |
-| AI-06   | Use explicit blank-versus-zero semantics; distinguish velocity, track gain, event pan and master processing.                                   |
+| AI-06   | Use explicit blank-versus-zero semantics; distinguish velocity, track gain, event pan and master processing. Master Output Gain is a performance setting, never a musical CSV column or MIDI velocity multiplier.                                   |
 | AI-07   | For TAB, check string/fret feasibility, tuning, stroke and per-string precedence; for drums, check the kit mapping.                            |
 | AI-08   | Deliver actual files only when created and checked. Label illustrative tables as non-importable. Do not claim audible verification without it. |
 | AI-09   | Separate implemented LABS behaviour, planned features and uncertain release details.                                                           |
@@ -755,7 +764,8 @@ These are proposed reproducible functional acceptance cases derived from documen
 | Pan differs in DAW           | Receiver/channel-wide CC10 constraints                                 | Compare exported MIDI events and use WAV to preserve audible result.         |
 | WAV starts late/ends early   | Onset offset or musical clipping boundary                              | Check milliseconds and the authoritative song duration.                      |
 | Effects not heard            | Processor bypass, zero send, contextual send mute                      | Enable processor and inspect the relevant track send.                        |
-| Audio clipping / harshness   | Track gain, drum multiplier, EQ boost or combined returns              | Reduce gains and monitor safely; limiter is not a guarantee.                 |
+| Audio clipping / harshness   | Track gain, drum multiplier, EQ/output gain boost or combined returns              | Reduce gains and monitor safely; the limiter is not a brick-wall guarantee.                 |
+| Live distortion but clean exported audio | Real-time playback load or audio configuration; exact cause requires investigation | If live playback distorts while the rendered WAV or MP3 sounds clean, reduce output gain and headphone volume, then audition the same passage with fewer tracks or effects, or on another computer/browser. Real-time audio deadlines, overlapping sampled voices and audio/device configuration can contribute; the cause is not established by listening alone. Offline rendering is not subject to the same real-time deadlines. Keep the musical CSV unchanged until a musical problem is isolated. The existing limiter reduces peaks but is not a brick-wall or true-peak guarantee. |
 | Cannot save or recover       | No musical track, storage quota, invalid ZIP or unavailable control    | Preserve originals; check project controls, browser storage and exact error. |
 | Announcements stale          | Network or validation failure                                          | Refresh; bundled fallback can remain visible offline.                        |
 | Export differs from audition | Saved mix settings, receiving app or file format mismatch              | Compare the same range and settings; use stereo WAV as a reference.          |
