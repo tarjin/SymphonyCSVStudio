@@ -8,7 +8,7 @@
  */
 import {inventoryProjectEntries} from './SymphonyCSV_Project_Inventory_v01.mjs';
 import {inspectWavBytes,WAV_MAX_BYTES} from './SymphonyCSV_WAV_Core_v01.mjs';
-import {readProjectManifest} from './SymphonyCSV_Project_Manifest_v01.mjs';
+import {readProjectManifest} from './SymphonyCSV_Project_Manifest_v01.mjs?v=mastergain02';
 import {MAX_SF2_BYTES,MAX_TOTAL_SF2_BYTES,verifySoundFontAssets} from './SymphonyCSV_SoundFont_Assets_v01.mjs';
 
 export const PROJECT_ZIP_MAX_BYTES = 512 * 1024 * 1024;

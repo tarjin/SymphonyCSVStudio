@@ -7,7 +7,7 @@
  * (window.SymphonyCSVPreflightRecoveryFromCSV in the current Studio).
  * The active composition must never be cleared here.
  */
-import {readProjectZip} from './SymphonyCSV_Project_ZIP_Reader_v01.mjs';
+import {readProjectZip} from './SymphonyCSV_Project_ZIP_Reader_v01.mjs?v=mastergain02';
 import {validateWavOnset} from './SymphonyCSV_WAV_Core_v01.mjs';
 
 const utf8 = new TextDecoder('utf-8', {fatal:true});

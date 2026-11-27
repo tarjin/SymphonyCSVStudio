@@ -5765,7 +5765,7 @@ class LocalSF2 {
     }
   });
   $('scsv-save-project-settings').addEventListener('click',()=>{
-    const json=JSON.stringify(state.projectConfig,null,2)+'\n';
+    const json=JSON.stringify({...state.projectConfig,master_output_gain_db:state.effects.masterOutputGainDb??0},null,2)+'\n';
     const blob=new Blob([json],{type:'application/json;charset=utf-8'});
     const url=URL.createObjectURL(blob);
     const anchor=document.createElement('a');
@@ -5780,7 +5780,14 @@ class LocalSF2 {
     try{
       // Parse and validate atomically before replacing the current preference.
       const candidate=performance.loadProject(JSON.parse(await file.text()));
+      const gain=Object.hasOwn(candidate,'master_output_gain_db')?candidate.master_output_gain_db:0;
+      if(typeof gain!=='number'||!Number.isFinite(gain)||gain< -12||gain>12)
+        throw Error('Master Output Gain must be a number from -12 to +12 dB.');
+      // Keep a single authoritative runtime gain; the standalone JSON is only a serialization format.
+      delete candidate.master_output_gain_db;
       state.projectConfig=candidate;
+      state.effects.masterOutputGainDb=gain;
+      applyEffects();renderEffectUI();
       $('scsv-decay-padding-ms').value=String(decayPaddingMs());
       updatePaddingReadout();
       syncDrumMasterControl();
@@ -6554,11 +6561,11 @@ class LocalSF2 {
 <script type="module" src="/SymphonyCSV_WAV_UI_v01.mjs"></script>
 <script type="module" src="/SymphonyCSV_MIDI_Export_UI_v01.mjs"></script>
 <script type="module" src="/SymphonyCSV_Session_Manual_UI_v02.mjs"></script>
-<script type="module" src="/SymphonyCSV_Project_Open_UI_v01.mjs"></script>
+<script type="module" src="/SymphonyCSV_Project_Open_UI_v01.mjs?v=mastergain02"></script>
 <!-- Standalone telemetry assets: deliberately not imported into Vite/Rust bundles. -->
 <script src="/analytics-config.js"></script>
 <script src="/studio-analytics.js"></script>
-<script type="module" src="/SymphonyCSV_Project_Save_UI_v01.mjs"></script>
+<script type="module" src="/SymphonyCSV_Project_Save_UI_v01.mjs?v=mastergain02"></script>
 <script type="module" src="/SymphonyCSV_Announcements_v01.mjs?v=labs-nps-20261123"></script>
 <script type="module" src="/SymphonyCSV_Master_Export_UI_v01.mjs"></script>
 <script type="module" src="/SymphonyCSV_Master_Monitor_v01.mjs"></script>

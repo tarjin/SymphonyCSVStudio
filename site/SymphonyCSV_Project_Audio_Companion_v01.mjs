@@ -2,7 +2,7 @@
  * Both archive halves are local. Music ZIP alone remains a complete song.
  * V1 uses classic STORE ZIP, capped at 512 MiB. No false claim of ZIP64.
  */
-import {projectZipCrc32,PROJECT_ZIP_MAX_BYTES,readRestrictedZipEntries} from './SymphonyCSV_Project_ZIP_Reader_v01.mjs';
+import {projectZipCrc32,PROJECT_ZIP_MAX_BYTES,readRestrictedZipEntries} from './SymphonyCSV_Project_ZIP_Reader_v01.mjs?v=mastergain02';
 import {inspectWavBytes,validateWavOnset} from './SymphonyCSV_WAV_Core_v01.mjs';
 
 export const AUDIO_COMPANION_JSON='SymphonyCSV_Project_Audio.json';

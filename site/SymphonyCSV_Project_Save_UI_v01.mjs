@@ -1,11 +1,11 @@
 /* Projects Save — user-initiated download only, separate from IndexedDB
  * Save to Browser / Recover Session. No localStorage or session mutations.
  */
-import {defaultProjectManifest} from './SymphonyCSV_Project_Manifest_v01.mjs';
+import {defaultProjectManifest} from './SymphonyCSV_Project_Manifest_v01.mjs?v=mastergain02';
 import {inspectWavBytes} from './SymphonyCSV_WAV_Core_v01.mjs';
-import {writeAudioCompanionZip,projectCompanionSha256} from './SymphonyCSV_Project_Audio_Companion_v01.mjs';
+import {writeAudioCompanionZip,projectCompanionSha256} from './SymphonyCSV_Project_Audio_Companion_v01.mjs?v=mastergain02';
 import {chooseProjectSaveMode} from './SymphonyCSV_Project_Dialogs_v01.mjs';
-import {writeSymphonyCSVProjectZip} from './SymphonyCSV_Project_ZIP_Writer_v01.mjs';
+import {writeSymphonyCSVProjectZip} from './SymphonyCSV_Project_ZIP_Writer_v01.mjs?v=mastergain02';
 import {prepareSymphonyCSVTrackExport} from './SymphonyCSV_MIDI_Export_Core_v01.mjs';
 import {buildProjectDetailsText} from './SymphonyCSV_Project_Details_v01.mjs';
 import {prepareSoundFontsForSession} from './SymphonyCSV_SoundFont_Ready_v01.mjs';

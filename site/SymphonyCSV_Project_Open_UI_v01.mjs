@@ -2,10 +2,10 @@
  * explicit replacement consent, then synchronous guarded Studio commit.
  * Browser Save/Recover Session storage is never accessed here.
  */
-import {preflightProjectImport} from './SymphonyCSV_Project_Preflight_v01.mjs';
+import {preflightProjectImport} from './SymphonyCSV_Project_Preflight_v01.mjs?v=mastergain02';
 import {stageProjectWithBrowserWasm} from './SymphonyCSV_Project_Browser_Stage_v01.mjs';
 import {commitStagedProject} from './SymphonyCSV_Project_Commit_v01.mjs';
-import {readAudioCompanionZip} from './SymphonyCSV_Project_Audio_Companion_v01.mjs';
+import {readAudioCompanionZip} from './SymphonyCSV_Project_Audio_Companion_v01.mjs?v=mastergain02';
 import {chooseProjectAudioRestore} from './SymphonyCSV_Project_Dialogs_v01.mjs';
 
 export async function validateProjectZipSelection(file,preflightCSV) {

@@ -3,8 +3,8 @@
  * only when every input passes validation. No browser storage or session writes.
  */
 import {inventoryProjectEntries} from './SymphonyCSV_Project_Inventory_v01.mjs';
-import {readProjectManifest} from './SymphonyCSV_Project_Manifest_v01.mjs';
-import {projectZipCrc32,PROJECT_ZIP_MAX_BYTES} from './SymphonyCSV_Project_ZIP_Reader_v01.mjs';
+import {readProjectManifest} from './SymphonyCSV_Project_Manifest_v01.mjs?v=mastergain02';
+import {projectZipCrc32,PROJECT_ZIP_MAX_BYTES} from './SymphonyCSV_Project_ZIP_Reader_v01.mjs?v=mastergain02';
 
 const enc=new TextEncoder();
 const must=(condition,message)=>{if(!condition)throw Error(message);};
