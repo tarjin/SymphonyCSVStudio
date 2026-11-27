@@ -13,14 +13,14 @@ export const PROJECT_DEFAULT_GLOBAL_EFFECTS=Object.freeze({
   chorusRateHz:0.7,chorusDepthMs:3,delayTimeMs:320,
   compressorThreshold:-20,compressorRatio:3,compressorAttackMs:8,compressorReleaseMs:180,
   masterEqEnabled:false,masterEq80Db:0,masterEq250Db:0,masterEq1000Db:0,
-  masterEq4000Db:0,masterEq12000Db:0
+  masterEq4000Db:0,masterEq12000Db:0,masterOutputGainDb:0
 });
 const EFFECT_RANGES={reverbMix:[0,100],delayMix:[0,100],delayFeedback:[0,75],
   chorusMix:[0,100],chorusRateHz:[0.1,3],chorusDepthMs:[0,8],
   delayTimeMs:[80,900],compressorThreshold:[-48,0],
   compressorRatio:[1,12],compressorAttackMs:[0,50],compressorReleaseMs:[20,500],
   masterEq80Db:[-12,12],masterEq250Db:[-12,12],masterEq1000Db:[-12,12],
-  masterEq4000Db:[-12,12],masterEq12000Db:[-12,12]};
+  masterEq4000Db:[-12,12],masterEq12000Db:[-12,12],masterOutputGainDb:[-12,12]};
 const isObject=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const check=(ok,message)=>{if(!ok)throw Error(message);};
 function keysOnly(o,allowed,where){
@@ -37,7 +37,7 @@ function globalEffects(input){
   keysOnly(input,Object.keys(PROJECT_DEFAULT_GLOBAL_EFFECTS),'global effects');
   const out={};
   const newOptional=new Set(['compressorRatio','compressorAttackMs','compressorReleaseMs','chorusRateHz','chorusDepthMs','delayTimeMs',
-    'masterEqEnabled','masterEq80Db','masterEq250Db','masterEq1000Db','masterEq4000Db','masterEq12000Db']);
+    'masterEqEnabled','masterEq80Db','masterEq250Db','masterEq1000Db','masterEq4000Db','masterEq12000Db','masterOutputGainDb']);
   for(const k of Object.keys(PROJECT_DEFAULT_GLOBAL_EFFECTS)){
     if(!Object.hasOwn(input,k)&&newOptional.has(k)){
       out[k]=PROJECT_DEFAULT_GLOBAL_EFFECTS[k];
